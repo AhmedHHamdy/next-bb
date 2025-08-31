@@ -1,20 +1,20 @@
 import BlogsCategories from "@/app/components/blogs/Blogs-Categories";
 
-async function getBlogsPageData(locale: string): Promise<BlogsPageData> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getHomePage`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      lang: locale,
-    }
-  });
+// async function getBlogsPageData(locale: string): Promise<BlogsPageData> {
+//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getHomePage`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//       lang: locale,
+//     }
+//   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch BlogsData data");
-  }
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch BlogsData data");
+//   }
 
-  return res.json();
-}
+//   return res.json();
+// }
 
 export default function Page() {
   return (
