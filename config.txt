@@ -1,0 +1,7 @@
+During Dev set the package.json scripts
+  "dev": "next dev --turbopack",
+  "build": "next build",
+  "start": "next start",
+
+During Pushing to Production set the package.json scripts
+"start": "NODE_ENV=production node server.js",
