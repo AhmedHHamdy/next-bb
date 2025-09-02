@@ -7,11 +7,37 @@ interface UploadedFile {
   progress: number;
 }
 
-export default function FileUpload({ title, required }: { title: string, required: boolean }) {
+export default function FileUpload({ title, required, setSelectedFiles }: { title: string, required: boolean, setSelectedFiles?: (values: File[]) => void }) {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Handle file selection
+  // const handleFiles = (selectedFiles: FileList | null) => {
+  //   if (!selectedFiles) return;
+
+  //   const newFiles: UploadedFile[] = Array.from(selectedFiles).map((file) => ({
+  //     file,
+  //     progress: 0,
+  //   }));
+
+  //   setFiles((prev) => [...prev, ...newFiles]);
+
+  //   // Simulate upload progress
+  //   newFiles.forEach((newFile, index) => {
+  //     let progress = 0;
+  //     const interval = setInterval(() => {
+  //       progress += 10;
+  //       setFiles((prev) =>
+  //         prev.map((f) =>
+  //           f.file === newFile.file ? { ...f, progress } : f
+  //         )
+  //       );
+  //       if (progress >= 100) clearInterval(interval);
+  //     }, 200);
+  //   });
+  // };
+
+  // Inside FileUpload.tsx
   const handleFiles = (selectedFiles: FileList | null) => {
     if (!selectedFiles) return;
 
@@ -22,8 +48,13 @@ export default function FileUpload({ title, required }: { title: string, require
 
     setFiles((prev) => [...prev, ...newFiles]);
 
+    // 🔥 Pass files back to parent
+    if (setSelectedFiles) {
+      setSelectedFiles(newFiles.map((f) => f.file));
+    }
+
     // Simulate upload progress
-    newFiles.forEach((newFile, index) => {
+    newFiles.forEach((newFile) => {
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
@@ -44,8 +75,16 @@ export default function FileUpload({ title, required }: { title: string, require
   };
 
   // Delete file
+  // const handleDelete = (fileToDelete: File) => {
+  //   setFiles((prev) => prev.filter((f) => f.file !== fileToDelete));
+  // };
+
   const handleDelete = (fileToDelete: File) => {
     setFiles((prev) => prev.filter((f) => f.file !== fileToDelete));
+  
+    if (setSelectedFiles) {
+      setSelectedFiles(files.filter((f) => f.file !== fileToDelete).map((f) => f.file));
+    }
   };
 
 
@@ -64,7 +103,7 @@ export default function FileUpload({ title, required }: { title: string, require
         {/* Upload Area */}
         <div
           id="upload-area"
-          className="border-2 w-full border-dashed border-[#EDA133] h-full rounded-xl p-8 text-center bg-[rgba(252,244,233,0.5)] cursor-pointer"
+          className="border-2 w-full border-dashed border-[#EDA133] h-full rounded-xl p-8 text-center bg-[rgba(252,244,233,0.5)] cursor-pointer flex items-center justify-center"
           onClick={() => fileInputRef.current?.click()}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}

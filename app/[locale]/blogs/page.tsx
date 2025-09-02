@@ -1,30 +1,40 @@
 import BlogsCategories from "@/app/components/blogs/Blogs-Categories";
+import BlogsPagination from "@/app/components/blogs/BlogsPagination";
+import { BlogsPageDataApi } from "@/app/utils/Types";
+import { Link } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
 
-// async function getBlogsPageData(locale: string): Promise<BlogsPageData> {
-//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getHomePage`, {
-//     method: "GET",
-//     headers: {
-//       "Content-Type": "application/json",
-//       lang: locale,
-//     }
-//   });
+async function getBlogsPageData(locale: string): Promise<BlogsPageDataApi> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAllBlogInfo`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      lang: locale,
+    }
+  });
 
-//   if (!res.ok) {
-//     throw new Error("Failed to fetch BlogsData data");
-//   }
+  if (!res.ok) {
+    throw new Error("Failed to fetch BlogsData data");
+  }
 
-//   return res.json();
-// }
+  return res.json();
+}
 
-export default function Page() {
+export default async function Page() {
+  const locale = await getLocale();
+
+
+  // fetch typed data
+  const { data } = await getBlogsPageData(locale);
+
   return (
     <>
       <div className="w-full bg-white px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem]">
         <div className="max-w-[1400px] mx-auto xl:px-[24px]">
           <div className="flex items-center gap-2">
-            <a href="index.html" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
+            <Link href="/" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
               الرئيسية
-            </a>
+            </Link>
             <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M10.0603 14.281C10.1869 14.281 10.3136 14.2343 10.4136 14.1343C10.6069 13.941 10.6069 13.621 10.4136 13.4277L6.06693 9.08099C5.74693 8.76099 5.74693 8.24099 6.06693 7.92099L10.4136 3.57432C10.6069 3.38099 10.6069 3.06099 10.4136 2.86766C10.2203 2.67432 9.90026 2.67432 9.70693 2.86766L5.36026 7.21432C5.02026 7.55432 4.82693 8.01432 4.82693 8.50099C4.82693 8.98766 5.01359 9.44766 5.36026 9.78766L9.70693 14.1343C9.80693 14.2277 9.93359 14.281 10.0603 14.281Z"
@@ -32,25 +42,25 @@ export default function Page() {
               />
             </svg>
 
-            <a href="blogs.html" className="text-black text-[15px] font-medium leading-[1.65]">
+            <Link href="/blogs" className="text-black text-[15px] font-medium leading-[1.65]">
               المدونة
-            </a>
+            </Link>
           </div>
         </div>
       </div>
 
-      <section className="relative bg-white pt-[24px] pb-[64px] md:pb-[64px] md:pt-[36px]">
+      <section className="relative bg-white pt-[24px] pb-[64px] md:pb-[100px] md:pt-[36px]">
         <div className="max-w-[1400px] mx-auto lg:px-[47px]">
           <div className="flex flex-col items-center gap-3 mb-[40px] md:mb-[32px] px-[15px]">
             <h1 className="text-center font-bold text-[24px] md:text-[40px] text-black leading-[1.2] max-w-[550px]">
-              أحدث المقالات والنصائح
+              {data?.heading_title}
             </h1>
             <p className="text-center font-medium text-[14px] md:text-[18px] text-[#4A4A4A] leading-[1.44] max-w-[550px]">
-              تابع مقالاتنا المتجددة حول البرمجة، التسويق الرقمي، وتجربة المستخدم، واكتشف كيف تطور مشروعك بخطوات ذكية.
+              {data?.heading_desc}
             </p>
           </div>
 
-          <div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center gap-6 mb-[32px] md:border-b-2 md:border-[#F0ECE7] md:pb-[22px]">
+          {/* <div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center gap-6 mb-[32px] md:border-b-2 md:border-[#F0ECE7] md:pb-[22px]">
             <div className="hidden md:flex flex-wrap gap-[32px] lg:gap-y-[40px] xl:gap-6 px-[15px] xl:px-0">
               <div className="blog-icon-container flex flex-col items-center gap-2 relative">
                 <svg
@@ -200,6 +210,87 @@ export default function Page() {
 
                 <div className="indicator absolute -bottom-6 w-20 h-0.5 bg-transparent rounded-full"></div>
               </div>
+
+              {data?.sections?.map(section => {
+                return (
+                  <div key={section.id} className="blog-icon-container flex flex-col items-center gap-2 relative">
+                    <svg
+                      className="blogs-icon"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="69"
+                      height="68"
+                      viewBox="0 0 69 68"
+                      fill="none"
+                    >
+                      <g filter="url(#filter0_d_3872_97201)">
+                        <g clipPath="url(#clip0_3872_97201)">
+                          <rect x="4.5" y="4" width="60" height="60" rx="30" fill="url(#paint0_radial_3872_97201)" />
+                          <path
+                            d="M43.4521 31.4622L35.4992 23.5092C34.677 22.687 33.3391 22.687 32.5168 23.5092C31.7777 24.2483 31.7141 25.3755 32.2599 26.1804L32.2488 26.2358C31.6754 29.1029 30.2795 31.7112 28.2119 33.7788L24.5641 37.4266C23.74 38.2508 23.7398 39.5847 24.5641 40.4089L26.5523 42.3971C27.3764 43.2212 28.7104 43.2213 29.5346 42.3971L30.0317 41.9L33.511 45.3794C34.3352 46.2036 35.6691 46.2036 36.4933 45.3794C37.3155 44.5572 37.3155 43.2193 36.4933 42.3971L35.0021 40.906L35.4992 40.4089C36.3234 39.5848 36.3235 38.2509 35.4992 37.4267L35.1614 37.0888C36.8231 35.9254 38.7102 35.1155 40.7256 34.7124L40.7816 34.7012C41.6044 35.2567 42.729 35.1674 43.4521 34.4444H43.4521C44.2742 33.6222 44.2742 32.2844 43.4521 31.4622ZM28.5405 41.403C28.2658 41.6776 27.8211 41.6777 27.5464 41.4029L25.5582 39.4148C25.2835 39.14 25.2835 38.6954 25.5582 38.4207L29.0375 34.9413L32.0198 37.9236L28.5405 41.403ZM35.4992 43.3912C35.7732 43.6652 35.7732 44.1112 35.4992 44.3852C35.2251 44.6593 34.7791 44.6593 34.5051 44.3852L31.0257 40.9059L32.0198 39.9118L35.4992 43.3912ZM33.0139 38.9177C33.2252 38.7064 33.5415 38.3827 34.0408 37.9563L34.5051 38.4207C34.7798 38.6954 34.7798 39.14 34.5051 39.4148L34.008 39.9118L33.0139 38.9177ZM33.0438 36.9595L30.0017 33.9173C31.6319 32.0349 32.7994 29.8127 33.424 27.3987L39.5624 33.5371C37.1484 34.1617 34.9263 35.3291 33.0438 36.9595ZM42.4578 33.4502C42.1831 33.7249 41.7385 33.7249 41.4638 33.4502L33.5109 25.4974C33.2362 25.2226 33.2362 24.7781 33.5109 24.5033C33.7857 24.2286 34.2303 24.2286 34.5051 24.5033L42.4578 32.4561C42.7319 32.7302 42.7319 33.1761 42.4578 33.4502Z"
+                            fill="#2A313D"
+                          />
+                          <path
+                            d="M29.5345 37.4272C29.2601 37.1527 28.8149 37.1527 28.5404 37.4272L27.5464 38.4213C27.2719 38.6958 27.2719 39.1409 27.5464 39.4154C27.8208 39.6899 28.266 39.6899 28.5404 39.4154L29.5345 38.4213C29.809 38.1468 29.809 37.7017 29.5345 37.4272ZM38.7276 21.998C38.3394 21.998 38.0247 22.3128 38.0247 22.701V24.1069C38.0247 24.4951 38.3394 24.8098 38.7276 24.8098C39.1158 24.8098 39.4306 24.4951 39.4306 24.1069V22.701C39.4306 22.3128 39.1158 21.998 38.7276 21.998ZM44.3511 27.6215H42.9452C42.557 27.6215 42.2423 27.9362 42.2423 28.3244C42.2423 28.7127 42.557 29.0274 42.9452 29.0274H44.3511C44.7393 29.0274 45.0541 28.7127 45.0541 28.3244C45.0541 27.9362 44.7393 27.6215 44.3511 27.6215ZM43.4423 23.6098C43.1678 23.3353 42.7227 23.3353 42.4482 23.6098L41.0423 25.0156C40.7678 25.2901 40.7678 25.7352 41.0423 26.0097C41.3168 26.2842 41.7619 26.2843 42.0364 26.0097L43.4423 24.6038C43.7168 24.3293 43.7168 23.8843 43.4423 23.6098Z"
+                            fill="#2A313D"
+                          />
+                          <rect x="5" y="4.5" width="59" height="59" rx="29.5" stroke="#F3F3F1" />
+                        </g>
+                      </g>
+                      <defs>
+                        <filter
+                          id="filter0_d_3872_97201"
+                          x="0.5"
+                          y="0"
+                          width="68"
+                          height="68"
+                          filterUnits="userSpaceOnUse"
+                          colorInterpolationFilters="sRGB"
+                        >
+                          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                          <feColorMatrix
+                            in="SourceAlpha"
+                            type="matrix"
+                            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                            result="hardAlpha"
+                          />
+                          <feMorphology
+                            radius="1"
+                            operator="dilate"
+                            in="SourceAlpha"
+                            result="effect1_dropShadow_3872_97201"
+                          />
+                          <feOffset />
+                          <feGaussianBlur stdDeviation="1.5" />
+                          <feComposite in2="hardAlpha" operator="out" />
+                          <feColorMatrix
+                            type="matrix"
+                            values="0 0 0 0 0.952941 0 0 0 0 0.952941 0 0 0 0 0.945098 0 0 0 1 0"
+                          />
+                          <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3872_97201" />
+                          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3872_97201" result="shape" />
+                        </filter>
+                        <radialGradient
+                          id="paint0_radial_3872_97201"
+                          cx="0"
+                          cy="0"
+                          r="1"
+                          gradientUnits="userSpaceOnUse"
+                          gradientTransform="translate(34.5 34) scale(39.6 20.4)"
+                        >
+                          <stop stopColor="#F0ECE7" />
+                          <stop offset="1" stopColor="white" />
+                        </radialGradient>
+                        <clipPath id="clip0_3872_97201">
+                          <rect x="4.5" y="4" width="60" height="60" rx="30" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium">{section.name}</span>
+
+                    <div className="indicator absolute -bottom-6 w-20 h-0.5 bg-transparent rounded-full"></div>
+                  </div>
+                )
+              })}
 
               <div className="blog-icon-container flex flex-col items-center gap-2 relative">
                 <svg
@@ -503,7 +594,7 @@ export default function Page() {
             </div>
 
             <section className="block md:hidden w-full px-[10px] xl:px-0 pb-[0px] border-b-2 border-[#F0ECE7]">
-              <BlogsCategories />
+              <BlogsCategories sectionsData={data?.sections} />
             </section>
 
             <div className="w-full lg:w-[439px] px-[15px] xl:px-0">
@@ -522,11 +613,13 @@ export default function Page() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-[24px] md:gap-x-[20px] md:gap-y-[32px] px-[15px] xl:px-0">
+          <BlogsPagination sectionsData={data?.sections} />
+
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-[24px] md:gap-x-[20px] md:gap-y-[32px] px-[15px] xl:px-0">
             <a href="blog-details.html">
-              <div className="bg-white h-full pb-[24px] xl:pb-0 h-full 2xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="bg-white pb-[24px] xl:pb-0 h-full 2xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className="relative">
                   <div
                     className="w-full h-[206px] lg:h-64 bg-no-repeat rounded-t-lg bg-cover"
@@ -1009,7 +1102,7 @@ export default function Page() {
             <div className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] cursor-pointer flex justify-center items-center">
               <img src="/pagination-arrow-left.svg" alt="pagination arrow left" />
             </div>
-          </section>
+          </section> */}
         </div>
       </section>
     </>

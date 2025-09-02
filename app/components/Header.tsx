@@ -411,6 +411,7 @@ export default function Header() {
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/"
+                    onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
                     الرئيسية
@@ -422,6 +423,7 @@ export default function Header() {
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/services"
+                    onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
                     خدماتنا
@@ -433,6 +435,7 @@ export default function Header() {
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/projects"
+                    onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
                     مشاريعنا
@@ -444,6 +447,7 @@ export default function Header() {
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/about-us"
+                    onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
                     من نحن
@@ -455,6 +459,7 @@ export default function Header() {
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/blogs"
+                    onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
                     مدونة
@@ -466,6 +471,7 @@ export default function Header() {
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/contact-us"
+                    onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
                     تواصل معنا
@@ -489,7 +495,7 @@ export default function Header() {
                   </svg>
                 </Link>
 
-                <Link href="/free-consultation" className="border w-full h-[48px] rounded-[8px] border-[#EDA133] text-[#EDA133] px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors">
+                <Link href="/free-consultation" className="border text-center w-full h-[48px] rounded-[8px] border-[#EDA133] text-[#EDA133] px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors flex items-center justify-center">
                   استشارة مجانية
                 </Link>
               </section>

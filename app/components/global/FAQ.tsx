@@ -4,7 +4,7 @@ import FAQItem from "./FAQItem";
 import { useQuery } from "@tanstack/react-query";
 import { FAQItemType } from "@/app/utils/Types";
 
-export default function FAQ({faqs}: {faqs: FAQItemType[]}) {
+export default function FAQ({faqs, homePageStatus}: {faqs: FAQItemType[], homePageStatus?: boolean}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
 
@@ -43,7 +43,7 @@ export default function FAQ({faqs}: {faqs: FAQItemType[]}) {
 
 
   return (
-    <section className="relative bg-white py-[48px] md:py-[72px]">
+    <section className={`relative bg-white ${homePageStatus ? "py-[48px] md:py-[72px]" : "pt-[48px] pb-[64px] md:pb-[100px]"} `}>
       <div className="max-w-[1400px] mx-auto">
         <div className="text-center mb-[29px] md:mb-[59px] px-[15px] md:px-0">
           <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[12px]">

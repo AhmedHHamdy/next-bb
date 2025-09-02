@@ -1,4 +1,38 @@
-export default function Page() {
+import { ServicesDetailsPageDataType } from "@/app/utils/Types";
+import { Link } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const locale = await getLocale();
+
+  const {slug} =  await params
+
+
+  async function getServiceDetails(locale: string): Promise<ServicesDetailsPageDataType> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getServiceById`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      },
+      body: JSON.stringify({
+        service_id: slug
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch Service Details data");
+    }
+
+    return res.json();
+  }
+
+  const { data } = await getServiceDetails(locale);
+
   return (
     <>
       {/* <!-- Section 1  --> */}
@@ -53,27 +87,27 @@ export default function Page() {
 
               {/* <!-- Main Heading --> */}
               <h1 className="text-[28px] md:text-[48px] font-bold text-[#2A313D] leading-[1.4]">
-                خدماتنا التقنية: حلول مبتكرة لأعمالك
+                {data?.name}
               </h1>
 
               {/* <!-- Description --> */}
-              <p className="text-[14px] md:text-[18px] text-[#393939] leading-[1.56] font-medium">
-                نحن نقدم مجموعة من الخدمات الرقمية المخصصة لكل أنواع الشركات، لتساعدك في تحقيق أهدافك بطرق مبتكرة وسهلة.
+              <p className="text-[14px] md:text-[18px] text-[#393939] leading-[1.56] font-medium break-words">
+                {data?.description}
               </p>
 
               {/* <!-- CTA Button --> */}
               <div className="flex items-center gap-4">
-                <button className="px-6 py-4 bg-[#EDA133] w-full md:w-auto rounded-lg text-white text-[16px] font-medium flex justify-center items-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
+                <Link href="/start-your-projects" className="px-6 py-4 bg-[#EDA133] w-full md:w-auto rounded-lg text-white text-[16px] font-medium flex justify-center items-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
                   اطلب خدمة الآن
                   <img src="/arrow-up-right.svg" alt="arrow" />
-                </button>
+                </Link>
               </div>
             </div>
 
             {/* <!-- Right Side - Image --> */}
             <div className="w-full h-[293px] lg:w-[542px] md:h-[420px] relative">
               <div className="w-full h-full bg-[#FFFFFF] rounded-[8px] overflow-hidden">
-                <img src="/services-hero-1f2c35.png" alt="services" className="w-full h-full object-cover" />
+                <img src={data?.image_url} alt="services" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>

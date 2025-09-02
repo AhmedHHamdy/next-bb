@@ -6,8 +6,10 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
+import { Project } from "@/app/utils/Types";
+import { log } from "console";
 
-export default function ProjectLogos() {
+export default function ProjectLogos({ logosData }: { logosData?: Project[] }) {
   return (
     <section className="bg-white w-full h-[69px] md:h-[116px] overflow-hidden flex items-center px-[15px] md:px-0 max-w-[2560px] mx-auto">
         <Swiper
@@ -40,8 +42,13 @@ export default function ProjectLogos() {
                 }
             }}
             >
-            <SwiperSlide><img src="/shine.svg" alt="shine project logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/garagePlus.svg" alt="garage plus logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
+            {logosData && logosData.map(logo => {
+                return (
+                    <SwiperSlide id={String(logo.id)}><img src={logo.image_url} alt="shine project logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
+                )
+            })}
+            
+            {/* <SwiperSlide><img src="/garagePlus.svg" alt="garage plus logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
             <SwiperSlide><img src="/final.svg" alt="final logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
             <SwiperSlide><img src="/rental.svg" alt="rental logo" className="w-[140px] h-[32px] md:h-[50px]" /></SwiperSlide>
             <SwiperSlide><img src="/exclusive.svg" alt="exclusive logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
@@ -49,7 +56,7 @@ export default function ProjectLogos() {
             <SwiperSlide><img src="/garagePlus.svg" alt="garage plus logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
             <SwiperSlide><img src="/final.svg" alt="final logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
             <SwiperSlide><img src="/rental.svg" alt="rental logo" className="w-[140px] h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/exclusive.svg" alt="exclusive logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
+            <SwiperSlide><img src="/exclusive.svg" alt="exclusive logo" className="h-[32px] md:h-[50px]" /></SwiperSlide> */}
         </Swiper>
     </section>
   );

@@ -1,23 +1,46 @@
-'use client'
 
 
 import ServicesMarquee from "@/app/components/about-us/ServicesMarquee";
 import Counters from "@/app/components/global/Counters";
 import ProjectLogos from "@/app/components/global/PojectLogos";
-import Reviews from "@/app/components/home/Reviews";
-import { routing } from "@/i18n/routing";
-import { setRequestLocale } from "next-intl/server";
-import { use } from "react";
+import Reviews from "@/app/components/global/Reviews";
+import { AboutUsData } from "@/app/utils/Types";
+import { Link } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
+// import { routing } from "@/i18n/routing";
+// import { setRequestLocale } from "next-intl/server";
+// import { use } from "react";
 
 // export function generateStaticParams() {
 //   return routing.locales.map((locale) => ({locale}));
 // }
 
-export default function Page({ params }: { params: Promise<{ locale: string }> }) {
+async function getAboutUsPageData(locale: string): Promise<AboutUsData> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAboutUsPage`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      lang: locale,
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch homepage data");
+  }
+
+  return res.json();
+}
+
+export default async function Page() {
   // const {locale} = use(params);
 
   // setRequestLocale(locale);
 
+  const locale = await getLocale();
+
+
+  // fetch typed data
+  const { data } = await getAboutUsPageData(locale);
 
   return (
     <>
@@ -39,11 +62,11 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
             {/* LEFT SIDE (Text Content) */}
             <div
               className="bg-[#FCF4E9] h-full relative w-full 2xl:col-span-3
-      flex flex-col items-start justify-center gap-[32px]
-      px-[15px] xl:px-[5rem] 2xl:px-[14rem] pt-[20px] lg:py-[32px]"
+              flex flex-col items-start justify-center gap-[32px]
+              px-[15px] xl:px-[5rem] 2xl:px-[14rem] pt-[20px] lg:py-[32px]"
             >
               <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.75] relative z-[50]">
-                نبني مستقبلًا رقميًا يليق بطموحاتك
+                {data?.other?.header_title?.slice(0, 80)}
               </h1>
 
               {/* Decorative Vectors */}
@@ -64,13 +87,12 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
               </div>
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
-                شركة سعودية-مصرية متخصصة في الحلول الرقمية المتكاملة: البرمجة، التسويق،
-                وخدمة العملاء – نُقدم لك خبرة، ابتكار، ودعم مستمر لتطوير أعمالك.
+                {data?.other?.header_description?.slice(0, 255)}
               </p>
 
               {/* Buttons */}
               <div className="flex flex-row gap-4 w-full relative z-[50]">
-                <button className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
+                <Link href="/fee-consultation" className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
                   احجز استشارة مجانية
                   <svg
                     width="17"
@@ -84,11 +106,11 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
                       fill="white"
                     />
                   </svg>
-                </button>
+                </Link>
 
-                <button className="border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
+                <Link href="/projects" className="border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
                   شاهد أعمالنا
-                </button>
+                </Link>
               </div>
             </div>
 
@@ -140,32 +162,37 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
 
             {/* <!-- Features List --> */}
             <div className="flex flex-col gap-6 w-full">
-              {/* <!-- Feature 1 --> */}
-              <div className="flex items-center gap-4">
-                <img src="/experience-icon.svg" alt="experience" className="w-12 h-12" />
-                <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">+10 سنوات من الخبرة.</span>
-              </div>
+              {/* <!-- Features --> */}
+              {data.other.expressions.map(expression => {
+                return (
+                  <div key={expression.id} className="flex items-center gap-4">
+                    <img src={expression.image_url} alt="experience" className="w-12 h-12" />
+                    <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">{expression.title}</span>
+                  </div>
+                )
+              })}
+              
 
               {/* <!-- Feature 2 --> */}
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
                 <img src="/team-icon.svg" alt="team" className="w-12 h-12" />
                 <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">فريق عمل متنوع من الخبراء</span>
-              </div>
+              </div> */}
 
               {/* <!-- Feature 3 --> */}
-              <div className="flex items-center gap-4">
+              {/* <div className="flex items-center gap-4">
                 <img src="/projects-icon.svg" alt="projects" className="w-12 h-12" />
                 <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">أكثر من 100 مشروع ناجح</span>
-              </div>
+              </div> */}
 
               {/* <!-- Feature 4 --> */}
-              <div className="flex items-center gap-4 w-full">
+              {/* <div className="flex items-center gap-4 w-full">
                 <img src="/clients-icon.svg" alt="clients" className="w-12 h-12" />
 
                 <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">
                   عملاء من 6 دول في الخليج والعالم العربي
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -180,13 +207,12 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
             <div className="w-full xl:w-[666px] flex flex-col gap-6">
               {/* <!-- Main Heading --> */}
               <h2 className="text-[32px] md:text-[40px] font-bold text-[#232323] leading-[1.4]">
-                نحن نبني مستقبلًا رقميًا يليق بطموحاتك
+                {data?.other?.header_title?.slice(0, 80)}
               </h2>
 
               {/* <!-- Description --> */}
               <p className="text-[14px] md:text-[20px] font-medium md:font-regular text-[#393939] leading-[1.6]">
-                شركة سعودية-مصرية متخصصة في الحلول الرقمية المتكاملة: البرمجة، التسويق، وخدمة العملاء – نقدم لك خبرة،
-                ابتكار، ودعم مستمر لتطوير أعمالك.
+                {data?.other?.header_description}
               </p>
 
               {/* <!-- Vision & Mission Cards --> */}
@@ -201,7 +227,7 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
                     <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">رؤيتنا</h3>
 
                     <p className="text-[14px] md:text-[16px] text-[#2A313D] font-medium leading-[1.5] max-w-[277px]">
-                      أن نصبح الشريك الرقمي الأول للشركات الخليجية من خلال خدمات تجمع بين التقنية والابتكار.
+                        {data?.other?.our_vision?.slice(0, 80)}
                     </p>
                   </div>
                 </div>
@@ -216,7 +242,7 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
                     <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">مهمتنا</h3>
 
                     <p className="text-[14px] md:text-[16px] text-[#2A313D] font-medium leading-[1.5] max-w-[277px]">
-                      هدفنا هو صفر حوادث ومعدل تكرار فقدان الوقت لدينا هو الأفضل في الصناعة.
+                      {data?.other?.our_mission?.slice(0, 80)}
                     </p>
                   </div>
                 </div>
@@ -238,25 +264,24 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
                 <h3 className="text-[20px] md:text-[36px] font-bold text-[#232323] ">قيمنا الأساسية</h3>
 
                 {/* <!-- Values Grid --> */}
+
                 <div className="flex flex-row items-center gap-6 lg:gap-24">
-                  {/* <!-- Quality --> */}
                   <div className="flex flex-col items-center gap-2">
                     <img src="/quality-icon.gif" alt="quality" className="w-24 h-24 object-cover" />
-                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">الجودة</span>
+                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{data?.other?.our_values?.first?.slice(0, 80)}</span>
                   </div>
 
-                  {/* <!-- Flexibility --> */}
                   <div className="flex flex-col items-center gap-2">
                     <img src="/flexibility-icon.gif" alt="flexibility" className="w-24 h-24 object-cover" />
-                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">المرونة</span>
+                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{data?.other?.our_values?.second?.slice(0, 80)}</span>
                   </div>
 
-                  {/* <!-- Innovation --> */}
                   <div className="flex flex-col items-center gap-2">
                     <img src="/innovation-icon.gif" alt="innovation" className="w-24 h-24 object-cover" />
-                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">الابتكار</span>
+                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{data?.other?.our_values?.third?.slice(0, 80)}</span>
                   </div>
                 </div>
+                
               </div>
 
               {/* <!-- Right Side - Decorative Pattern --> */}
@@ -285,8 +310,9 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
               لماذا نحن؟ <span className="text-[#F2B660]">الفرق التنافسي</span>
             </h2>
             <p className="text-[14px] md:text-[18px] mt-[12px] md:mt-0 text-[#4A4A4A] font-medium leading-[1.56] max-w-[600px] mx-auto">
-              نوفّر حلولًا رقمية شاملة تُلبي جميع متطلباتك التقنية، من تطوير البرمجيات، إلى التسويق الرقمي، وانتهاءً
-              بخدمات الدعم والمساندة.
+              {/* نوفّر حلولًا رقمية شاملة تُلبي جميع متطلباتك التقنية، من تطوير البرمجيات، إلى التسويق الرقمي، وانتهاءً
+              بخدمات الدعم والمساندة. */}
+              {data?.other?.why_us?.description}
             </p>
           </div>
 
@@ -347,7 +373,7 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
           <section className="relative bg-white mt-[30px] lg:pt-[42px]">
             <div>
               {/* <!-- Statistics Grid --> */}
-              <Counters />
+              <Counters countersData={data?.other?.statistics || []} />
             </div>
           </section>
         </div>
@@ -376,7 +402,7 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
                 من نخدم؟
               </h2>
               <p className="text-[14px] md:text-[18px] font-medium text-[#FAEAD1] leading-[1.56] opacity-80">
-                عملاؤنا نحن نعمل مع مجموعة واسعة من القطاعات تشمل
+                {data?.other?.who_we_serve?.description}
               </p>
             </div>
 
@@ -385,14 +411,19 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
               <div className="flex flex-row items-center justify-center gap-12">
                 <div className="w-full lg:w-[759px] flex flex-col gap-12">
                   <div className="w-full flex flex-wrap gap-6">
-                    <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      شركات إنتاج
-                    </button>
+                    {data?.other?.who_we_serve?.clients?.map(service => {
+                      return (
+                        <button
+                          key={service.id}
+                          className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
+                           rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
+                          >
+                          {service.name}
+                        </button>
+                      )
+                    })}
 
-                    <button
+                    {/* <button
                       className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
                   rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
                     >
@@ -434,19 +465,19 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
                   rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
                     >
                       علامات تجارية تجزئة
-                    </button>
+                    </button> */}
                   </div>
 
                   {/* <!-- Action Buttons --> */}
                   <div className="flex flex-row items-center gap-3 md:gap-4">
-                    <button className="md:px-6 py-4 bg-[#EDA133] rounded-lg text-white h-[48px] md:h-full text-[14px] md:text-[16px] w-full md:w-auto font-medium flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
+                    <a href="#reviews" className="md:px-6 py-4 bg-[#EDA133] rounded-lg text-white h-[48px] md:h-full text-[14px] md:text-[16px] w-full md:w-auto font-medium flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
                       استعرض قصص النجاح
                       <img src="/arrow-icon.svg" alt="arrow" />
-                    </button>
+                    </a>
 
-                    <button className="md:px-6 py-4 border border-[#EDA133] rounded-lg h-[48px] md:h-full text-[#EDA133] text-[14px] w-full md:w-auto md:text-[16px] font-medium hover:bg-[#EDA13333] hover:text-white transition-all duration-300">
+                    <Link href="/projects" className="md:px-6 py-4 border border-[#EDA133] rounded-lg h-[48px] md:h-full text-[#EDA133] text-[14px] w-full md:w-auto md:text-[16px] font-medium hover:bg-[#EDA13333] hover:text-white transition-all duration-300">
                       شاهد المشاريع السابقة
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -461,10 +492,12 @@ export default function Page({ params }: { params: Promise<{ locale: string }> }
       </section>
 
       {/* <!-- Business Building Projects bar section --> */}
-      <ProjectLogos />
+      <ProjectLogos logosData={data?.other?.projects || []} />
 
       {/* <!-- What Our Customers Say About Us Section --> */}
-      <Reviews />
+      <section id="reviews">
+        <Reviews reviewsData={data?.other?.our_clients || []} />
+      </section>
     </>
   );
 }

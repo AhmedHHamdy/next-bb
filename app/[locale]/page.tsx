@@ -1,36 +1,20 @@
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";
 import ProjectLogos from "../components/global/PojectLogos";
 import Counters from "../components/global/Counters";
 import Services from "../components/home/Services";
 import WhoAreWe from "../components/home/WhoAreWe";
 import PreviousProjects from "../components/home/PreviousProjects";
-import Reviews from "../components/home/Reviews";
+import Reviews from "../components/global/Reviews";
 import FAQ from "../components/global/FAQ";
 import Blogs from "../components/home/Blogs";
-import { routing } from "@/i18n/routing";
+// import { routing } from "@/i18n/routing";
 import { getLocale, setRequestLocale } from "next-intl/server";
-import { use } from "react";
+// import { use } from "react";
 import { HomePageData } from "../utils/Types";
 
 // export function generateStaticParams() {
 //   return routing.locales.map((locale) => ({ locale }));
 // }
-
-async function getHomePageData(locale: string): Promise<HomePageData> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getHomePage`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      lang: locale,
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch homepage data");
-  }
-
-  return res.json();
-}
 
 // { params }: { params: { locale: string } }
 
@@ -38,13 +22,29 @@ export default async function HomePage() {
   const locale = await getLocale();
 
   // set locale for next-intl
-  setRequestLocale(locale);
+  // setRequestLocale(locale);
+
+  async function getHomePageData(locale: string): Promise<HomePageData> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getHomePage`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      }
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch homepage data");
+    }
+  
+    return res.json();
+  }
 
   // fetch typed data
   const { data } = await getHomePageData(locale);
 
   return (
-    <>
+    <section className="mb-[64px] md:mb-[100px]"> 
       <main className="mx-auto max-w-[1400px] pt-[6.5rem] md:pt-[8.5rem] lg:pt-[10.5rem] relative px-[15px] 2xl:px-0">
         <section className="absolute xl:left-[1%] xl:top-[-3%] 2xl:left-[-2%] 2xl:top-[-3%] opacity-60 hidden xl:block">
           <img src="/background-section.svg" />
@@ -84,7 +84,7 @@ export default async function HomePage() {
           <section className="relative w-full overflow-hidden mt-[24px] md:mt-[56px] rounded-[8px]">
             <figure className="w-full h-[293px] xl:h-[374px]">
               <video
-                src="/demo-video.mp4"
+                src={data?.app_home_video}
                 autoPlay
                 muted
                 loop
@@ -95,12 +95,12 @@ export default async function HomePage() {
           </section>
         </section>
 
-        <Counters />
+        <Counters countersData={data?.statistics} />
       </main>
 
-      <Services />
+      <Services servicesData={data?.our_services || []} />
 
-      <ProjectLogos />
+      <ProjectLogos logosData={data?.our_projects.projects} />
 
       <WhoAreWe />
 
@@ -108,9 +108,9 @@ export default async function HomePage() {
 
       <Reviews />
 
-      <FAQ faqs={data?.faqs} />
+      <FAQ faqs={data?.faqs} homePageStatus={true} />
 
-      <Blogs articles={data?.articles} />
-    </>
+      <Blogs articles={data?.our_articles} />
+    </section>
   );
 }

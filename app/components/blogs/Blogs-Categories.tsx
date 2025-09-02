@@ -5,8 +5,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
+import { SectionCategory } from "@/app/utils/Types";
 
-export default function BlogsCategories() {
+export default function BlogsCategories({ sectionsData, setSelectedSection, selectedSectionId }: { sectionsData: SectionCategory[], setSelectedSection: (value: string) => void, selectedSectionId: string}) {
   return (
     <Swiper
       className="w-full"
@@ -34,7 +35,7 @@ export default function BlogsCategories() {
       }}
     >
       <SwiperSlide className="swiper-slide">
-        <div className="blog-icon-container flex flex-col items-center gap-2 relative">
+        <div onClick={() => setSelectedSection("")} className={`${selectedSectionId == "" ? "blog-icon-container": ""} flex flex-col items-center gap-2 relative`}>
           <svg
             className="blogs-icon"
             xmlns="http://www.w3.org/2000/svg"
@@ -119,90 +120,94 @@ export default function BlogsCategories() {
         </div>
       </SwiperSlide>
 
-      <SwiperSlide className="swiper-slide">
-        <div className="blog-icon-container flex flex-col items-center gap-2 relative">
-          <svg
-            className="blogs-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="55"
-            height="51"
-            viewBox="0 0 55 51"
-            fill="none"
-          >
-            <g filter="url(#filter0_d_3872_97286)">
-              <g clipPath="url(#clip0_3872_97286)">
-                <rect x="3.82184" width="47.3563" height="47.3563" rx="23.6782" fill="url(#paint0_radial_3872_97286)" />
-                <path
-                  d="M34.5687 21.6821L28.2903 15.4065C27.6412 14.7577 26.585 14.7577 25.9359 15.4065C25.3524 15.9897 25.3021 16.8792 25.733 17.5144L25.7243 17.558C25.2716 19.8205 24.1697 21.8787 22.5374 23.5102L19.6576 26.3887C19.007 27.039 19.0069 28.0916 19.6576 28.742L21.2272 30.3108C21.8778 30.9612 22.9309 30.9612 23.5816 30.3108L23.974 29.9186L26.7207 32.6642C27.3714 33.3145 28.4244 33.3146 29.0751 32.6642C29.7242 32.0154 29.7242 30.9597 29.0751 30.3109L27.8979 29.1342L28.2903 28.742C28.9409 28.0917 28.941 27.0391 28.2903 26.3887L28.0236 26.1221C29.3355 25.2041 30.8253 24.565 32.4162 24.2469L32.4605 24.238C33.1101 24.6764 33.9979 24.6059 34.5687 24.0354H34.5687C35.2177 23.3866 35.2177 22.331 34.5687 21.6821ZM22.7968 29.5264C22.5799 29.7431 22.2288 29.7432 22.012 29.5264L20.4424 27.9575C20.2255 27.7407 20.2255 27.3899 20.4424 27.1731L23.1892 24.4275L25.5435 26.7809L22.7968 29.5264ZM28.2903 31.0953C28.5066 31.3115 28.5066 31.6634 28.2903 31.8797C28.0739 32.0959 27.7218 32.0959 27.5055 31.8797L24.7587 29.1341L25.5435 28.3497L28.2903 31.0953ZM26.3283 27.5653C26.4951 27.3985 26.7448 27.1431 27.1389 26.8067L27.5055 27.1731C27.7224 27.3899 27.7224 27.7407 27.5055 27.9575L27.1131 28.3498L26.3283 27.5653ZM26.3519 26.02L23.9503 23.6195C25.2373 22.1341 26.159 20.3806 26.6521 18.4757L31.498 23.3195C29.5922 23.8123 27.838 24.7336 26.3519 26.02ZM33.7838 23.2509C33.5669 23.4677 33.2159 23.4677 32.999 23.2509L26.7207 16.9754C26.5038 16.7586 26.5038 16.4077 26.7207 16.191C26.9376 15.9742 27.2886 15.9742 27.5055 16.191L33.7838 22.4665C34.0001 22.6827 34.0001 23.0346 33.7838 23.2509Z"
-                  fill="#2A313D"
-                />
-                <path
-                  d="M23.5815 26.3861C23.3648 26.1694 23.0134 26.1694 22.7967 26.3861L22.012 27.1705C21.7953 27.3871 21.7953 27.7383 22.012 27.9549C22.2286 28.1715 22.5801 28.1715 22.7967 27.9549L23.5815 27.1705C23.7982 26.9539 23.7982 26.6027 23.5815 26.3861ZM30.839 14.2109C30.5325 14.2109 30.284 14.4593 30.284 14.7656V15.875C30.284 16.1813 30.5325 16.4297 30.839 16.4297C31.1455 16.4297 31.3939 16.1813 31.3939 15.875V14.7656C31.3939 14.4593 31.1455 14.2109 30.839 14.2109ZM35.2784 18.6484H34.1686C33.8621 18.6484 33.6136 18.8967 33.6136 19.2031C33.6136 19.5094 33.8621 19.7578 34.1686 19.7578H35.2784C35.5849 19.7578 35.8334 19.5094 35.8334 19.2031C35.8334 18.8967 35.5849 18.6484 35.2784 18.6484ZM34.561 15.4827C34.3443 15.2661 33.9929 15.2661 33.7762 15.4827L32.6663 16.5921C32.4496 16.8087 32.4496 17.1599 32.6663 17.3765C32.883 17.5931 33.2344 17.5932 33.4511 17.3765L34.561 16.2672C34.7777 16.0506 34.7777 15.6994 34.561 15.4827Z"
-                  fill="#2A313D"
-                />
-                <rect
-                  x="4.21623"
-                  y="0.394636"
-                  width="46.5671"
-                  height="46.5671"
-                  rx="23.2835"
-                  stroke="#F3F3F1"
-                  strokeWidth="0.789272"
-                />
-              </g>
-            </g>
-            <defs>
-              <filter
-                id="filter0_d_3872_97286"
-                x="0.66475"
-                y="-3.15709"
-                width="53.6705"
-                height="53.6696"
-                filterUnits="userSpaceOnUse"
-                colorInterpolationFilters="sRGB"
+      {sectionsData && sectionsData?.map(section => {
+        return (
+          <SwiperSlide key={section.id} className="swiper-slide">
+            <div onClick={() => setSelectedSection(String(section.id))} className={`${String(section.id) == selectedSectionId ? "blog-icon-container": ""} flex flex-col items-center gap-2 relative`}>
+              <svg
+                className="blogs-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="55"
+                height="51"
+                viewBox="0 0 55 51"
+                fill="none"
               >
-                <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                <feColorMatrix
-                  in="SourceAlpha"
-                  type="matrix"
-                  values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                  result="hardAlpha"
-                />
-                <feMorphology
-                  radius="0.789272"
-                  operator="dilate"
-                  in="SourceAlpha"
-                  result="effect1_dropShadow_3872_97286"
-                />
-                <feOffset />
-                <feGaussianBlur stdDeviation="1.18391" />
-                <feComposite in2="hardAlpha" operator="out" />
-                <feColorMatrix type="matrix" values="0 0 0 0 0.952941 0 0 0 0 0.952941 0 0 0 0 0.945098 0 0 0 1 0" />
-                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3872_97286" />
-                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3872_97286" result="shape" />
-              </filter>
-              <radialGradient
-                id="paint0_radial_3872_97286"
-                cx="0"
-                cy="0"
-                r="1"
-                gradientUnits="userSpaceOnUse"
-                gradientTransform="translate(27.5 23.6782) scale(31.2552 16.1012)"
-              >
-                <stop offset="1" stopColor="white" />
-              </radialGradient>
-              <clipPath id="clip0_3872_97286">
-                <rect x="3.82184" width="47.3563" height="47.3563" rx="23.6782" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-          <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium text-center h-[52px]">تسويق إلكتروني</span>
+                <g filter="url(#filter0_d_3872_97286)">
+                  <g clipPath="url(#clip0_3872_97286)">
+                    <rect x="3.82184" width="47.3563" height="47.3563" rx="23.6782" fill="url(#paint0_radial_3872_97286)" />
+                    <path
+                      d="M34.5687 21.6821L28.2903 15.4065C27.6412 14.7577 26.585 14.7577 25.9359 15.4065C25.3524 15.9897 25.3021 16.8792 25.733 17.5144L25.7243 17.558C25.2716 19.8205 24.1697 21.8787 22.5374 23.5102L19.6576 26.3887C19.007 27.039 19.0069 28.0916 19.6576 28.742L21.2272 30.3108C21.8778 30.9612 22.9309 30.9612 23.5816 30.3108L23.974 29.9186L26.7207 32.6642C27.3714 33.3145 28.4244 33.3146 29.0751 32.6642C29.7242 32.0154 29.7242 30.9597 29.0751 30.3109L27.8979 29.1342L28.2903 28.742C28.9409 28.0917 28.941 27.0391 28.2903 26.3887L28.0236 26.1221C29.3355 25.2041 30.8253 24.565 32.4162 24.2469L32.4605 24.238C33.1101 24.6764 33.9979 24.6059 34.5687 24.0354H34.5687C35.2177 23.3866 35.2177 22.331 34.5687 21.6821ZM22.7968 29.5264C22.5799 29.7431 22.2288 29.7432 22.012 29.5264L20.4424 27.9575C20.2255 27.7407 20.2255 27.3899 20.4424 27.1731L23.1892 24.4275L25.5435 26.7809L22.7968 29.5264ZM28.2903 31.0953C28.5066 31.3115 28.5066 31.6634 28.2903 31.8797C28.0739 32.0959 27.7218 32.0959 27.5055 31.8797L24.7587 29.1341L25.5435 28.3497L28.2903 31.0953ZM26.3283 27.5653C26.4951 27.3985 26.7448 27.1431 27.1389 26.8067L27.5055 27.1731C27.7224 27.3899 27.7224 27.7407 27.5055 27.9575L27.1131 28.3498L26.3283 27.5653ZM26.3519 26.02L23.9503 23.6195C25.2373 22.1341 26.159 20.3806 26.6521 18.4757L31.498 23.3195C29.5922 23.8123 27.838 24.7336 26.3519 26.02ZM33.7838 23.2509C33.5669 23.4677 33.2159 23.4677 32.999 23.2509L26.7207 16.9754C26.5038 16.7586 26.5038 16.4077 26.7207 16.191C26.9376 15.9742 27.2886 15.9742 27.5055 16.191L33.7838 22.4665C34.0001 22.6827 34.0001 23.0346 33.7838 23.2509Z"
+                      fill="#2A313D"
+                    />
+                    <path
+                      d="M23.5815 26.3861C23.3648 26.1694 23.0134 26.1694 22.7967 26.3861L22.012 27.1705C21.7953 27.3871 21.7953 27.7383 22.012 27.9549C22.2286 28.1715 22.5801 28.1715 22.7967 27.9549L23.5815 27.1705C23.7982 26.9539 23.7982 26.6027 23.5815 26.3861ZM30.839 14.2109C30.5325 14.2109 30.284 14.4593 30.284 14.7656V15.875C30.284 16.1813 30.5325 16.4297 30.839 16.4297C31.1455 16.4297 31.3939 16.1813 31.3939 15.875V14.7656C31.3939 14.4593 31.1455 14.2109 30.839 14.2109ZM35.2784 18.6484H34.1686C33.8621 18.6484 33.6136 18.8967 33.6136 19.2031C33.6136 19.5094 33.8621 19.7578 34.1686 19.7578H35.2784C35.5849 19.7578 35.8334 19.5094 35.8334 19.2031C35.8334 18.8967 35.5849 18.6484 35.2784 18.6484ZM34.561 15.4827C34.3443 15.2661 33.9929 15.2661 33.7762 15.4827L32.6663 16.5921C32.4496 16.8087 32.4496 17.1599 32.6663 17.3765C32.883 17.5931 33.2344 17.5932 33.4511 17.3765L34.561 16.2672C34.7777 16.0506 34.7777 15.6994 34.561 15.4827Z"
+                      fill="#2A313D"
+                    />
+                    <rect
+                      x="4.21623"
+                      y="0.394636"
+                      width="46.5671"
+                      height="46.5671"
+                      rx="23.2835"
+                      stroke="#F3F3F1"
+                      strokeWidth="0.789272"
+                    />
+                  </g>
+                </g>
+                <defs>
+                  <filter
+                    id="filter0_d_3872_97286"
+                    x="0.66475"
+                    y="-3.15709"
+                    width="53.6705"
+                    height="53.6696"
+                    filterUnits="userSpaceOnUse"
+                    colorInterpolationFilters="sRGB"
+                  >
+                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
+                    <feColorMatrix
+                      in="SourceAlpha"
+                      type="matrix"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                      result="hardAlpha"
+                    />
+                    <feMorphology
+                      radius="0.789272"
+                      operator="dilate"
+                      in="SourceAlpha"
+                      result="effect1_dropShadow_3872_97286"
+                    />
+                    <feOffset />
+                    <feGaussianBlur stdDeviation="1.18391" />
+                    <feComposite in2="hardAlpha" operator="out" />
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.952941 0 0 0 0 0.952941 0 0 0 0 0.945098 0 0 0 1 0" />
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3872_97286" />
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3872_97286" result="shape" />
+                  </filter>
+                  <radialGradient
+                    id="paint0_radial_3872_97286"
+                    cx="0"
+                    cy="0"
+                    r="1"
+                    gradientUnits="userSpaceOnUse"
+                    gradientTransform="translate(27.5 23.6782) scale(31.2552 16.1012)"
+                  >
+                    <stop offset="1" stopColor="white" />
+                  </radialGradient>
+                  <clipPath id="clip0_3872_97286">
+                    <rect x="3.82184" width="47.3563" height="47.3563" rx="23.6782" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+              <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium text-center h-[52px]">{section.name}</span>
 
-          <div className="indicator absolute -bottom-[4.2px] w-20 h-0.5 bg-transparent rounded-full"></div>
-        </div>
-      </SwiperSlide>
+              <div className="indicator absolute -bottom-[4.2px] w-20 h-0.5 bg-transparent rounded-full"></div>
+            </div>
+          </SwiperSlide>
+        )
+      })}
 
-      <SwiperSlide className="swiper-slide">
+      {/* <SwiperSlide className="swiper-slide">
         <div className="blog-icon-container flex flex-col items-center gap-2 relative">
           <svg
             className="blogs-icon"
@@ -535,7 +540,7 @@ export default function BlogsCategories() {
 
           <div className="indicator absolute -bottom-[0.2px] w-20 h-0.5 bg-transparent rounded-full"></div>
         </div>
-      </SwiperSlide>
+      </SwiperSlide> */}
     </Swiper>
   );
 }

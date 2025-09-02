@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
@@ -8,14 +8,22 @@ import "swiper/css/scrollbar";
 import { ArticleType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
 
-export default function Blogs({ articles }: { articles: ArticleType[] }) {
+export default function Blogs({
+  articles,
+}: {
+  articles: {
+    title: string;
+    desc: string;
+    articles: ArticleType[];
+  };
+}) {
   return (
     <section className="relative bg-white">
       <div className="max-w-[1400px] mx-auto">
         <div className="text-center mb-[36px] md:mb-[48px] px-[15px] 2xl:px-0">
-          <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[12px]">أحدث المقالات والنصائح</h2>
+          <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[12px]">{articles?.title}</h2>
           <p className="text-[14px] md:text-[18px] text-[#4A4A4A] font-medium leading-relaxed max-w-xl mx-auto">
-            تابع مقالاتنا المتجددة حول البرمجة، التسويق الرقمي، وتجربة المستخدم، واكتشف كيف تطور مشروعك بخطوات ذكية.
+            {articles?.desc}
           </p>
         </div>
 
@@ -43,8 +51,8 @@ export default function Blogs({ articles }: { articles: ArticleType[] }) {
               },
             }}
           >
-            {articles &&
-              articles.map((article) => {
+            {articles?.articles &&
+              articles?.articles?.map((article) => {
                 return (
                   <SwiperSlide key={article.id} className="swiper-slide">
                     <Link href={`blogs/${article.id}`}>

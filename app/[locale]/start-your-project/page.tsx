@@ -3,66 +3,142 @@
 import CountryCodeInput from "@/app/components/global/CountryCodeInput";
 import FileUpload from "@/app/components/global/FileUpload";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { CountriesData } from "@/app/utils/Types";
+import { useLocale } from "next-intl";
+import PreviousProjects from "@/app/components/home/PreviousProjects";
+import { Select } from "antd";
+interface FormData {
+  name: string;
+  country_id: string; 
+  phone: string;
+  email: string;
+  communication_way: string;
+  communication_lang: string;
+  owner_identity: string;
+  owner_role: string;
+  project_name: string;
+  project_description: string;
+  has_file: boolean;
+  // project_description_file: File[];
+  services: string[]; 
+}
 
 export default function Page() {
+
+  const locale = useLocale();
+
   const [open, setOpen] = useState(false)
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    country_id: "",
+    phone: "",
+    email: "",
+    communication_way: "",
+    communication_lang: "",
+    owner_identity: "",
+    owner_role: "",
+    project_name: "",
+    project_description: "",
+    has_file: false,
+    // project_description_file: [],
+    services: []
+  })
+
+  const [errorText, setErrorText] = useState("")
+
+  console.log(formData, "formData")
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const fetchCountries = async (): Promise<CountriesData> => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAllCountries`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch website countries settings");
+    }
+    return res.json();
+  };
+
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["countries"],
+    queryFn: fetchCountries,
+  });
 
   // ✅ Mutation setup
   const mutation = useMutation({
-    mutationFn: async (formData: any) => {
-      const res = await fetch("/api/submit-form", {
+    mutationFn: async (formData: FormData) => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/setStartYourProjectDemand`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          lang: locale
+          // "Content-Type": "multipart/form-data",
         },
         body: JSON.stringify(formData),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to submit form");
+        // Try to extract error message from API response
+        const errorData = await res.json().catch(() => null);
+        throw new Error(
+          errorData?.message || "فشل في إرسال النموذج. حاول مرة أخرى."
+        );
       }
 
       return res.json();
     },
     onSuccess: (data) => {
       console.log("✅ Form submitted successfully:", data);
-      alert("تم إرسال النموذج بنجاح!");
+      setFormData({
+        name: "",
+        country_id: "",
+        phone: "",
+        email: "",
+        communication_way: "",
+        communication_lang: "",
+        owner_identity: "",
+        owner_role: "",
+        project_name: "",
+        project_description: "",
+        has_file: false,
+        // project_description_file: [],
+        services: []
+      })
+      // alert("تم إرسال النموذج بنجاح!");
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      alert("حدث خطأ أثناء إرسال النموذج.");
+      // alert("حدث خطأ أثناء إرسال النموذج.");
+      console.log(error, "error")
+      setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
     },
   });
 
-   // ✅ Handle form submit
-   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
 
-    const formData = {
-      name: (e.currentTarget.elements.namedItem("name") as HTMLInputElement)
-        ?.value,
-      country: (e.currentTarget.elements.namedItem(
-        "country"
-      ) as HTMLSelectElement)?.value,
-      email: (e.currentTarget.elements.namedItem("email") as HTMLInputElement)
-        ?.value,
-      projectName: (e.currentTarget.elements.namedItem(
-        "projectName"
-      ) as HTMLInputElement)?.value,
-    };
-
-    mutation.mutate(formData);
-  };
-    
   return (
     <>
       <div className="w-full bg-white px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem]">
         <div className="max-w-[1400px] mx-auto xl:px-[24px]">
           <div className="flex items-center gap-2">
-            <a href="index.html" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
+            <Link href="/" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
               الرئيسية
-            </a>
+            </Link>
             <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M10.0603 14.281C10.1869 14.281 10.3136 14.2343 10.4136 14.1343C10.6069 13.941 10.6069 13.621 10.4136 13.4277L6.06693 9.08099C5.74693 8.76099 5.74693 8.24099 6.06693 7.92099L10.4136 3.57432C10.6069 3.38099 10.6069 3.06099 10.4136 2.86766C10.2203 2.67432 9.90026 2.67432 9.70693 2.86766L5.36026 7.21432C5.02026 7.55432 4.82693 8.01432 4.82693 8.50099C4.82693 8.98766 5.01359 9.44766 5.36026 9.78766L9.70693 14.1343C9.80693 14.2277 9.93359 14.281 10.0603 14.281Z"
@@ -70,9 +146,9 @@ export default function Page() {
               />
             </svg>
 
-            <a href="start-your-project.html" className="text-black text-[15px] font-medium leading-[1.65]">
+            <Link href="/start-your-project" className="text-black text-[15px] font-medium leading-[1.65]">
               ابدأ مشروعك الآن
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -109,6 +185,10 @@ export default function Page() {
                         </label>
                         <input
                           type="text"
+                          value={formData.name}
+                          name="name"
+                          required
+                          onChange={handleChange}
                           placeholder="الرجاء إدخال اسمك."
                           className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
                         />
@@ -120,17 +200,38 @@ export default function Page() {
                           الدولة <span className="text-[#FF6B6B]">*</span>
                         </label>
                         <div className="relative">
-                          <select className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]">
+                          {/* <select value={formData.country_id} onChange={handleChange} name="country_id" required className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]">
                             <option value="">الرجاء إختيار الدولة.</option>
-                            <option value="egypt">Egypt</option>
-                            <option value="saudi">Saudi Arabia</option>
-                            <option value="qatar">Qatar</option>
-                          </select>
-                          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                            {data && data.data.map(country => {
+                                return (
+                                  <option key={country.id} value={country.id}>{country.name}</option>
+                                )
+                              }
+                            )}
+                            
+                          </select> */}
+
+                          <Select
+                            className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                            allowClear
+                            value={formData.country_id == "" ? undefined : formData.country_id } 
+                            style={{ width: '100%', height: "3rem" }}
+                            placeholder="الرجاء إختيار الدولة"
+                            onChange={(value) => setFormData({...formData, country_id: value})}
+                            options={data && data.data.map(country => {
+                              return (
+                                {
+                                  label: country.name,
+                                  value: country.id,
+                                }
+                              )
+                            })}
+                          />
+                          {/* <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                               <path d="M2.78 6.84L17.23 6.84L10 13.37L2.78 6.84Z" fill="#8B8B8B" />
                             </svg>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -150,21 +251,31 @@ export default function Page() {
                           ما هي صفتك؟ <span className="text-[#FF6B6B]">*</span>
                         </h3>
                         <div id="role-buttons" className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
-                          <button className="role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "owner"}))} className={`${formData.owner_identity == "owner" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             صاحب المشروع
                           </button>
-                          <button className="role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "representative"}))} className={`${formData.owner_identity == "representative" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             ممثل عن الشركة
                           </button>
-                          <button className="role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "employee"}))} className={`${formData.owner_identity == "employee" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             موظف
                           </button>
-                          <button className="role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "consulting"}))} className={`${formData.owner_identity == "consulting" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             جهة استشارية
                           </button>
-                          <button
+                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "other"}))}
                             id="other-button"
-                            className="role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors"
+                            className={`${formData.owner_identity == "other" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}
                           >
                             أخرى
                           </button>
@@ -172,14 +283,18 @@ export default function Page() {
                       </div>
 
                       {/* <!-- Hidden by default --> */}
-                      <div id="other-button-field" className="space-y-3 hidden">
+                      {formData.owner_identity == "other" && <div id="other-button-field" className="space-y-3">
                         <label className="text-base font-medium text-black block">ما هو دورك في المشروع؟</label>
                         <input
                           type="text"
+                          name="owner_role"
+                          required
+                          value={formData.owner_role}
+                          onChange={handleChange}
                           placeholder="الرجاء إدخال دورك في الشركة."
                           className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
                         />
-                      </div>
+                      </div>}
                     </div>
                   </div>
 
@@ -192,7 +307,7 @@ export default function Page() {
                       {/* <!-- Name and Email Row --> */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-6">
                         {/* <!-- Phone Field --> */}
-                        <CountryCodeInput />
+                        <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, phone: value}))} />
 
                         {/* <!-- Email Field --> */}
                         <div className="space-y-3">
@@ -201,6 +316,10 @@ export default function Page() {
                           </label>
                           <input
                             type="email"
+                            name="email"
+                            required
+                            value={formData.email}
+                            onChange={handleChange}
                             placeholder="الرجاء إدخال البريد الإلكتروني."
                             className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
                           />
@@ -215,10 +334,14 @@ export default function Page() {
                             وسيلة التواصل المفضلة؟ <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
-                            <button className="px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_way: "whatsapp"}))} className={`${formData.communication_way == "whatsapp" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                               واتساب
                             </button>
-                            <button className="px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_way: "call"}))} className={`${formData.communication_way == "call" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                               اتصال
                             </button>
                           </div>
@@ -230,10 +353,16 @@ export default function Page() {
                             ما اللغة التي تفضل التواصل بها؟ <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
-                            <button className="px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_lang: "arabic"}))} className={`px-6 py-3 border 
+                            border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] 
+                            transition-colors ${formData.communication_lang == "arabic" ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            }`}>
                               عربي
                             </button>
-                            <button className="px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_lang: "english"}))} className={`px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors ${formData.communication_lang == "english" ? 
+                              "border-[#EDA133] bg-[#FAEAD1] text-black" : ""
+                            }`}>
                               إنجليزي
                             </button>
                           </div>
@@ -253,8 +382,12 @@ export default function Page() {
                         <div className="space-y-3">
                           <label className="text-base font-medium text-black block">اسم المشروع</label>
                           <input
-                            type="email"
-                            placeholder="الرجاء إدخال البريد الإلكتروني."
+                            value={formData.project_name} 
+                            onChange={handleChange}
+                            name="project_name"
+                            required
+                            type="text"
+                            placeholder="اسم المشروع"
                             className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
                           />
                         </div>
@@ -264,15 +397,37 @@ export default function Page() {
                             ما نوع الخدمة التي تحتاجها؟ <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="relative">
-                            <select className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]">
+                            {/* <select value={formData["services"]?.[0]} name="services" required onChange={(e) =>
+                              setFormData((previous) => ({
+                                ...previous,
+                                services: [e.target.value], // overwrite with single value
+                              }))
+                            } className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]">
                               <option value="">اختر</option>
-                              <option value="web">web</option>
-                            </select>
-                            <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                              <option value="3">web</option>
+                            </select> */}
+
+                            <Select
+                              mode="multiple"
+                              className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                              allowClear
+                              value={formData["services"]} 
+                              style={{ width: '100%' }}
+                              placeholder="اختر"
+                              onChange={(values) => setFormData({...formData, services: [...values]})}
+                              options={[{
+                                label: "web",
+                                value: 3,
+                              }, {
+                                label: "mobile",
+                                value: 2,
+                              }]}
+                            />
+                            {/* <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <path d="M2.78 6.84L17.23 6.84L10 13.37L2.78 6.84Z" fill="#8B8B8B" />
                               </svg>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
 
@@ -281,6 +436,9 @@ export default function Page() {
                             احكِ لنا نبذة مختصرة عن المشروع أو الفكرة
                           </label>
                           <textarea
+                            value={formData.project_description}
+                            onChange={handleChange}
+                            name="project_description"
                             placeholder="الرجاء إدخال لنا نبذة مختصرة عن المشروع أو الفكرة."
                             className="w-full h-36 px-3 py-3 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] resize-none"
                           ></textarea>
@@ -294,12 +452,23 @@ export default function Page() {
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
                             <button
                               id="upload-files"
-                              onClick={() => setOpen(true)}
-                              className="file-input-settings px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors"
+                              
+                              onClick={() => {
+                                setOpen(true)
+                                setFormData((previousData) => ({...previousData, has_file: true}))
+                              }}
+                              className={`${formData.has_file == true ? 
+                                "border-[#EDA133] bg-[#faead1] text-black" : ""
+                              } file-input-settings px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}
                             >
                               نعم
                             </button>
-                            <button onClick={() => setOpen(false)} className="file-input-settings px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors">
+                            <button onClick={() => {
+                              setOpen(false)
+                              setFormData((previousData) => ({...previousData, has_file: false}))
+                            }} className={`${formData.has_file == false ? 
+                              "border-[#EDA133] bg-[#faead1] text-black" : ""
+                            } file-input-settings px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                               لا
                             </button>
                           </div>
@@ -308,7 +477,17 @@ export default function Page() {
                       <div></div>
 
                       {/* <!-- File Upload Section --> */}
-                      {open && <FileUpload title="إرفاق ملف عن المشروع" required={false} />}
+                      {open && <FileUpload
+                        setSelectedFiles={(values: File[]) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            // has_file: values.length > 0,
+                            project_description_file: values,
+                          }))
+                        }
+                        title="إرفاق ملف عن المشروع"
+                        required={false}
+                      />}
                     </div>
 
                     {/* <!-- Form Actions --> */}
@@ -321,10 +500,32 @@ export default function Page() {
                       <button
                         type="submit"
                         disabled={mutation.isPending}
+                        onClick={() => mutation.mutate(formData)}
                         className="flex-1 px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
                       >
                         {mutation.isPending ? "جاري الإرسال..." : "إرسال"}
                       </button>
+
+                      {/* Error Message */}
+                      {errorText && (
+                        <div className="mt-5 w-fit flex items-center gap-2 rounded-lg border border-red-400 bg-red-50 px-4 py-3 text-red-700">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-red-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z"
+                            />
+                          </svg>
+                          <p className="font-medium">{errorText}</p>
+                        </div>
+                      )}
                       </div>
                     </section>
                   </div>

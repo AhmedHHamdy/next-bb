@@ -75,11 +75,57 @@ export interface ArticleType {
   views: number;
 }
 
+export interface ServiceType {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;      
+}
 export interface HomePage {
   app_hero_title: string;
   app_hero_desc: string;
+  app_home_video: string;
   faqs: FAQItemType[];
-  articles: ArticleType[]
+  statistics: {
+    first: {
+      title: string;
+      value: string;
+    },
+    second: {
+      title: string;
+      value: string;
+    },
+    third: {
+      title: string;
+      value: string;
+    }
+}
+  our_projects: {
+    title: string;
+    desc: string;
+    projects: {
+      id: number;
+      image_url: string;
+    }[]
+  }
+  our_articles: {
+    title: string;
+    desc: string;
+    articles: ArticleType[]
+  }
+  our_services: {
+    title: string;
+    desc: string;
+    services: ServiceType[]
+  }
+  about_us: {
+    title: string;
+    desc: string;
+    features: {
+      title: string;
+      desc: string;
+    }[]
+  }
 }
 
 export interface HomePageData {
@@ -88,3 +134,222 @@ export interface HomePageData {
   message: string;
   error: string;
 }
+
+export interface SectionCategory {
+  id: number;
+  name: string;
+}
+
+export interface BlogsPageData {
+  heading_title: string;
+  heading_desc: string;
+  sections: SectionCategory[];
+}
+
+export interface BlogsPageDataApi {
+  data: BlogsPageData;
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+
+export interface Pagination {
+  total: number;
+  last_page: number;
+  perPage: number;
+  currentPage: number;
+}
+export interface ArticleListResponse {
+  data: {
+    data: ArticleType[];
+    pagination: Pagination;
+  };
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+
+interface Expression {
+  id: number;
+  title: string;
+  image_url: string;
+}
+
+interface Value {
+  first: string;
+  second: string;
+  third: string;
+}
+
+interface WhyUs {
+  description: string;
+  differences: string[];
+}
+
+interface StatisticItem {
+  title: string;
+  value: string;
+}
+
+export interface Statistics {
+  first: StatisticItem;
+  second: StatisticItem;
+  third: StatisticItem;
+}
+
+interface WhoWeServe {
+  description: string,
+  clients: {
+    id: number,
+    name: string
+  }[]
+}
+
+export interface Project {
+  id: number;
+  image_url: string;
+}
+
+export interface Review {
+  id: number;
+  username: string;
+  position: string;
+  quote: string;
+  image_url: string;
+  file_type: string;
+  file_url: string;
+}
+
+interface Other {
+  header_title: string;
+  header_description: string;
+  expressions: Expression[];
+  our_vision: string;
+  our_mission: string;
+  our_values: Value;
+  why_us: WhyUs;
+  statistics: Statistics;
+  who_we_serve: WhoWeServe;
+  projects: Project[];
+  our_clients: {
+    description: string,
+    reviews: Review[]
+  };
+}
+
+interface PageData {
+  title: string;
+  content: string;
+  slug: string;
+  meta_description: string;
+  meta_keywords: string;
+  other: Other;
+}
+
+export interface AboutUsData {
+  data: PageData;
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+export interface CountriesData {
+  data: {
+    id: number,
+    name: string,
+    country_code: string,
+    flag: string
+  }[]
+}
+
+export interface ServiceTypeData {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;
+}
+
+interface ProjectType {
+  id: number;
+  image_url: string;
+}
+
+interface StepType {
+  title: string;
+  desc: string;
+}
+export interface ServicesPageDataType {
+  data: {
+    title: string;
+    desc: string;
+    services: ServiceTypeData[];
+    projects: ProjectType[];
+    steps: StepType[];
+  };
+  status: boolean;
+  message: string;
+  error: string;
+}
+export interface ServicesDetailsPageDataType {
+  data: ServiceTypeData
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+
+export interface ProjectTypeData {
+  id: number;
+  title: string;
+  short_description: string;
+  description: string;
+  owner_name: string;
+  country_name: string;
+  image_url: string;
+}
+export interface ProjectsPageDataType {
+  data: {
+    title: string;
+    desc: string;
+    projects: ProjectTypeData[];
+  };
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+export interface ProjectDetailsPageDataType {
+  data: {
+    project: ProjectTypeData;
+    similar: ProjectTypeData[];
+  };
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+export type ArticleWithTags = ArticleType & {
+  tags: {
+    id: number;
+    name: string;
+  }[];
+};
+
+export interface BlogDetailsPageDataType {
+  data: {
+    article: ArticleWithTags;
+    similar: ArticleType[];
+  };
+  status: boolean;
+  message: string;
+  error: string;
+}
+export interface BlogsPageByTagsDataApi {
+  data: ArticleType[];
+  status: boolean;
+  message: string;
+  error: string;
+}
+

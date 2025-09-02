@@ -7,8 +7,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { useEffect, useRef } from "react";
+import { Review } from "@/app/utils/Types";
 
-export default function Reviews() {
+export default function Reviews({ reviewsData }: { reviewsData?: {
+  description: string,
+  reviews: Review[]
+}}) {
   const swiperRef = useRef<any>(null);
   const swiperClientRef = useRef<any>(null); // second swiper if you want sync
 
@@ -141,7 +145,7 @@ export default function Reviews() {
           <div className="relative text-center mb-[49px] pt-[50px] md:pt-[50px] h-[250px] md:h-[350px] xl:h-[360px] 2xl:h-[400px] bg-white  2xl:px-0">
             <h2 className="text-[24px] md:text-[40px] font-bold mb-[12px]">ماذا يقول عملاؤنا</h2>
             <p className="text-[#4A4A4A] text-[14px] md:text-[18px] max-w-[520px] font-medium mb-[20px] mx-auto">
-              تعرف على آراء عملائنا في خدماتنا، حيث نقدم لهم حلولًا تقنية مبتكرة ودعمًا مستمرًا.
+              {reviewsData?.description}
             </p>
 
             <section className="relative z-[100] client-carousel max-w-[1400px] mx-auto">
@@ -174,7 +178,7 @@ export default function Reviews() {
               onInit={handleInit}
               onSlideChange={handleSlideChange}
             >
-              {[
+              {/* {[
                 "/client-img.png",
                 "/review-img-2.png",
                 "/review-img-3.png",
@@ -191,6 +195,18 @@ export default function Reviews() {
                   <img
                     className="client-img w-[80px] md:w-[100px] md:h-[100px] rounded-full object-cover cursor-pointer"
                     src={src}
+                    alt={`client ${index}`}
+                    onClick={() => handleImageClick(index)} // ✅ click-to-slide
+                  />
+                </SwiperSlide>
+              ))} */}
+
+              {reviewsData && reviewsData?.reviews?.map((src, index) => (
+                //  duration-500
+                <SwiperSlide key={index} className="transition-transform ease-in-out">
+                  <img
+                    className="client-img w-[80px] md:w-[100px] md:h-[100px] rounded-full object-cover cursor-pointer"
+                    src={src.image_url}
                     alt={`client ${index}`}
                     onClick={() => handleImageClick(index)} // ✅ click-to-slide
                   />
@@ -246,7 +262,7 @@ export default function Reviews() {
               },
             }}
           >
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
+            {/* <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
               <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
                 <section className="xl:w-[536px] flex flex-col">
                   <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
@@ -280,9 +296,55 @@ export default function Reviews() {
                   ></video>
                 </figure>
               </section>
-            </SwiperSlide>
+            </SwiperSlide> */}
 
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
+            {reviewsData && reviewsData?.reviews?.map(review => {
+              return (
+                <SwiperSlide key={review.id} className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
+                  <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
+                    <section className="xl:w-[536px] flex flex-col">
+                      <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
+                      <p className="text-[14px] md:text-[24px] font-medium">
+                        {review.quote}
+                      </p>
+                      <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
+
+                      <section className="flex items-center gap-[16px]">
+                        <img
+                          className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
+                          src={review.image_url}
+                          alt="client img"
+                        />
+                        <section>
+                          <h4 className="text-[14px] md:text-[24px] font-bold">{review.username}</h4>
+                          <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
+                            {review.position}
+                          </h5>
+                        </section>
+                      </section>
+                    </section>
+
+                    {review.file_type == "video" && <figure className="w-full h-full lg:h-[350px] xl:w-[499px] xl:h-[350px]">
+                      <video
+                        src="/demo-video.mp4"
+                        controls
+                        playsInline
+                        className="w-full h-full object-cover rounded-[16px]"
+                      ></video>
+                    </figure>}
+
+                    {review.file_type == "image" && <figure className="w-full h-full lg:h-[350px] xl:w-[499px] xl:h-[350px]">
+                      <img
+                        src={review.file_url}
+                        className="w-full h-full object-cover rounded-[16px]"
+                      />
+                    </figure>}
+                  </section>
+                </SwiperSlide>
+              )
+            })}
+
+            {/* <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
               <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] xl:gap-[29px]">
                 <section className="xl:w-[536px] flex flex-col">
                   <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
@@ -604,7 +666,7 @@ export default function Reviews() {
                   ></video>
                 </figure>
               </section>
-            </SwiperSlide>
+            </SwiperSlide> */}
           </Swiper>
         </div>
 

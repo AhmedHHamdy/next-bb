@@ -89,7 +89,10 @@ html {
   transition: max-height 0.3s ease-out, padding 0.3s ease-out;
 }
 .faq-content.expanded {
-  max-height: 500px;
+  /* max-height: 500px; */
+  max-height: 200px;
+  overflow-y: auto;
+  /* max-height: 100%; */
   transition: max-height 0.3s ease-in, padding 0.3s ease-in;
 }
 /* .plus-icon {
@@ -276,7 +279,7 @@ client-carousel {
 /* .blogs-icon:hover path {
   fill: #EDA133;
 } */
-
+/* 
 .blog-icon-container:hover .blog-icon-text {
   color: #EDA133;
 }
@@ -286,6 +289,20 @@ client-carousel {
 }
 
 .blog-icon-container:hover .indicator {
+  background: #EDA133;
+} */
+
+
+
+.blog-icon-container .blog-icon-text {
+  color: #EDA133;
+}
+
+.blog-icon-container .blogs-icon path {
+  fill: #EDA133;
+}
+
+.blog-icon-container .indicator {
   background: #EDA133;
 }
 
@@ -513,3 +530,8 @@ client-carousel {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
+
+
+:where(.css-dev-only-do-not-override-1hfhzvu).ant-select-multiple .ant-select-selection-wrap {
+  align-self: center!important;
+}

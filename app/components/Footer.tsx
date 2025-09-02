@@ -57,7 +57,8 @@ export default function Footer() {
 
   return (
     <>
-      <footer className="footer mt-[48px] md:mt-[80px]">
+    {/* mt-[64px] md:mt-[100px] */}
+      <footer className="footer">
         <div
           className="relative py-12 bg-[#131A27] overflow-hidden bg-no-repeat bg-cover bg-center md:bg-top w-full md:h-98"
           style={{
@@ -629,7 +630,7 @@ export default function Footer() {
                   </div>
                   <div className="flex items-center gap-4 w-full">
                     <div className="flex-1">
-                      <button className="bg-[#EDA133] w-full h-[107px] rounded-[8px] text-white text-sm font-medium hover:bg-brand-600 cursor-pointer transition-colors flex items-center justify-evenly md:justify-between">
+                      <Link href="/start-your-project" className="bg-[#EDA133] w-full h-[107px] rounded-[8px] text-white text-sm font-medium hover:bg-brand-600 cursor-pointer transition-colors flex items-center justify-evenly md:justify-between">
                         <img className="w-[65px] h-[65px] md:w-32 md:h-[120px]" src="/projects.gif" alt="projects gif" />
 
                         <section className="flex items-center xl:pe-[17px]">
@@ -656,7 +657,7 @@ export default function Footer() {
                             />
                           </svg>
                         </section>
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

@@ -1,8 +1,9 @@
 'use client';
 
+import { Statistics } from "@/app/utils/Types";
 import CountUp from "react-countup";
 
-export default function Counters() {
+export default function Counters({ countersData }: { countersData?: Statistics}) {
   return (
     <section className="relative bg-white pt-[40px] md:pt-[42px]">
       <div>
@@ -50,9 +51,9 @@ export default function Counters() {
               </svg>
             </div>
             <div className="flex-1 ">
-              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">عدد المشاريع المنجزة</h3>
+              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">{countersData?.first?.title}</h3>
               <div className="text-[20px] md:text-[32px] font-bold text-black ">
-                <CountUp end={10} /> +
+                <CountUp end={Number(countersData?.first?.value?.slice(0, 8))} /> +
               </div>
             </div>
           </div>
@@ -91,9 +92,9 @@ export default function Counters() {
               </svg>
             </div>
             <div className="flex-1 ">
-              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">عملاء راضون بالكامل</h3>
+              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">{countersData?.second?.title}</h3>
               <div className="text-[20px] md:text-[32px] font-bold text-black ">
-                <CountUp end={10} /> +
+                <CountUp end={Number(countersData?.second?.value?.slice(0, 8))} /> +
               </div>
             </div>
           </div>
@@ -124,14 +125,14 @@ export default function Counters() {
               </svg>
             </div>
             <div className="flex-1 ">
-              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">فريق عمل متميز</h3>
+              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">{countersData?.third?.title}</h3>
               <div className="text-[20px] md:text-[32px] font-bold text-black ">
-                <CountUp end={10} /> +
+                <CountUp end={Number(countersData?.third?.value?.slice(0, 8))} /> +
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-[19px] flex items-center gap-4 w-full xl:w-full h-[111px]">
+          {/* <div className="bg-white border border-gray-200 rounded-lg p-[19px] flex items-center gap-4 w-full xl:w-full h-[111px]">
             <div className="w-18 h-18 bg-[#FCF4E9] rounded flex items-center justify-center">
               <svg width="73" height="73" viewBox="0 0 73 73" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -152,7 +153,7 @@ export default function Counters() {
                 <CountUp end={10} /> +
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

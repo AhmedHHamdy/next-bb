@@ -1,14 +1,42 @@
 import BlogsCarousel from "@/app/components/blogs/Blogs-Carousel";
+import { Link } from "@/i18n/navigation";
+import { BlogDetailsPageDataType } from "@/app/utils/Types";
+import { getLocale } from "next-intl/server";
 
-export default function Page() {
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const locale = await getLocale();
+
+  const { slug } = await params;
+
+  async function getBlogDetails(locale: string): Promise<BlogDetailsPageDataType> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getArticleById`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      },
+      body: JSON.stringify({
+        article_id: slug,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch Service Details data");
+    }
+
+    return res.json();
+  }
+
+  const { data } = await getBlogDetails(locale);
+
   return (
     <>
       <div className="w-full bg-white px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem]">
         <div className="max-w-[1400px] mx-auto xl:px-[24px]">
           <div className="flex flex-wrap items-center gap-2">
-            <a href="index.html" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
+            <Link href="/" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
               الرئيسية
-            </a>
+            </Link>
 
             <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -17,9 +45,9 @@ export default function Page() {
               />
             </svg>
 
-            <a href="blogs.html" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
+            <Link href="/blogs" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
               المدونة
-            </a>
+            </Link>
 
             <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -28,9 +56,9 @@ export default function Page() {
               />
             </svg>
 
-            <a href="blog-details.html" className="text-black text-[15px] font-medium leading-[1.65]">
-              حلول برمجية مبتكرة لتحقيق أهداف عملك بسهولة وسرعة
-            </a>
+            <Link href={`/blogs/${slug}`} className="text-black text-[15px] font-medium leading-[1.65]">
+              ${data?.article?.title}
+            </Link>
           </div>
         </div>
       </div>
@@ -39,14 +67,14 @@ export default function Page() {
       <section className="px-[15px] 2xl:px-0">
         <section
           className="relative w-full h-[279px] lg:h-[418px] bg-cover bg-center bg-no-repeat max-w-[1360px] mx-auto md:rounded-[16px] mt-[24px] md:mt-[36px]"
-          style={{ backgroundImage: "url('/blog-bg.png')" }}
+          style={{ backgroundImage: `url(${data?.article?.image_url})` }}
         >
           {/* <!-- Content Card --> */}
           <div className="absolute top-8/8 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-[770px] p-3 md:px-6">
             <div className="bg-white rounded-lg border border-[#F5F5F5] shadow-lg py-[16px] px-[14px] md:p-8">
               <div className="flex flex-col items-center gap-4 max-w-[566px] mx-auto">
                 <h1 className="text-center font-bold text-[24px] md:text-[32px] text-black leading-[1.25]">
-                  حلول برمجية مبتكرة لتحقيق أهداف عملك بسهولة وسرعة
+                  ${data?.article?.title}
                 </h1>
 
                 <div className="flex flex-col items-center gap-4 p-[6px]">
@@ -66,7 +94,7 @@ export default function Page() {
                           />
                         </svg>
                       </div>
-                      <span className="text-[#4A4A4A] text-sm font-medium">سوشيال ميديا</span>
+                      <span className="text-[#4A4A4A] text-sm font-medium">${data?.article?.section_name}</span>
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -78,7 +106,7 @@ export default function Page() {
                           />
                         </svg>
                       </div>
-                      <span className="text-[#4A4A4A] text-sm font-medium">5 مارس 2025</span>
+                      <span className="text-[#4A4A4A] text-sm font-medium">${data?.article?.published_at}</span>
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -94,7 +122,7 @@ export default function Page() {
                           />
                         </svg>
                       </div>
-                      <span className="text-[#4A4A4A] text-sm font-medium">1250 مشاهدة</span>
+                      <span className="text-[#4A4A4A] text-sm font-medium">${data?.article?.views}</span>
                     </div>
                   </div>
                 </div>
@@ -206,26 +234,30 @@ export default function Page() {
             <div className="lg:col-span-2 xl:col-span-3">
               <div className="mb-[48px] lg:mb-[64px]">
                 <div>
-                  <img
+                  {/* <img
                     className="relative h-[211px] w-full md:h-[420px] bg-cover bg-center bg-no-repeat rounded-lg"
                     src="/blog-img-2.png"
                     alt="blog image"
-                  />
+                  /> */}
 
                   <div className="my-[24px] md:my-[48px]">
                     <div>
-                      <h2 className="text-[18px] md:text-[24px] font-bold text-black mb-[16px] md:mb-6">
+                      {/* <h2 className="text-[18px] md:text-[24px] font-bold text-black mb-[16px] md:mb-6">
                         كيف تساهم هذه الحلول في تحقيق أهداف عملك؟
-                      </h2>
+                      </h2> */}
                       <div className="text-[#686868] md:text-black text-base leading-7">
                         <div>
-                          <h3 className="">1. توفير الوقت والجهد</h3>
-                          <p>
+                          {/* <h3 className="">1. توفير الوقت والجهد</h3> */}
+                          {/* <p>
                             من خلال أتمتة المهام المتكررة مثل إرسال الفواتير، إدارة المخزون، أو جدولة الاجتماعات، تستطيع
                             الشركات أن تُعيد توزيع الوقت والموارد البشرية نحو أعمال أكثر استراتيجية وإبداعية.
+                          </p> */}
+                          <p dangerouslySetInnerHTML={{__html: data?.article?.description}}>
+                            {/* من خلال أتمتة المهام المتكررة مثل إرسال الفواتير، إدارة المخزون، أو جدولة الاجتماعات، تستطيع
+                            الشركات أن تُعيد توزيع الوقت والموارد البشرية نحو أعمال أكثر استراتيجية وإبداعية. */}
                           </p>
                         </div>
-                        <div>
+                        {/* <div>
                           <h3 className="">2. اتخاذ قرارات مبنية على البيانات</h3>
                           <p>
                             بفضل أدوات تحليل البيانات والـ Business Intelligence، يمكن لأصحاب الأعمال تتبع الأداء وتحديد
@@ -252,7 +284,7 @@ export default function Page() {
                             منصات العمل الجماعي مثل Slack، Microsoft Teams، وTrello تعزز من التعاون داخل الفريق، خاصة
                             عند العمل عن بُعد أو مع فرق موزعة.
                           </p>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
@@ -293,13 +325,13 @@ export default function Page() {
                   </video>
                 </figure>
               </section> */}
-                  <img
+                  {/* <img
                     className="relative h-[211px] w-full md:h-[420px] bg-cover bg-center bg-no-repeat rounded-lg mt-[32px] lg:mt-[48px]"
                     src="/blog-img-3.png"
                     alt="blog image"
-                  />
+                  /> */}
 
-                  <div className="mt-[24px] md:mt-[48px]">
+                  {/* <div className="mt-[24px] md:mt-[48px]">
                     <div>
                       <h2 className="text-[18px] md:text-[24px] font-bold text-black mb-[24px]">
                         خطوات اختيار الحل البرمجي المناسب:
@@ -326,7 +358,7 @@ export default function Page() {
                         </li>
                       </ol>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -334,7 +366,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="bg-white">
+      <section className="bg-white mt-10">
         <div className="max-w-[1360px] mx-auto px-[15px] 2xl:px-0">
           <div className="bg-white rounded-lg p-5 md:p-6" style={{ boxShadow: "0px 0px 6px 0px #0000001F" }}>
             <div className="flex flex-col gap-6">
@@ -344,13 +376,18 @@ export default function Page() {
                   <div className="w-full h-px bg-[#DADADA]"></div>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                  <a
-                    href="#"
-                    className="px-3 py-2 border border-[#DADADA] rounded text-[#393939] font-medium text-base hover:bg-[#EDA133] hover:text-white transition-colors"
-                  >
-                    خدمات الجرافيك
-                  </a>
-                  <a
+                  {data?.article?.tags && data?.article?.tags?.map(tag => {
+                    return (
+                      <Link
+                        key={tag?.id}
+                        href={`/blogs/tags/${tag?.id}`}
+                        className="px-3 py-2 border border-[#DADADA] rounded text-[#393939] font-medium text-base hover:bg-[#EDA133] hover:text-white transition-colors"
+                      >
+                        {tag?.name}
+                      </Link>
+                    )
+                  })}
+                  {/* <a
                     href="#"
                     className="px-3 py-2 border border-[#DADADA] rounded text-[#393939] font-medium text-base hover:bg-[#EDA133] hover:text-white transition-colors"
                   >
@@ -391,7 +428,7 @@ export default function Page() {
                     className="px-3 py-2 border border-[#DADADA] rounded text-[#393939] font-medium text-base hover:bg-[#EDA133] hover:text-white transition-colors"
                   >
                     تسويق إلكتروني
-                  </a>
+                  </a> */}
                 </div>
               </div>
 
@@ -459,7 +496,7 @@ export default function Page() {
       </section>
 
       <section className="pt-[48px] pb-[64px] md:pb-[56px] px-[15px] 2xl:px-0">
-        <BlogsCarousel />
+        <BlogsCarousel articlesData={data?.similar || []} />
       </section>
     </>
   );
