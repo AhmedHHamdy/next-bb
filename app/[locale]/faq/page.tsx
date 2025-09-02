@@ -1,6 +1,36 @@
 import FAQ from "@/app/components/global/FAQ";
+import { FAQPageDataType } from "@/app/utils/Types";
+import { getLocale } from "next-intl/server";
 
-export default function FaqPage() {
+export default async function FaqPage() {
+
+  const locale = await getLocale();
+
+
+  async function getFAQPageData(locale: string): Promise<FAQPageDataType> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getFaqsPage`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      }
+    });
+  
+    if (!res.ok) {
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch FAQ Page data");
+      }
+    }
+  
+    return res.json();
+  }
+
+  // fetch typed data
+  const { data } = await getFAQPageData(locale);
+
+
   return (
     <>
       <div className="w-full bg-white px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem]">
@@ -23,7 +53,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-      {/* <FAQ /> */}
+      <FAQ faqs={data ? data : []}/>
     </>
   );
 }

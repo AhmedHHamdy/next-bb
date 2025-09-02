@@ -6,6 +6,8 @@ export interface Branch {
   location: string;
   phone: string;
   email: string;
+  lat: string;
+  lng: string;
 }
 
 export interface Footer {
@@ -353,3 +355,58 @@ export interface BlogsPageByTagsDataApi {
   error: string;
 }
 
+export interface FAQPageDataType {
+  data: FAQItemType[];
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+export interface ContactUsPageDataType {
+  data: {
+    title: string;
+    slug: string;
+    meta_description: string;
+    meta_keywords: string;
+    other: {
+      header_title: "نبني مستقبلًا رقميًا يليق بطموحاتك",
+      header_description: "شركة سعودية-مصرية متخصصة في الحلول الرقمية المتكاملة: البرمجة، التسويق، وخدمة العملاء – نُقدم لك خبرة، ابتكار، ودعم مستمر لتطوير أعمالك.Z",
+      communication: {
+          phone: string;
+          support_mail: string;
+          contact_email: string;
+      },
+      branches: Branch[];
+      locations: {
+        lat: string;
+        lng: string;
+      }[];
+      faqs: FAQItemType[]
+    }
+  };
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+
+export interface FormSettingsDataType {
+  data: {
+    countries: {
+      id: number;
+      name: string;
+      country_code: string;
+      flag: string;
+    }[];
+    services: {
+      id: number;
+      name: string;
+      description: string;
+      image_url: string;
+    }[]
+  },
+  status: boolean;
+  message: string;
+  error: string
+
+}

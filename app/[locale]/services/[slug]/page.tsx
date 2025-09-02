@@ -25,7 +25,11 @@ export default async function Page({
     });
 
     if (!res.ok) {
-      throw new Error("Failed to fetch Service Details data");
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch Service Details data");
+      }
     }
 
     return res.json();

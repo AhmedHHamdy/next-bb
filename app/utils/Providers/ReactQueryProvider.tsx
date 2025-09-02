@@ -10,7 +10,7 @@ const ReactQueryProvider = ({ children }: { children: React.ReactNode }) => {
         defaultOptions: {
           queries: {
             refetchOnWindowFocus: false, // don't refetch when window regains focus
-            retry: 1, // retry failed requests once
+            retry: 2, // retry failed requests once
             staleTime: 1000 * 60 * 2, // data stays "fresh" for 5 minutes
           },
         },

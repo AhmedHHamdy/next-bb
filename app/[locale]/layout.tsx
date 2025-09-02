@@ -98,9 +98,6 @@ export default async function RootLayout({
               },
             }}>
               <Header />
-              <section className="fixed bottom-2 right-4 z-[2000]">
-                <img src="/whatsapp.svg" alt="whatsapp icon" />
-              </section>
               {children}
               <Footer />
             </ConfigProvider>

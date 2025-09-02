@@ -132,7 +132,7 @@ export default function CountryCodeInput({ setSelectedPhone }: {
                   className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
                     setSelected(c);
-                    setSelectedPhone && setSelectedPhone(c.country_code + phoneInputValue)
+                    setSelectedPhone && setSelectedPhone(c.country_code + "-" + phoneInputValue)
                     setIsOpen(false);
                   }}
                 >
@@ -150,7 +150,7 @@ export default function CountryCodeInput({ setSelectedPhone }: {
           value={phoneInputValue}
           onChange={(e) => {
             setPhoneInputValue(e.target.value)
-            setSelectedPhone && setSelectedPhone(selected?.country_code + e.target.value)
+            setSelectedPhone && setSelectedPhone(selected?.country_code + "-" + e.target.value)
           }}
           placeholder="الرجاء إدخال رقم الجوال"
           className="flex-1 px-3 py-2 text-end text-sm text-black placeholder-[#B1B1B1] focus:outline-none"

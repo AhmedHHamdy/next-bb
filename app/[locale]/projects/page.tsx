@@ -28,7 +28,11 @@ export default async function Page() {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to fetch Project Page data");
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch Project Page data");
+      }
     }
 
     return res.json();
@@ -93,7 +97,7 @@ export default async function Page() {
                         href={`/projects/${project?.id}`}
                         className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
                       >
-                        <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
+                        <span className="text-[14px] md:text-[16px] font-medium">رؤية المزيد</span>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                           <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
                         </svg>

@@ -59,6 +59,17 @@ export default function Footer() {
     <>
     {/* mt-[64px] md:mt-[100px] */}
       <footer className="footer">
+      <a
+        href={`https://wa.me/${data?.data?.social?.whatsapp}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <section className="fixed bottom-2 right-4 z-[2000]">
+          <img src="/whatsapp.svg" alt="whatsapp icon" />
+        </section>
+      </a>
+
+
         <div
           className="relative py-12 bg-[#131A27] overflow-hidden bg-no-repeat bg-cover bg-center md:bg-top w-full md:h-98"
           style={{
@@ -171,10 +182,10 @@ export default function Footer() {
                           />
                         </svg>
                         <a
-                          href="#"
+                          href="/faq"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          رؤيتنا ورسالتنا
+                          الأسئلة الشائعة
                         </a>
                       </li>
                       <li className="flex items-center gap-4">

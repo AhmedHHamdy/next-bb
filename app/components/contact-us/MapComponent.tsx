@@ -1,93 +1,101 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
+import { Branch } from "@/app/utils/Types";
+import { useEffect, useRef } from "react";
 
-export default function MapComponent() {
+export default function MapComponent({ branchesData }: { branchesData?: Branch[] }) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!mapRef.current) return;
 
     // Branch Data
+    // const branchData: Record<
+    //   string,
+    //   {
+    //     title: string;
+    //     address: string;
+    //     phone: string;
+    //     email: string;
+    //     lat: number;
+    //     lng: number;
+    //   }
+    // > = {
+    //   "riyadh-1": {
+    //     title: "فرع الرياض",
+    //     address: "7 ش حسين , الرياض , السعودية",
+    //     phone: "(309) 8855-314",
+    //     email: "info@domainname.com",
+    //     lat: 24.7136,
+    //     lng: 46.6753,
+    //   },
+    //   "jeddah-1": {
+    //     title: "فرع جدة",
+    //     address: "شارع التحلية، حي الشاطئ، جدة، السعودية",
+    //     phone: "+966 12 345 6789",
+    //     email: "jeddah@domainname.com",
+    //     lat: 21.4858,
+    //     lng: 39.1925,
+    //   },
+    //   "dammam-1": {
+    //     title: "فرع الدمام",
+    //     address: "شارع الملك خالد، حي الشاطئ، الدمام، السعودية",
+    //     phone: "+966 13 234 5678",
+    //     email: "dammam@domainname.com",
+    //     lat: 26.4207,
+    //     lng: 50.0888,
+    //   },
+    //   "makkah-1": {
+    //     title: "فرع مكة",
+    //     address: "شارع العزيزية، حي العزيزية، مكة المكرمة، السعودية",
+    //     phone: "+966 12 123 4567",
+    //     email: "makkah@domainname.com",
+    //     lat: 21.4225,
+    //     lng: 39.8262,
+    //   },
+    // };
+
     const branchData: Record<
       string,
-      {
-        title: string;
-        address: string;
-        phone: string;
-        email: string;
-        lat: number;
-        lng: number;
-      }
-    > = {
-      'riyadh-1': {
-        title: 'فرع الرياض',
-        address: '7 ش حسين , الرياض , السعودية',
-        phone: '(309) 8855-314',
-        email: 'info@domainname.com',
-        lat: 24.7136,
-        lng: 46.6753,
-      },
-      'jeddah-1': {
-        title: 'فرع جدة',
-        address: 'شارع التحلية، حي الشاطئ، جدة، السعودية',
-        phone: '+966 12 345 6789',
-        email: 'jeddah@domainname.com',
-        lat: 21.4858,
-        lng: 39.1925,
-      },
-      'dammam-1': {
-        title: 'فرع الدمام',
-        address: 'شارع الملك خالد، حي الشاطئ، الدمام، السعودية',
-        phone: '+966 13 234 5678',
-        email: 'dammam@domainname.com',
-        lat: 26.4207,
-        lng: 50.0888,
-      },
-      'makkah-1': {
-        title: 'فرع مكة',
-        address: 'شارع العزيزية، حي العزيزية، مكة المكرمة، السعودية',
-        phone: '+966 12 123 4567',
-        email: 'makkah@domainname.com',
-        lat: 21.4225,
-        lng: 39.8262,
-      },
-    };
+      Branch
+    > = branchesData ? branchesData.reduce((acc, branch) => {
+      const key = `branch-${branch.id}`
+      acc[key] = branch
+      return acc
+    }, {} as Record<string, Branch>) : {}
 
     let map: google.maps.Map;
     let activeMarker: google.maps.marker.AdvancedMarkerElement | null = null;
 
     async function initMap() {
-      const { Map } = (await google.maps.importLibrary('maps')) as google.maps.MapsLibrary;
-      const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-        'marker'
-      )) as google.maps.MarkerLibrary;
-    
+      const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
+      const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
+
       map = new Map(mapRef.current as HTMLElement, {
         zoom: 6,
         center: { lat: 24.7136, lng: 46.6753 },
-        mapId: '4504f8b37365c3d0',
+        mapId: "4504f8b37365c3d0",
         styles: [
           {
-            featureType: 'poi',
-            elementType: 'labels',
-            stylers: [{ visibility: 'off' }],
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{ visibility: "off" }],
           },
         ],
       });
-    
+
       // Floating card elements
-      const floatingCard = document.getElementById('floating-branch-card')!;
-      const branchTitle = document.getElementById('branch-title')!;
-      const branchContent = document.getElementById('branch-content')!;
-      const closeButton = document.getElementById('close-branch-card')!;
-      const mapLoading = document.getElementById('map-loading')!;
-    
+      const floatingCard = document.getElementById("floating-branch-card")!;
+      const branchTitle = document.getElementById("branch-title")!;
+      const branchContent = document.getElementById("branch-content")!;
+      const closeButton = document.getElementById("close-branch-card")!;
+      const mapLoading = document.getElementById("map-loading")!;
+
       let activeMarker: google.maps.marker.AdvancedMarkerElement | null = null;
-    
+
       // Default marker icon
       function createMarkerIcon() {
-        const div = document.createElement('div');
+        const div = document.createElement("div");
         div.innerHTML = `
           <svg class="relative z-10" width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_3191_16566)">
@@ -103,18 +111,18 @@ export default function MapComponent() {
         `;
         return div;
       }
-    
+
       // Mini card that replaces marker when active
-      function buildMarkerCard(branch: typeof branchData[string]) {
-        const div = document.createElement('div');
-        div.className = 'branch-marker';
+      function buildMarkerCard(branch: (typeof branchData)[string]) {
+        const div = document.createElement("div");
+        div.className = "branch-marker";
         div.innerHTML = `
           <div class="branch-card bg-[#F5F5F5] border-2 border-[white] rounded shadow p-2 text-xs max-w-[160px]">
-            <h4 class="font-bold mb-[12px] text-[20px]">${branch.title}</h4>
+            <h4 class="font-bold mb-[12px] text-[20px]">${branch.name}</h4>
             <div class="space-y-1">
               <div class="flex items-center gap-1">
                 <img src="/location-icon-svg.svg" class="w-[25px] h-[25px]"/>
-                <span class="text-[15px] font-medium">${branch.address}</span>
+                <span class="text-[15px] font-medium">${branch.location}</span>
               </div>
               <div class="flex items-center gap-1">
                 <img src="/call-icon-svg.svg" class="w-[25px] h-[25px]"/>
@@ -129,7 +137,7 @@ export default function MapComponent() {
         `;
         return div;
       }
-    
+
       // Floating card content
       // function buildFloatingCard(branch: typeof branchData[string]) {
       //   return `
@@ -149,43 +157,43 @@ export default function MapComponent() {
       //     </div>
       //   `;
       // }
-    
+
       // Add markers
       Object.values(branchData).forEach((branch) => {
         const marker = new AdvancedMarkerElement({
-          position: { lat: branch.lat, lng: branch.lng },
+          position: { lat: Number(branch.lat), lng: Number(branch.lng) },
           map,
           content: createMarkerIcon(),
-          title: branch.title,
+          title: branch.name,
         });
-    
-        marker.addListener('click', () => {
+
+        marker.addListener("click", () => {
           // Reset previous active marker
           if (activeMarker && activeMarker !== marker) {
             activeMarker.content = createMarkerIcon();
           }
-    
+
           // Toggle current marker
           if (activeMarker === marker) {
             marker.content = createMarkerIcon();
             activeMarker = null;
-            floatingCard.style.opacity = '0';
-            floatingCard.style.pointerEvents = 'none';
-            floatingCard.style.transform = 'translateY(2px)';
+            floatingCard.style.opacity = "0";
+            floatingCard.style.pointerEvents = "none";
+            floatingCard.style.transform = "translateY(2px)";
           } else {
             marker.content = buildMarkerCard(branch);
             activeMarker = marker;
-    
+
             // branchTitle.textContent = branch.title;
             // branchContent.innerHTML = buildFloatingCard(branch);
-    
+
             // floatingCard.style.opacity = '1';
             // floatingCard.style.pointerEvents = 'auto';
             // floatingCard.style.transform = 'translateY(0)';
           }
         });
       });
-    
+
       // Close button
       // closeButton.addEventListener('click', () => {
       //   floatingCard.style.opacity = '0';
@@ -196,15 +204,15 @@ export default function MapComponent() {
       //     activeMarker = null;
       //   }
       // });
-    
+
       // Hide loading overlay
-      map.addListener('tilesloaded', () => {
-        mapLoading.style.opacity = '0';
-        setTimeout(() => (mapLoading.style.display = 'none'), 500);
+      map.addListener("tilesloaded", () => {
+        mapLoading.style.opacity = "0";
+        setTimeout(() => (mapLoading.style.display = "none"), 500);
       });
     }
 
-    if (typeof google !== 'undefined' && google.maps) {
+    if (typeof google !== "undefined" && google.maps) {
       initMap();
     }
   }, []);
@@ -223,10 +231,7 @@ export default function MapComponent() {
           <div className="bg-[#F5F5F5] rounded-[6px] h-full p-3">
             <div className="flex justify-between items-start mb-3">
               <h4 id="branch-title" className="font-bold text-lg text-black"></h4>
-              <button
-                id="close-branch-card"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
+              <button id="close-branch-card" className="text-gray-400 hover:text-gray-600 transition-colors">
                 ✕
               </button>
             </div>

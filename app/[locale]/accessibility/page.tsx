@@ -11,7 +11,6 @@ export default function Page() {
   const locale = useLocale();
 
   console.log(locale, "sd")
-  
 
   const fetchAccessibility = async (): Promise<PolicyPages> => {
     const res = await fetch(
@@ -26,7 +25,9 @@ export default function Page() {
     );
 
     if (!res.ok) {
-      throw new Error("Failed to fetch website settings");
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      }
     }
     return res.json();
   };

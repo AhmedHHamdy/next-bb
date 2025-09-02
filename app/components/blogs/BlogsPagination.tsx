@@ -28,7 +28,11 @@ export default function BlogsPagination({ sectionsData }: {sectionsData: Section
     });
 
     if (!res.ok) {
-      throw new Error("Failed to fetch website settings");
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch articles Data settings");
+      }
     }
     return res.json();
   };

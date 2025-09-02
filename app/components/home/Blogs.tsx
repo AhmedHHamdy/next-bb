@@ -235,7 +235,7 @@ export default function Blogs({
             href="/blogs"
             className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-[232px] h-[56px] text-white font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2 mx-auto"
           >
-            <span className="text-[16px]">استكشف جميع المقالات</span>
+            <span className="text-[16px] font-medium">استكشف جميع المقالات</span>
             <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M7.27637 0.398438C7.59612 0.398438 7.86133 0.675535 7.86133 1.00977C7.86677 1.17663 7.79496 1.33198 7.69043 1.44141C7.58568 1.5509 7.44175 1.62012 7.27637 1.62012H2.15918L10.5186 10.3574C10.7443 10.5936 10.7442 10.9855 10.5186 11.2217C10.2925 11.4579 9.91744 11.4579 9.69141 11.2217L1.16797 2.31152V8.00488C1.16797 8.33911 0.903733 8.61621 0.583984 8.61621C0.264241 8.6162 0 8.33911 0 8.00488V1.00977C0 0.675538 0.264241 0.398444 0.583984 0.398438H7.27637Z"

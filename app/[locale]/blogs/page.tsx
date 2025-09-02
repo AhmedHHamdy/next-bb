@@ -14,7 +14,11 @@ async function getBlogsPageData(locale: string): Promise<BlogsPageDataApi> {
   });
 
   if (!res.ok) {
-    throw new Error("Failed to fetch BlogsData data");
+    if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+      throw new Error("Failed to fetch Server issue");
+    } else {
+      throw new Error("Failed to fetch BlogsData data");
+    }
   }
 
   return res.json();

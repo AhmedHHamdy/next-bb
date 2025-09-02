@@ -21,8 +21,9 @@ interface FormData {
   project_name: string;
   project_description: string;
   has_file: boolean;
-  // project_description_file: File[];
-  services: string[]; 
+  project_description_file: null;
+  services: string[];
+  country_code: string; 
 }
 
 export default function Page() {
@@ -42,8 +43,9 @@ export default function Page() {
     project_name: "",
     project_description: "",
     has_file: false,
-    // project_description_file: [],
-    services: []
+    project_description_file: null,
+    services: [],
+    country_code: ""
   })
 
   const [errorText, setErrorText] = useState("")
@@ -101,6 +103,7 @@ export default function Page() {
         );
       }
 
+      console.log(res, "res")
       return res.json();
     },
     onSuccess: (data) => {
@@ -117,8 +120,9 @@ export default function Page() {
         project_name: "",
         project_description: "",
         has_file: false,
-        // project_description_file: [],
-        services: []
+        project_description_file: null,
+        services: [],
+        country_code: ""
       })
       // alert("تم إرسال النموذج بنجاح!");
     },
@@ -200,17 +204,6 @@ export default function Page() {
                           الدولة <span className="text-[#FF6B6B]">*</span>
                         </label>
                         <div className="relative">
-                          {/* <select value={formData.country_id} onChange={handleChange} name="country_id" required className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]">
-                            <option value="">الرجاء إختيار الدولة.</option>
-                            {data && data.data.map(country => {
-                                return (
-                                  <option key={country.id} value={country.id}>{country.name}</option>
-                                )
-                              }
-                            )}
-                            
-                          </select> */}
-
                           <Select
                             className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
                             allowClear
@@ -227,11 +220,6 @@ export default function Page() {
                               )
                             })}
                           />
-                          {/* <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                              <path d="M2.78 6.84L17.23 6.84L10 13.37L2.78 6.84Z" fill="#8B8B8B" />
-                            </svg>
-                          </div> */}
                         </div>
                       </div>
                     </div>
@@ -307,7 +295,7 @@ export default function Page() {
                       {/* <!-- Name and Email Row --> */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-6">
                         {/* <!-- Phone Field --> */}
-                        <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, phone: value}))} />
+                        <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, country_code: value?.split("-")?.[0], phone: value?.split("-")?.[1]}))} />
 
                         {/* <!-- Email Field --> */}
                         <div className="space-y-3">
@@ -397,16 +385,6 @@ export default function Page() {
                             ما نوع الخدمة التي تحتاجها؟ <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="relative">
-                            {/* <select value={formData["services"]?.[0]} name="services" required onChange={(e) =>
-                              setFormData((previous) => ({
-                                ...previous,
-                                services: [e.target.value], // overwrite with single value
-                              }))
-                            } className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]">
-                              <option value="">اختر</option>
-                              <option value="3">web</option>
-                            </select> */}
-
                             <Select
                               mode="multiple"
                               className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
@@ -423,11 +401,6 @@ export default function Page() {
                                 value: 2,
                               }]}
                             />
-                            {/* <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M2.78 6.84L17.23 6.84L10 13.37L2.78 6.84Z" fill="#8B8B8B" />
-                              </svg>
-                            </div> */}
                           </div>
                         </div>
 
@@ -477,7 +450,7 @@ export default function Page() {
                       <div></div>
 
                       {/* <!-- File Upload Section --> */}
-                      {open && <FileUpload
+                      {/* {open && <FileUpload
                         setSelectedFiles={(values: File[]) =>
                           setFormData((prev) => ({
                             ...prev,
@@ -487,7 +460,7 @@ export default function Page() {
                         }
                         title="إرفاق ملف عن المشروع"
                         required={false}
-                      />}
+                      />} */}
                     </div>
 
                     {/* <!-- Form Actions --> */}

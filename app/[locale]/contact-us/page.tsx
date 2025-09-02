@@ -1,8 +1,38 @@
 import ContactUsForm from "@/app/components/contact-us/ContactUsForm";
 import MapComponent from "@/app/components/contact-us/MapComponent";
 import FAQ from "@/app/components/global/FAQ";
+import { ContactUsPageDataType } from "@/app/utils/Types";
+import { Link } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
 
-export default function Page() {
+export default async function Page() {
+  const locale = await getLocale();
+
+  async function getContactUsPageData(locale: string): Promise<ContactUsPageDataType> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getContactUsInfo`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      }
+    });
+  
+    if (!res.ok) {
+      console.log(res, "res")
+      console.log("Server responded with error code:", res.status);
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch homepage data");
+      }
+    }
+  
+    return res.json();
+  }
+
+  // fetch typed data
+  const { data } = await getContactUsPageData(locale);
+
   return (
     <>
       {/* <!-- Contact Us Section --> */}
@@ -27,7 +57,7 @@ export default function Page() {
               ">
 
               <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.75] relative z-[50]">
-                تواصل معنا لايوم
+                {data?.other?.header_title?.slice(0, 60)}
               </h1>
 
               <div className="absolute z-[50] md:top-[31%] lg:top-[36%] xl:top-[38%] 2xl:top-[38%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
@@ -39,14 +69,12 @@ export default function Page() {
               </div>
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
-                نحن هنا لخدمتك! إذا كان لديك أي استفسار أو تحتاج إلى دعم في بدء مشروعك أو الحصول على استشارة، لا تتردد
-                في التواصل معنا. فريقنا المتخصص مستعد للرد على جميع استفساراتك وتقديم الحلول المثلى التي تناسب
-                احتياجاتك. اختر الوسيلة التي تفضلها للتواصل وسنكون في خدمتك قريبًا.
+                {data?.other?.header_description}
               </p>
 
               {/* <!-- Buttons --> */}
               <div className="flex flex-row gap-4 w-full relative z-[50]">
-                <button className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
+                <Link href="/start-your-project" className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
                   ابدأ مشروعك الآن
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -54,7 +82,7 @@ export default function Page() {
                       fill="white"
                     />
                   </svg>
-                </button>
+                </Link>
 
                 <button className="border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
                   اتصل بنا الآن
@@ -106,7 +134,7 @@ export default function Page() {
                       <br />
                       دعنا نناقش أفكارك.
                     </p>
-                    <p className="text-[18px] font-bold text-black">966 123 456 789+</p>
+                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.phone}</p>
                   </div>
                 </div>
               </div>
@@ -127,7 +155,7 @@ export default function Page() {
                       <br />
                       دعم فوري
                     </p>
-                    <p className="text-[18px] font-bold text-black">Support@mail.com</p>
+                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.support_mail}</p>
                   </div>
                 </div>
               </div>
@@ -148,7 +176,7 @@ export default function Page() {
                       <br />
                       بالرد عليها بسرعة.
                     </p>
-                    <p className="text-[18px] font-bold text-black">Info@mail.com</p>
+                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.contact_email}</p>
                   </div>
                 </div>
               </div>
@@ -169,115 +197,46 @@ export default function Page() {
           </div>
 
           {/* <!-- Interactive Map --> */}
-          <MapComponent />
+          <MapComponent branchesData={data?.other?.branches ? data?.other?.branches : []} />
 
           {/* <!-- Default Branches Cards --> */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[24px] md:gap-[35px] px-[15px] lg:px-0">
-            {/* <!-- Riyadh Branch --> */}
-            <div className="bg-white rounded-[6px] p-1 shadow-lg border border-[#F3F3F1] w-full">
-              <div className="bg-[rgba(245,245,245,0.5)] rounded-[6px] p-6 h-full">
-                <h4 className="font-bold text-[20px] leading-normal text-black mb-[12px]">فرع الرياض</h4>
-                <div className="space-y-[10px]">
-                  <div className="flex items-center gap-[14px]">
-                    <div className="flex-shrink-0">
-                      <img src="/location-icon-svg.svg" alt="location icon" />
-                    </div>
-                    <span className="font-medium text-[14px] text-[#232323] leading-tight">
-                      7 ش حسين , الرياض , السعودية
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/call-icon-svg.svg" alt="call icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">(309) 8855-314</span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/email-icon-svg.svg" alt="email icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">info@info.com</span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* <!-- Jeddah Branch --> */}
-            <div className="bg-white rounded-[6px] p-1 shadow-lg border border-[#F3F3F1] w-full">
-              <div className="bg-[rgba(245,245,245,0.5)] rounded-[6px] p-6 h-full">
-                <h4 className="font-bold text-[20px] leading-normal text-black mb-[12px]">فرع جدة</h4>
-                <div className="space-y-[10px]">
-                  <div className="flex items-center gap-[14px]">
-                    <div className="flex-shrink-0">
-                      <img src="/location-icon-svg.svg" alt="location icon" />
+            {data?.other?.branches?.map(branch => {
+              return (
+                <div key={branch.id} className="bg-white rounded-[6px] p-1 shadow-lg border border-[#F3F3F1] w-full">
+                  <div className="bg-[rgba(245,245,245,0.5)] rounded-[6px] p-6 h-full">
+                    <h4 className="font-bold text-[20px] leading-normal text-black mb-[12px]">{branch?.name}</h4>
+                    <div className="space-y-[10px]">
+                      <div className="flex items-center gap-[14px]">
+                        <div className="flex-shrink-0">
+                          <img src="/location-icon-svg.svg" alt="location icon" />
+                        </div>
+                        <span className="font-medium text-[14px] text-[#232323] leading-tight">
+                          {branch?.location}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-[14px]">
+                        <img src="/call-icon-svg.svg" alt="call icon" />
+                        <span className="font-medium text-[14px] text-[#232323]">{branch?.phone}</span>
+                      </div>
+                      <div className="flex items-center gap-[14px]">
+                        <img src="/email-icon-svg.svg" alt="email icon" />
+                        <span className="font-medium text-[14px] text-[#232323]">{branch?.email}</span>
+                      </div>
                     </div>
-                    <span className="font-medium text-[14px] text-[#232323] leading-tight">
-                      شارع التحلية، حي الشاطئ، جدة، السعودية
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/call-icon-svg.svg" alt="call icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">+966 12 345 6789</span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/email-icon-svg.svg" alt="email icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">jeddah@info.com</span>
                   </div>
                 </div>
-              </div>
-            </div>
+              )
+            })}
 
-            {/* <!-- Dammam Branch --> */}
-            <div className="bg-white rounded-[6px] p-1 shadow-lg border border-[#F3F3F1]">
-              <div className="bg-[rgba(245,245,245,0.5)] rounded-[6px] p-6 h-full">
-                <h4 className="font-bold text-[20px] leading-normal text-black mb-[12px]">فرع الدمام</h4>
-                <div className="space-y-[10px]">
-                  <div className="flex items-center gap-[14px]">
-                    <div className="flex-shrink-0">
-                      <img src="/location-icon-svg.svg" alt="location icon" />
-                    </div>
-                    <span className="font-medium text-[14px] text-[#232323] leading-tight">
-                      شارع الملك خالد، حي الشاطئ، الدمام، السعودية
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/call-icon-svg.svg" alt="call icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">+966 13 234 5678</span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/email-icon-svg.svg" alt="email icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">dammam@info.com</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* <!-- Makkah Branch --> */}
-            <div className="bg-white rounded-[6px] p-1 shadow-lg border border-[#F3F3F1]">
-              <div className="bg-[rgba(245,245,245,0.5)] rounded-[6px] p-6 h-full">
-                <h4 className="font-bold text-[20px] leading-normal text-black mb-[12px]">فرع مكة</h4>
-                <div className="space-y-[10px]">
-                  <div className="flex items-center gap-[14px]">
-                    <div className="flex-shrink-0">
-                      <img src="/location-icon-svg.svg" alt="location icon" />
-                    </div>
-                    <span className="font-medium text-[14px] text-[#232323] leading-tight">
-                      شارع العزيزية، حي العزيزية، مكة المكرمة، السعودية
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/call-icon-svg.svg" alt="call icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">+966 12 123 4567</span>
-                  </div>
-                  <div className="flex items-center gap-[14px]">
-                    <img src="/email-icon-svg.svg" alt="email icon" />
-                    <span className="font-medium text-[14px] text-[#232323]">makkah@info.com</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+  
           </div>
         </div>
       </div>
 
       {/* <!-- FAQ Section --> */}
-      {/* <FAQ /> */}
+      <FAQ faqs={data?.other?.faqs ? data?.other?.faqs : []} />
     </>
   );
 }
