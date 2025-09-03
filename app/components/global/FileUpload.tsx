@@ -38,21 +38,56 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
   // };
 
   // Inside FileUpload.tsx
+  // const handleFiles = (selectedFiles: FileList | null) => {
+  //   if (!selectedFiles) return;
+
+  //   const newFiles: UploadedFile[] = Array.from(selectedFiles).map((file) => ({
+  //     file,
+  //     progress: 0,
+  //   }));
+
+  //   setFiles((prev) => [...prev, ...newFiles]);
+
+  //   // 🔥 Pass files back to parent
+  //   if (setSelectedFiles) {
+  //     setSelectedFiles(newFiles.map((f) => f.file));
+  //   }
+
+  //   // Simulate upload progress
+  //   newFiles.forEach((newFile) => {
+  //     let progress = 0;
+  //     const interval = setInterval(() => {
+  //       progress += 10;
+  //       setFiles((prev) =>
+  //         prev.map((f) =>
+  //           f.file === newFile.file ? { ...f, progress } : f
+  //         )
+  //       );
+  //       if (progress >= 100) clearInterval(interval);
+  //     }, 200);
+  //   });
+  // };
+
   const handleFiles = (selectedFiles: FileList | null) => {
     if (!selectedFiles) return;
-
+  
     const newFiles: UploadedFile[] = Array.from(selectedFiles).map((file) => ({
       file,
       progress: 0,
     }));
-
-    setFiles((prev) => [...prev, ...newFiles]);
-
-    // 🔥 Pass files back to parent
-    if (setSelectedFiles) {
-      setSelectedFiles(newFiles.map((f) => f.file));
-    }
-
+  
+    setFiles((prev) => {
+      // ✅ Limit to 5 files max
+      const combined = [...prev, ...newFiles].slice(0, 5);
+  
+      // 🔥 Pass files back to parent
+      if (setSelectedFiles) {
+        setSelectedFiles(combined.map((f) => f.file));
+      }
+  
+      return combined;
+    });
+  
     // Simulate upload progress
     newFiles.forEach((newFile) => {
       let progress = 0;
@@ -79,12 +114,24 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
   //   setFiles((prev) => prev.filter((f) => f.file !== fileToDelete));
   // };
 
-  const handleDelete = (fileToDelete: File) => {
-    setFiles((prev) => prev.filter((f) => f.file !== fileToDelete));
+  // const handleDelete = (fileToDelete: File) => {
+  //   setFiles((prev) => prev.filter((f) => f.file !== fileToDelete));
   
-    if (setSelectedFiles) {
-      setSelectedFiles(files.filter((f) => f.file !== fileToDelete).map((f) => f.file));
-    }
+  //   if (setSelectedFiles) {
+  //     setSelectedFiles(files.filter((f) => f.file !== fileToDelete).map((f) => f.file));
+  //   }
+  // };
+
+  const handleDelete = (fileToDelete: File) => {
+    setFiles((prev) => {
+      const updated = prev.filter((f) => f.file !== fileToDelete);
+  
+      if (setSelectedFiles) {
+        setSelectedFiles(updated.map((f) => f.file));
+      }
+  
+      return updated;
+    });
   };
 
 
@@ -103,27 +150,39 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
         {/* Upload Area */}
         <div
           id="upload-area"
-          className="border-2 w-full border-dashed border-[#EDA133] h-full rounded-xl p-8 text-center bg-[rgba(252,244,233,0.5)] cursor-pointer flex items-center justify-center"
-          onClick={() => fileInputRef.current?.click()}
+          className={`border-2 w-full border-dashed rounded-xl p-8 text-center 
+            ${files.length >= 5 ? "cursor-not-allowed opacity-50" : "cursor-pointer"} 
+            border-[#EDA133] bg-[rgba(252,244,233,0.5)] flex items-center justify-center`}
+          // onClick={() => fileInputRef.current?.click()}
+          // onDragOver={(e) => e.preventDefault()}
+          // onDrop={handleDrop}
+          onClick={() => {
+            if (files.length < 5) fileInputRef.current?.click();
+          }}
           onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
+          onDrop={(e) => {
+            if (files.length < 5) handleDrop(e);
+          }}
         >
           <input
             type="file"
             ref={fileInputRef}
             className="hidden"
             multiple
-            accept=".pdf,.doc,.docx"
+            disabled={files.length >= 5} // disable after 5 files
+            accept=".rar,.png,.jpg,.jpeg,.docx,.csv,.xls,.xlsx"
             onChange={(e) => handleFiles(e.target.files)}
           />
           <div className="flex flex-col items-center gap-6">
             <img src="/document-upload.svg" alt="document upload icon" />
             <div className="space-y-3">
               <p className="text-lg font-medium text-black">
-                اسحب وأفلت ملفاتك، أو تصفح
+                {files.length >= 5
+                  ? "تم الوصول إلى الحد الأقصى (5 ملفات)"
+                  : "اسحب وأفلت ملفاتك، أو تصفح"}
               </p>
-              <p className="text-sm text-[#393939]">
-                الصيغة المدعومة: PDF، DOC
+              <p className="text-sm text-center text-[#393939]">
+                الصيغة المدعومة: rar, png, jpg, docx, csv, excel
               </p>
             </div>
           </div>

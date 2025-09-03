@@ -3,8 +3,38 @@ import CulturesCarousel from "@/app/components/career/CulturesCarousel";
 import CountryCodeInput from "@/app/components/global/CountryCodeInput";
 import FAQ from "@/app/components/global/FAQ";
 import FileUpload from "@/app/components/global/FileUpload";
+import { CareerPageDataType } from "@/app/utils/Types";
+import { Link } from "@/i18n/navigation";
+import { getLocale } from "next-intl/server";
 
-export default function Page() {
+export default async function Page() {
+  const locale = await getLocale();
+
+  async function getCareerPageData(locale: string): Promise<CareerPageDataType> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCareerPageInfo`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      }
+    });
+  
+    if (!res.ok) {
+      console.log(res, "res")
+      console.log("Server responded with error code:", res.status);
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch homepage data");
+      }
+    }
+  
+    return res.json();
+  }
+
+  // fetch typed data
+  const { data } = await getCareerPageData(locale);
+
   return (
     <>
       {/* <!-- Hero Section --> */}
@@ -24,7 +54,7 @@ export default function Page() {
       px-[15px] xl:px-[5rem] 2xl:px-[10rem] pt-[20px] lg:py-[32px]"
             >
               <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.7] relative z-[50]">
-                نحن لا نوظّف موظفين، بل نبحث عن شركاء نجاح.
+                {data?.hero_title}
               </h1>
 
               {/* Decorative Vectors */}
@@ -37,13 +67,12 @@ export default function Page() {
               </div>
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
-                في Business Building، نؤمن أن الفريق هو قلب الشركة. إذا كنت شغوفًا بالتحديات، ومؤمنًا بالتحسين المستمر،
-                فمكانك بيننا.
+               {data?.hero_desc}
               </p>
 
               {/* Buttons */}
               <div className="flex flex-row gap-4 w-full relative z-[50]">
-                <button className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto lg:w-[200px] text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
+                <Link href="#jobs" className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto lg:w-[200px] text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
                   عرض الوظائف
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -51,11 +80,11 @@ export default function Page() {
                       fill="white"
                     />
                   </svg>
-                </button>
+                </Link>
 
-                <button className="border border-[#EDA133] w-full md:w-auto lg:w-[200px] text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
+                <Link href="#resumeForm" className="border border-[#EDA133] text-center w-full md:w-auto lg:w-[200px] text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
                   أرسل سيرتك
-                </button>
+                </Link>
               </div>
             </div>
 
@@ -73,31 +102,20 @@ export default function Page() {
           {/* <!-- Company Culture & Values --> */}
           <div className="rounded-[32px] bg-[#131A27] h-[260px] grid grid-cols-1 lg:grid-cols-2 items-center gap-[24px] lg:gap-[64px] px-[50px]  xl:w-[1200px] 2xl:w-[1325px] relative">
             <h2 className="text-[#FFFFFF] text-[28px] md:text-[40px] font-bold leading-[1.3]  order-1 lg:order-none">
-              الشركة
-              <br />
-              الثقافة والقيم
+              {data?.sections?.one?.title}
             </h2>
             <p className="text-[#FFFFFF] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[420px]">
-              تعكس ثقافة Business Building، في جوهرها، قيم التنوع والابتكار والتعاون. نؤمن بأهمية تنويع قوتنا العاملة
-              قدر الإمكان، حيث يسهل ذلك التغيير والنمو. وبالمثل، نقدم مجموعة واسعة من الموارد والفرص للتعلم واكتساب
-              الخبرة والترقية. كما أن العمل الجماعي والتواصل بين الأفراد يظل حاضراً باستمرار في قلب Business Building،
-              وكشركة، نضمن أن يشعر كل موظف بأنه عضو قيم في عائلة كبيرة بدلاً من مجرد اسم في قاعدة بيانات.
+              {data?.sections?.one?.desc}
             </p>
 
             {/* <!-- Diversity at Business Building --> */}
             <section className="absolute top-[85%]">
               <div className="rounded-[32px] bg-[#F7BF45] h-[260px] grid grid-cols-1 lg:grid-cols-2 items-center gap-[24px] lg:gap-[64px] px-[50px]  xl:w-[1150px] 2xl:w-[1275px]">
                 <h2 className="text-[#000000] text-[28px] md:text-[40px] font-bold leading-[1.3]  order-1 lg:order-none">
-                  التنوع في
-                  <br />
-                  Business Building
+                  {data?.sections?.two?.title}
                 </h2>
                 <p className="text-[#000000] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[550px]">
-                  مع وجود ما يقرب من 200 موظف من دول وخلفيات مختلفة، تُعدّ فريق Business Building واحداً من أكثر الشركات
-                  تنوعاً في المنطقة. نحن شغوفون بإدماج أصوات جديدة في الفريق، والاستماع إلى اقتراحات جديدة، والتعرف على{" "}
-                  <br /> أشخاص من جميع أنحاء العالم. طالما لديك شغف بالتكنولوجيا، فأنت مرحب بك للانضمام إلى فريقنا
-                  المتنامي والمساهمة بأفكارك الخاصة. وبالمثل، نقدم أيضاً فرص الانتقال وخيارات العمل عن بُعد لأي شخص مهتم
-                  بالانضمام إلى الفريق من خارج أرمينيا.
+                  {data?.sections?.two?.desc}
                 </p>
               </div>
             </section>
@@ -106,16 +124,10 @@ export default function Page() {
             <section className="absolute top-[170%]">
               <div className="rounded-[32px] bg-[#EB971B] h-[260px] grid grid-cols-1 lg:grid-cols-2 items-center gap-[24px] lg:gap-[64px] px-[50px]  xl:w-[1100px] 2xl:w-[1200px]">
                 <h2 className="text-[#EAEAEA] text-[28px] md:text-[42px] font-bold leading-[1.28]  order-1 lg:order-none">
-                  خلفية
-                  <br />
-                  الشركة
+                  {data?.sections?.three?.title}
                 </h2>
                 <p className="text-[#EAEAEA] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[450px]">
-                  بدأت Business Building كمشروع صغير في عام 2014، مع عدد قليل من الموظفين يعملون على النسخة الأولى من
-                  منشئ المواقع في مساحة مكتبية ضيقة.
-                  <br /> بعد إدراك إمكانيات النمو في السوق الذي اخترناه، <br /> <br /> قمنا بتوظيف فريق أكبر <br />{" "}
-                  وعملنا على تحسين برنامجنا. وبعد عدة سنوات، انتقلنا إلى منشأة مفتوحة تضم أكثر من 200 موظف، وأمنّا قاعدة
-                  عملاء وفية تضم أكثر من مليون مستخدم، وحصلنا على مكانة محترمة في سوق منشئي المواقع.
+                  {data?.sections?.three?.desc}
                 </p>
               </div>
             </section>
@@ -123,7 +135,7 @@ export default function Page() {
         </div>
 
         <section className="lg:hidden">
-          <CulturesCarousel />
+          <CulturesCarousel culturesData={data?.sections} />
         </section>
       </section>
 
@@ -134,7 +146,7 @@ export default function Page() {
           <div className="hidden md:flex lg:flex-row items-center max-w-[1319px] mx-auto gap-[16px] ">
             <div className="md:hidden xl:block bg-[#EDA133] rounded-lg p-[15px] px-[21px] flex flex-col justify-between items-center w-full lg:min-h-[590px] lg:w-[270px]">
               <div className="flex flex-col gap-[32px] items-center w-full h-full">
-                <h2 className="text-[40px] font-bold text-white leading-[1.2]  w-full">المزايا</h2>
+                <h2 className="text-[40px] font-bold text-white leading-[1.2] w-full">{data?.our_benefits?.title}</h2>
 
                 {/* <!-- Decorative Pattern --> */}
                 <div className="flex flex-col gap-[6px] opacity-20">
@@ -158,7 +170,7 @@ export default function Page() {
                 {/* <!-- Bottom Content --> */}
                 <div className="flex flex-col gap-[25px] w-full">
                   <p className="text-[16px] font-medium text-white leading-[1.5]  w-full">
-                    استفد من العديد من <br /> المزايا التي نقدمها للموظفين - من إجازات مدفوعة إلى مرافق المكتب.
+                    {data?.our_benefits?.desc}
                   </p>
                   <button className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] border border-[#FCF4E9] rounded-lg hover:bg-[#FCF4E9] text-white hover:text-[#EDA133] transition-colors">
                     <span className="text-[16px] font-medium">عرض جميع المزايا</span>
@@ -204,30 +216,31 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* <!-- Benefit Card 1 - Gym Access --> */}
-              <div className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] py-[53.5px]">
-                <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
-                  <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
-                    دخول غير محدود مجاني إلى صالة رياضية احترافية في الموقع
-                  </h3>
-                  <div
-                    className="w-full h-[250px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden"
-                    style={{
-                      backgroundImage: "url('/gym-access-bg.png')",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  ></div>
-                  <p className="text-[14px] font-medium text-black leading-[1.43]  w-full h-[110px]">
-                    حافظ على لياقتك البدنية وقدرتك على التحمل، أوحتى ابدأ العمل عليها عند انضمامكإلى Ucraft. نحن نقدم
-                    دخولًا غير محدود مجانيًا إلىصالة رياضية في الموقع مع مجموعة واسعة من <br /> معدات التمارين وفرصة
-                    التدريب مع مدرب.
-                  </p>
-                </div>
-              </div>
+{/* min-h-[531px] */}
+              {data?.our_benefits?.benefits.map(benefit => {
+                return (
+                  <div key={benefit?.id} className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] 2xl:min-h-[590px] py-[53.5px]">
+                    <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
+                      <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
+                        {benefit?.title}
+                      </h3>
+                      <div
+                        className="w-full h-[250px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden"
+                        style={{
+                          backgroundImage: `url(${benefit?.image_url})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      ></div>
+                      <p className="text-[14px] font-medium text-black leading-[1.43]  w-full h-[110px]">
+                        {benefit?.description}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
 
-              {/* <!-- Benefit Card 2 - Medical Insurance --> */}
-              <div className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] py-[53.5px]">
+              {/* <div className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] py-[53.5px]">
                 <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
                   <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
                     تأمين طبي مجاني للحفاظ على الصحة والقوة
@@ -248,7 +261,6 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* <!-- Benefit Card 3 - Annual Leave --> */}
               <div className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] py-[53.5px]">
                 <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
                   <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
@@ -268,18 +280,18 @@ export default function Page() {
                     والاستعداد للعمل.
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
           <section className="md:hidden">
-            <BenefitsCarousel />
+            <BenefitsCarousel benefits={data?.our_benefits} />
           </section>
         </div>
       </section>
 
       {/* <!-- Job Listings Section --> */}
-      <section className="relative bg-[#131A27] px-[15px] pt-[20px] pb-[64px] md:py-[72px]">
+      <section id="jobs" className="relative bg-[#131A27] px-[15px] pt-[20px] pb-[64px] md:py-[72px]">
         {/* <!-- Decorative Background Elements --> */}
         <div className="absolute inset-0 right-[15%] top-[10%] hidden md:block">
           <img src="/career-bg-svg.svg" alt="background art" />
@@ -564,7 +576,7 @@ export default function Page() {
       </section>
 
       {/* <!-- form --> */}
-      <section className="relative bg-white px-[15px] pt-[40px] pb-[64px] md:py-[72px]">
+      <section id="resumeForm" className="relative bg-white px-[15px] pt-[40px] pb-[64px] md:py-[72px]">
         <div className="max-w-[1400px] mx-auto lg:px-[47px]">
           {/* <!-- Section Header --> */}
           <div className="text-center mb-[29px] md:mb-[48px] px-[15px] 2xl:px-0 max-w-[636px] mx-auto">
@@ -653,7 +665,7 @@ export default function Page() {
       </section>
 
       {/* <!-- FAQ Section --> */}
-      {/* <FAQ /> */}
+      <FAQ faqs={data?.faqs ? data?.faqs : []} />
     </>
   );
 }

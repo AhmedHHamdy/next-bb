@@ -95,6 +95,32 @@ html {
   /* max-height: 100%; */
   transition: max-height 0.3s ease-in, padding 0.3s ease-in;
 }
+
+/* Scrollbar styling for WebKit browsers (Chrome, Edge, Safari) */
+.faq-content.expanded::-webkit-scrollbar {
+  width: 8px; /* scrollbar width */
+}
+
+.faq-content.expanded::-webkit-scrollbar-track {
+  background: #e0e0e0; /* track color */
+  border-radius: 4px;
+}
+
+.faq-content.expanded::-webkit-scrollbar-thumb {
+  background: #EDA133; /* scrollbar color */
+  border-radius: 4px;
+}
+
+.faq-content.expanded::-webkit-scrollbar-thumb:hover {
+  background: #EDA133; /* hover color */
+}
+
+/* Firefox scrollbar styling */
+.faq-content.expanded {
+  scrollbar-width: thin; /* auto | thin | none */
+  scrollbar-color: #EDA133 #e0e0e0; /* thumb | track */
+}
+
 /* .plus-icon {
   transition: transform 0.3s ease;
 }

@@ -100,8 +100,12 @@ export interface HomePage {
     third: {
       title: string;
       value: string;
+    },
+    forth: {
+      title: string;
+      value: string;
     }
-}
+  }
   our_projects: {
     title: string;
     desc: string;
@@ -199,6 +203,7 @@ export interface Statistics {
   first: StatisticItem;
   second: StatisticItem;
   third: StatisticItem;
+  forth: StatisticItem;
 }
 
 interface WhoWeServe {
@@ -409,4 +414,52 @@ export interface FormSettingsDataType {
   message: string;
   error: string
 
+}
+
+export interface FreeConsultationDataType {
+  data: {
+    title: string;
+    desc: string
+    durations: []
+  },
+  status: true,
+  message: "الطلب تم بنجاح",
+  error: ""
+}
+
+interface SectionContent {
+  title: string;
+  desc: string;
+}
+
+export interface Sections {
+  one: SectionContent;
+  two: SectionContent;
+  three: SectionContent;
+  four: SectionContent;
+}
+export interface Benefit {
+  id: number;
+  title: string;
+  description: string;
+  image_url: string;
+}
+export interface CareerPageDataType {
+  data: {
+    title: string;
+    meta_description: string;
+    meta_keywords: string;
+    hero_title: string;
+    hero_desc: string;
+    sections: Sections;
+    our_benefits: {
+      title: string;
+      desc: string;
+      benefits: Benefit[];
+    };
+    faqs: FAQItemType[];
+  };
+  status: boolean;
+  message: string;
+  error: string;
 }

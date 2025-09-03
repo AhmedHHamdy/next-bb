@@ -6,8 +6,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
+import { Sections } from "@/app/utils/Types";
 
-export default function CulturesCarousel() {
+export default function CulturesCarousel({ culturesData }: { culturesData?: Sections }) {
   return (
     <>
       <Swiper
@@ -45,15 +46,10 @@ export default function CulturesCarousel() {
           {/* <!-- Card 1 --> */}
           <div className="rounded-[8px] bg-[#131A27] grid grid-cols-1 lg:grid-cols-2 items-center gap-[64px] ps-[17px] pe-[10px] py-[20px] min-h-[440px]">
             <h2 className="text-[#FFFFFF] text-[24px] md:text-[40px] font-bold leading-[1.3] order-1 lg:order-none">
-              الشركة
-              <br />
-              الثقافة والقيم
+              {culturesData?.one?.title}
             </h2>
             <p className="text-[#FFFFFF] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[420px]">
-              تعكس ثقافة Business Building، في جوهرها، قيم التنوع والابتكار والتعاون. نؤمن بأهمية تنويع قوتنا العاملة
-              قدر الإمكان، حيث يسهل ذلك التغيير والنمو. وبالمثل، نقدم مجموعة واسعة من الموارد والفرص للتعلم واكتساب
-              الخبرة والترقية. كما أن العمل الجماعي والتواصل بين الأفراد يظل حاضراً باستمرار في قلب Business Building،
-              وكشركة، نضمن أن يشعر كل موظف بأنه عضو قيم في عائلة كبيرة بدلاً من مجرد اسم في قاعدة بيانات.
+              {culturesData?.one?.desc}
             </p>
           </div>
         </SwiperSlide>
@@ -62,15 +58,10 @@ export default function CulturesCarousel() {
           {/* <!-- Card 2 --> */}
           <div className="rounded-[8px] bg-[#EB971B] grid grid-cols-1 lg:grid-cols-2 items-center gap-[64px] ps-[17px] pe-[10px] py-[20px] min-h-[440px]">
             <h2 className="text-black text-[24px] md:text-[42px] font-bold leading-[1.28]  order-1 lg:order-none">
-              خلفية الشركة
+              {culturesData?.one?.title}
             </h2>
             <p className="text-black text-[14px] leading-[1.6] order-2 lg:order-none max-w-[450px]">
-              بدأت Business Building كمشروع صغير في عام 2014، مع عدد قليل من الموظفين يعملون على النسخة الأولى من منشئ
-              المواقع في مساحة مكتبية ضيقة. بعد إدراك إمكانيات النمو في السوق الذي اخترناه، قمنا بتوظيف فريق أكبر وعملنا
-              على تحسين برنامجنا.
-              <br /> <br />
-              وبعد عدة سنوات، انتقلنا إلى منشأة مفتوحة تضم أكثر من 200 موظف، وأمنّا قاعدة عملاء وفية تضم أكثر من مليون
-              مستخدم، وحصلنا على مكانة محترمة في سوق منشئي المواقع.
+              {culturesData?.two?.desc}
             </p>
           </div>
         </SwiperSlide>
@@ -79,14 +70,10 @@ export default function CulturesCarousel() {
           {/* <!-- Card 3 --> */}
           <div className="rounded-[8px] bg-[#F7BF45] grid grid-cols-1 lg:grid-cols-2 items-center gap-[23px] ps-[17px] pe-[10px] py-[20px] min-h-[440px]">
             <h2 className="text-[#000000] text-[24px] md:text-[40px] font-bold leading-[1.3]  order-1 lg:order-none">
-              التنوع في Business Building
+              {culturesData?.three?.title}
             </h2>
             <p className="text-[#000000] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[550px]">
-              مع وجود ما يقرب من 200 موظف من دول وخلفيات مختلفة، تُعدّ فريق Business Building واحداً من أكثر الشركات
-              تنوعاً في المنطقة. نحن شغوفون بإدماج أصوات جديدة في الفريق، والاستماع إلى اقتراحات جديدة، والتعرف على
-              أشخاص من جميع أنحاء العالم. طالما لديك شغف بالتكنولوجيا، فأنت مرحب بك للانضمام إلى فريقنا المتنامي
-              والمساهمة بأفكارك الخاصة. وبالمثل، نقدم أيضاً فرص الانتقال وخيارات العمل عن بُعد لأي شخص مهتم بالانضمام
-              إلى الفريق من خارج أرمينيا.
+              {culturesData?.three?.desc}
             </p>
           </div>
         </SwiperSlide>

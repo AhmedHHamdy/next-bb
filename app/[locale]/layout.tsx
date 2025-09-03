@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ReactQueryProvider from "../utils/Providers/ReactQueryProvider";
 import { ConfigProvider } from "antd";
+import Head from "next/head";
 
 export const pingFont = localFont({
   src: [
@@ -87,6 +88,9 @@ export default async function RootLayout({
         async
         defer
       ></script>
+      <Head>
+        <link rel="icon" href="/about-team.png" type="image/png"/>
+      </Head>
       <body
         className={`${pingFont.variable} font-ping antialiased`}
       >

@@ -102,24 +102,19 @@ export default function ContactUsForm() {
         service_id: "",
         message: "",
       })
-      // alert("تم إرسال النموذج بنجاح!");
 
-        // Show success message
       setSuccessText("تم إرسال النموذج بنجاح!");
 
-      // Clear success message after 5s
       setTimeout(() => {
         setSuccessText("");
       }, 3000);
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      // alert("حدث خطأ أثناء إرسال النموذج.");
       console.log(error, "error")
 
       setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
 
-      // Clear error message after 5s
       setTimeout(() => {
         setErrorText("");
       }, 3000);
