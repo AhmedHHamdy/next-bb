@@ -91,6 +91,22 @@ export default function BlogsTagsPagination({ tagId }: { tagId?: string }) {
     return [];
   }
 
+  function truncateText(text: string = "", maxLength: number): string {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "..."
+    }
+
+    return text
+  }
+
+  function truncate80(text: string = ""): string {
+    return truncateText(text, 80)
+  }
+
+  function truncate100(text: string = ""): string {
+    return truncateText(text, 100)
+  }
+
   if (isLoading) {
     return (
       <section className="min-h-screen text-center flex items-center justify-center">
@@ -353,7 +369,7 @@ export default function BlogsTagsPagination({ tagId }: { tagId?: string }) {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <span className="text-[#B1B1B1] text-[14px] font-medium">${article?.section_name}</span>
+                        <span className="text-[#B1B1B1] text-[14px] font-medium">{article?.section_name}</span>
                       </div>
                       <div className="flex items-center gap-1 text-gray-500 text-sm">
                         <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -362,7 +378,7 @@ export default function BlogsTagsPagination({ tagId }: { tagId?: string }) {
                             fill="#888C93"
                           />
                         </svg>
-                        <span className="text-[#B1B1B1] text-[14px] font-medium">${article?.published_at}</span>
+                        <span className="text-[#B1B1B1] text-[14px] font-medium">{article?.published_at}</span>
                       </div>
                       <div className="flex items-center gap-1 text-gray-500 text-sm">
                         <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -371,14 +387,14 @@ export default function BlogsTagsPagination({ tagId }: { tagId?: string }) {
                             fill="#8B8B8B"
                           />
                         </svg>
-                        <span className="text-[#B1B1B1] text-[14px] font-medium">${article?.views}</span>
+                        <span className="text-[#B1B1B1] text-[14px] font-medium">{article?.views}</span>
                       </div>
                     </div>
                     <h3 className="text-[14px] md:text-[20px] font-bold text-black my-[16px] md:my-[8px]">
-                      ${article?.title}
+                      {truncate80(article?.title)}
                     </h3>
                     <p className="text-[#393939] font-medium text-[12px] md:text-[16px] leading-relaxed">
-                      ${article?.short_description}
+                      {truncate100(article?.short_description)}
                     </p>
                   </div>
                 </div>

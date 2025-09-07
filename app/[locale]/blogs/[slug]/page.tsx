@@ -61,7 +61,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             </svg>
 
             <Link href={`/blogs/${slug}`} className="text-black text-[15px] font-medium leading-[1.65]">
-              ${data?.article?.title}
+              {data?.article?.title}
             </Link>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <div className="bg-white rounded-lg border border-[#F5F5F5] shadow-lg py-[16px] px-[14px] md:p-8">
               <div className="flex flex-col items-center gap-4 max-w-[566px] mx-auto">
                 <h1 className="text-center font-bold text-[24px] md:text-[32px] text-black leading-[1.25]">
-                  ${data?.article?.title}
+                  {data?.article?.title}
                 </h1>
 
                 <div className="flex flex-col items-center gap-4 p-[6px]">
@@ -98,7 +98,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                           />
                         </svg>
                       </div>
-                      <span className="text-[#4A4A4A] text-sm font-medium">${data?.article?.section_name}</span>
+                      <span className="text-[#4A4A4A] text-sm font-medium">{data?.article?.section_name}</span>
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -110,7 +110,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                           />
                         </svg>
                       </div>
-                      <span className="text-[#4A4A4A] text-sm font-medium">${data?.article?.published_at}</span>
+                      <span className="text-[#4A4A4A] text-sm font-medium">{data?.article?.published_at}</span>
                     </div>
 
                     <div className="flex items-center gap-3">
@@ -126,7 +126,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                           />
                         </svg>
                       </div>
-                      <span className="text-[#4A4A4A] text-sm font-medium">${data?.article?.views}</span>
+                      <span className="text-[#4A4A4A] text-sm font-medium">{data?.article?.views}</span>
                     </div>
                   </div>
                 </div>

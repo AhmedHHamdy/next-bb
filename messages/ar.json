@@ -2,5 +2,14 @@
   "HomePage": {
     "title": "مرحبا بك في الصفحة الرئيسية",
     "about": "اذهب إلى صفحة المعلومات"
+  },
+  "ContactForm": {
+    "nameRequired": "حقل الاسم مطلوب",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
+    "countryRequired": "اختر دولتك",
+    "phoneRequired": "رقم الجوال مطلوب",
+    "serviceRequired": "اختر خدمة",
+    "messageRequired": "الرسالة مطلوبة"
   }
 }

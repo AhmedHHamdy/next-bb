@@ -343,7 +343,7 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                  <span className="text-neutral-700 text-sm font-medium">ENG</span>
+                  <span className="text-neutral-700 text-sm font-medium">{localeValue == "ar" ? "ENG" : "AR"}</span>
                 </Link>
 
                 <Link

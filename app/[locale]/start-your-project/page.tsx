@@ -5,7 +5,7 @@ import FileUpload from "@/app/components/global/FileUpload";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { CountriesData } from "@/app/utils/Types";
+import { CountriesData, FormSettingsDataType } from "@/app/utils/Types";
 import { useLocale } from "next-intl";
 import PreviousProjects from "@/app/components/home/PreviousProjects";
 import { Select } from "antd";
@@ -21,9 +21,9 @@ interface FormData {
   project_name: string;
   project_description: string;
   has_file: boolean;
-  project_description_file: null;
+  project_description_file: File[];
   services: string[];
-  country_code: string; 
+  country_code: number; 
 }
 
 export default function Page() {
@@ -43,12 +43,14 @@ export default function Page() {
     project_name: "",
     project_description: "",
     has_file: false,
-    project_description_file: null,
+    project_description_file: [],
     services: [],
-    country_code: ""
+    country_code: 0
   })
 
   const [errorText, setErrorText] = useState("")
+  const [successText, setSuccessText] = useState("");
+
 
   console.log(formData, "formData")
 
@@ -62,8 +64,8 @@ export default function Page() {
     }));
   };
 
-  const fetchCountries = async (): Promise<CountriesData> => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAllCountries`, {
+  const fetchFormSettingsData = async (): Promise<FormSettingsDataType> => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getStartYourProjectInfo`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -72,38 +74,68 @@ export default function Page() {
     });
 
     if (!res.ok) {
-      throw new Error("Failed to fetch website countries settings");
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      }
     }
     return res.json();
   };
 
+
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["countries"],
-    queryFn: fetchCountries,
+    queryKey: ["FormSettingsDataStartingProjectForm"],
+    queryFn: fetchFormSettingsData,
   });
+
 
   // ✅ Mutation setup
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/setStartYourProjectDemand`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          lang: locale
-          // "Content-Type": "multipart/form-data",
-        },
-        body: JSON.stringify(formData),
-      });
-
+      let body: BodyInit;
+      let headers: HeadersInit = { lang: locale };
+  
+      if (formData.has_file && formData.project_description_file.length > 0) {
+        // ✅ Use FormData for file upload
+        const fd = new FormData();
+  
+        // Append normal fields
+        Object.entries(formData).forEach(([key, value]) => {
+          if (key === "project_description_file") {
+            (value as File[]).forEach((file) => {
+              fd.append("project_description_file[]", file);
+            });
+          } else if (Array.isArray(value)) {
+            value.forEach((v) => fd.append(`${key}[]`, v));
+          } else if (value !== "" && value !== null && value !== undefined) {
+            fd.append(key, String(value));
+          }
+        });
+  
+        body = fd;
+        // ❌ Do not set Content-Type manually, browser will set it with boundary
+      } else {
+        // ✅ Send JSON if no files
+        const { project_description_file, ...rest } = formData;
+        body = JSON.stringify(rest);
+        headers["Content-Type"] = "application/json";
+      }
+  
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/setStartYourProjectDemand`,
+        {
+          method: "POST",
+          headers,
+          body,
+        }
+      );
+  
       if (!res.ok) {
-        // Try to extract error message from API response
         const errorData = await res.json().catch(() => null);
         throw new Error(
           errorData?.message || "فشل في إرسال النموذج. حاول مرة أخرى."
         );
       }
-
-      console.log(res, "res")
+  
       return res.json();
     },
     onSuccess: (data) => {
@@ -120,17 +152,27 @@ export default function Page() {
         project_name: "",
         project_description: "",
         has_file: false,
-        project_description_file: null,
+        project_description_file: [],
         services: [],
-        country_code: ""
+        country_code: 0
       })
-      // alert("تم إرسال النموذج بنجاح!");
+
+      setSuccessText("تم إرسال النموذج بنجاح!");
+
+      setOpen(false)
+
+      setTimeout(() => {
+        setSuccessText("");
+      }, 3000);
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      // alert("حدث خطأ أثناء إرسال النموذج.");
-      console.log(error, "error")
+
       setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
+
+      setTimeout(() => {
+        setErrorText("");
+      }, 3000);
     },
   });
 
@@ -173,7 +215,10 @@ export default function Page() {
           {/* <!-- Form Section --> */}
           <div className="max-w-[1300px] mx-auto bg-white border border-[#DADADA77] rounded-lg">
             <div className="p-2 md:p-8">
-              <div className="space-y-[32px] md:space-y-[48px]">
+              <form onSubmit={(e) => {
+                e.preventDefault()
+                mutation.mutate(formData)
+              }} className="space-y-[32px] md:space-y-[48px]">
                 <div className="space-y-12">
                   <div className="space-y-[16px] md:space-y-6">
                     <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
@@ -192,6 +237,7 @@ export default function Page() {
                           value={formData.name}
                           name="name"
                           required
+                          maxLength={60}
                           onChange={handleChange}
                           placeholder="الرجاء إدخال اسمك."
                           className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
@@ -211,7 +257,7 @@ export default function Page() {
                             style={{ width: '100%', height: "3rem" }}
                             placeholder="الرجاء إختيار الدولة"
                             onChange={(value) => setFormData({...formData, country_id: value})}
-                            options={data && data.data.map(country => {
+                            options={data?.data?.countries && data?.data?.countries.map(country => {
                               return (
                                 {
                                   label: country.name,
@@ -272,7 +318,7 @@ export default function Page() {
 
                       {/* <!-- Hidden by default --> */}
                       {formData.owner_identity == "other" && <div id="other-button-field" className="space-y-3">
-                        <label className="text-base font-medium text-black block">ما هو دورك في المشروع؟</label>
+                        <label className="text-base font-medium text-black block">ما هي صفتك ?</label>
                         <input
                           type="text"
                           name="owner_role"
@@ -295,7 +341,7 @@ export default function Page() {
                       {/* <!-- Name and Email Row --> */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-6">
                         {/* <!-- Phone Field --> */}
-                        <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, country_code: value?.split("-")?.[0], phone: value?.split("-")?.[1]}))} />
+                        <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, country_code: Number(value?.split("-")?.[0]), phone: value?.split("-")?.[1]}))} formDataValue={formData.phone} />
 
                         {/* <!-- Email Field --> */}
                         <div className="space-y-3">
@@ -306,6 +352,7 @@ export default function Page() {
                             type="email"
                             name="email"
                             required
+                            maxLength={160}
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="الرجاء إدخال البريد الإلكتروني."
@@ -387,19 +434,20 @@ export default function Page() {
                           <div className="relative">
                             <Select
                               mode="multiple"
-                              className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                              className="w-full min-h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
                               allowClear
                               value={formData["services"]} 
                               style={{ width: '100%' }}
                               placeholder="اختر"
                               onChange={(values) => setFormData({...formData, services: [...values]})}
-                              options={[{
-                                label: "web",
-                                value: 3,
-                              }, {
-                                label: "mobile",
-                                value: 2,
-                              }]}
+                              options={data?.data?.services && data?.data?.services?.map(service => {
+                                return (
+                                  {
+                                    label: service.name,
+                                    value: service.id,
+                                  }
+                                )
+                              })}
                             />
                           </div>
                         </div>
@@ -411,6 +459,7 @@ export default function Page() {
                           <textarea
                             value={formData.project_description}
                             onChange={handleChange}
+                            maxLength={3000}
                             name="project_description"
                             placeholder="الرجاء إدخال لنا نبذة مختصرة عن المشروع أو الفكرة."
                             className="w-full h-36 px-3 py-3 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] resize-none"
@@ -450,60 +499,75 @@ export default function Page() {
                       <div></div>
 
                       {/* <!-- File Upload Section --> */}
-                      {/* {open && <FileUpload
+                      {open && <FileUpload
                         setSelectedFiles={(values: File[]) =>
                           setFormData((prev) => ({
                             ...prev,
-                            // has_file: values.length > 0,
-                            project_description_file: values,
+                            project_description_file: values, 
                           }))
                         }
                         title="إرفاق ملف عن المشروع"
                         required={false}
-                      />} */}
+                      />}
                     </div>
 
                     {/* <!-- Form Actions --> */}
-                    <section className="w-full">
-                      <div>
-                        {/* <button className="flex-1 px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors">
-                          إرسال
-                        </button> */}
-
+                    <section className="w-full flex flex-col md:flex-row md:justify-start md:items-center gap-10">
                       <button
                         type="submit"
                         disabled={mutation.isPending}
                         onClick={() => mutation.mutate(formData)}
-                        className="flex-1 px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
+                        className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
                       >
                         {mutation.isPending ? "جاري الإرسال..." : "إرسال"}
                       </button>
 
-                      {/* Error Message */}
-                      {errorText && (
-                        <div className="mt-5 w-fit flex items-center gap-2 rounded-lg border border-red-400 bg-red-50 px-4 py-3 text-red-700">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-red-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z"
-                            />
-                          </svg>
-                          <p className="font-medium">{errorText}</p>
-                        </div>
-                      )}
+                      <div className="space-y-3 w-fit">
+                        {successText && (
+                          <div className="w-full h-[56px] flex items-center gap-2 rounded-lg border border-green-400 bg-green-100 px-4 py-3 text-green-700">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-green-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            <p className="font-medium">{successText}</p>
+                          </div>
+                        )}
+
+                        {errorText && (
+                          <div className="w-full h-[56px] flex items-center gap-2 rounded-lg border border-red-400 bg-red-50 px-4 py-3 text-red-700">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-red-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z"
+                              />
+                            </svg>
+                            <p className="font-medium">{errorText}</p>
+                          </div>
+                        )}
+                    
                       </div>
                     </section>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>

@@ -10,6 +10,23 @@ import { ArticleType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
 
 export default function BlogsCarousel({ articlesData }: {articlesData: ArticleType[]}) {
+
+  function truncateText(text: string = "", maxLength: number): string {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "..."
+    }
+
+    return text
+  }
+
+  function truncate80(text: string = ""): string {
+    return truncateText(text, 80)
+  }
+
+  function truncate100(text: string = ""): string {
+    return truncateText(text, 100)
+  }
+
   return (
     <div className="max-w-[1360px] mx-auto">
       <div className="mb-[32px] md:mb-[27px] flex items-center justify-between">
@@ -81,7 +98,7 @@ export default function BlogsCarousel({ articlesData }: {articlesData: ArticleTy
                   <div className="relative">
                     <div
                       className="w-full h-[206px] lg:h-64 bg-no-repeat rounded-t-lg bg-cover"
-                      style={{ backgroundImage: `"url(${article.image_url})"` }}
+                      style={{ backgroundImage: `url(${article.image_url})` }}
                     ></div>
                   </div>
                   <div className="px-[13px] pt-[11px]">
@@ -117,10 +134,12 @@ export default function BlogsCarousel({ articlesData }: {articlesData: ArticleTy
                       </div>
                     </div>
                     <h3 className="text-[14px] md:text-[20px] font-bold text-black my-[16px] md:my-[8px]">
-                      {article?.title}
+                      {/* {article?.title} */}
+                      {truncate80(article?.title)}
                     </h3>
                     <p className="text-[#393939] font-medium text-[12px] md:text-[16px] leading-relaxed">
-                      {article?.short_description}
+                      {/* {article?.short_description} */}
+                      {truncate100(article?.short_description)}
                     </p>
                   </div>
                 </div>

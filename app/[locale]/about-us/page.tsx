@@ -74,7 +74,7 @@ export default async function Page() {
               </h1>
 
               {/* Decorative Vectors */}
-              <div className="absolute z-[50] md:top-[35%] lg:top-[33%] xl:top-[36%] 2xl:top-[35%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
+              <div className="absolute z-[50] md:top-[35%] lg:top-[33%] xl:top-[36%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
                 <img
                   src="/hero-vector-1393.svg"
                   alt="decorative element"

@@ -11,6 +11,7 @@ import Blogs from "../components/home/Blogs";
 import { getLocale, setRequestLocale } from "next-intl/server";
 // import { use } from "react";
 import { HomePageData } from "../utils/Types";
+import ReviewsDummy from "../components/global/ReviewDummy";
 
 // export function generateStaticParams() {
 //   return routing.locales.map((locale) => ({ locale }));
@@ -112,7 +113,9 @@ export default async function HomePage() {
 
       <PreviousProjects />
 
-      <Reviews />
+      {/* <Reviews /> */}
+
+      <ReviewsDummy />
 
       <FAQ faqs={data?.faqs} homePageStatus={true} />
 

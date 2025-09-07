@@ -132,7 +132,7 @@ export default function Counters({ countersData }: { countersData?: Statistics})
             </div>
           </div>
 
-          {/* <div className="bg-white border border-gray-200 rounded-lg p-[19px] flex items-center gap-4 w-full xl:w-full h-[111px]">
+          <div className="bg-white border border-gray-200 rounded-lg p-[19px] flex items-center gap-4 w-full xl:w-full h-[111px]">
             <div className="w-18 h-18 bg-[#FCF4E9] rounded flex items-center justify-center">
               <svg width="73" height="73" viewBox="0 0 73 73" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -148,12 +148,12 @@ export default function Counters({ countersData }: { countersData?: Statistics})
               </svg>
             </div>
             <div className="flex-1 ">
-              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">قيمة الأعمال المحققة</h3>
+              <h3 className="text-[14px] md:text-[16px] font-medium text-gray-600 ">{countersData?.forth?.title}</h3>
               <div className="text-[20px] md:text-[32px] font-bold text-black ">
-                <CountUp end={10} /> +
+                <CountUp end={Number(countersData?.forth?.value?.slice(0, 8))} /> +
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </section>

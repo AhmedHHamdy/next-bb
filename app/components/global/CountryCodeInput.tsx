@@ -19,8 +19,9 @@ type Country = {
 //   { code: "+20", flag: "🇪🇬", img: "/sa-flag-icon.svg" },
 // ];
 
-export default function CountryCodeInput({ setSelectedPhone }: {
+export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
   setSelectedPhone?: (v: string) => void,
+  formDataValue?: string
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState<Country | undefined>();
@@ -97,7 +98,7 @@ export default function CountryCodeInput({ setSelectedPhone }: {
         {/* Country Code Dropdown */}
         <div
           ref={dropdownRef}
-          className="flex items-center gap-2 px-3 border-l border-[#D4D4D4] h-full cursor-pointer relative"
+          className="flex items-center gap-2 px-3 rtl:border-l ltr:border-r border-[#D4D4D4] h-full cursor-pointer relative"
           onClick={() => setIsOpen((prev) => !prev)}
         >
           <svg
@@ -132,7 +133,7 @@ export default function CountryCodeInput({ setSelectedPhone }: {
                   className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
                     setSelected(c);
-                    setSelectedPhone && setSelectedPhone(c.country_code + "-" + phoneInputValue)
+                    setSelectedPhone && setSelectedPhone(c.country_code + "-" + formDataValue)
                     setIsOpen(false);
                   }}
                 >
@@ -146,14 +147,15 @@ export default function CountryCodeInput({ setSelectedPhone }: {
 
         {/* Phone Input */}
         <input
-          type="tel"
-          value={phoneInputValue}
+          type="number"
+          value={formDataValue}
+          required
           onChange={(e) => {
-            setPhoneInputValue(e.target.value)
+            // setPhoneInputValue(e.target.value)
             setSelectedPhone && setSelectedPhone(selected?.country_code + "-" + e.target.value)
           }}
           placeholder="الرجاء إدخال رقم الجوال"
-          className="flex-1 px-3 py-2 text-end text-sm text-black placeholder-[#B1B1B1] focus:outline-none"
+          className="flex-1 px-3 py-2 text-end text-sm text-black placeholder-[#B1B1B1] focus:outline-none rtl:text-start ltr:text-start ltr:placeholder:text-start rtl:placeholder:text-start"
         />
       </div>
     </div>

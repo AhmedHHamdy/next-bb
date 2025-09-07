@@ -3,7 +3,7 @@
 import { FormSettingsDataType } from "@/app/utils/Types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Select } from "antd";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 interface FormData {
@@ -16,9 +16,19 @@ interface FormData {
   message: string;
 }
 
+interface ValidationErrors {
+  name?: string;
+  email?: string;
+  country_id?: string;
+  phone?: string;
+  message?: string;
+  service_id?: string;
+}
+
 export default function ContactUsForm() {
 
   const locale = useLocale();
+  const t = useTranslations("ContactForm");
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -30,6 +40,7 @@ export default function ContactUsForm() {
     message: "",
   });
 
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
   const [successText, setSuccessText] = useState("");
 
@@ -44,6 +55,56 @@ export default function ContactUsForm() {
       ...prev,
       [name]: value,
     }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[name as keyof ValidationErrors]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const errors: ValidationErrors = {};
+
+    // Name validation
+    if (!formData.name.trim()) {
+      errors.name = t("nameRequired");
+    }
+
+    // Email validation
+    if (!formData.email.trim()) {
+      errors.email = t("emailRequired");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        errors.email = t("emailInvalid");
+      }
+    }
+
+    // Country validation
+    if (!formData.country_id) {
+      errors.country_id = t("countryRequired");
+    }
+
+    // Phone validation
+    if (!formData.phone.trim()) {
+      errors.phone = t("phoneRequired");
+    }
+
+    // Service validation
+    if (!formData.service_id) {
+      errors.service_id = t("serviceRequired");
+    }
+
+    // Message validation
+    if (!formData.message.trim()) {
+      errors.message = t("messageRequired");
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const fetchFormSettingsData = async (): Promise<FormSettingsDataType> => {
@@ -102,24 +163,19 @@ export default function ContactUsForm() {
         service_id: "",
         message: "",
       })
-      // alert("تم إرسال النموذج بنجاح!");
 
-        // Show success message
       setSuccessText("تم إرسال النموذج بنجاح!");
 
-      // Clear success message after 5s
       setTimeout(() => {
         setSuccessText("");
       }, 3000);
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      // alert("حدث خطأ أثناء إرسال النموذج.");
       console.log(error, "error")
 
       setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
 
-      // Clear error message after 5s
       setTimeout(() => {
         setErrorText("");
       }, 3000);
@@ -184,9 +240,11 @@ export default function ContactUsForm() {
             <div className="bg-white border border-[#E7E8E9] rounded-lg p-6 shadow-lg">
               <div className="flex flex-col lg:flex-row gap-8">
                 {/* <!-- Form Fields --> */}
-                <form onSubmit={(e) => {
+                <form noValidate  onSubmit={(e) => {
                   e.preventDefault()
-                  mutation.mutate(formData)
+                  if (validateForm()) {
+                    mutation.mutate(formData)
+                  }
                 }} className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                   {/* <!-- Name Field --> */}
 
@@ -200,8 +258,13 @@ export default function ContactUsForm() {
                         value={formData.name}
                         required
                         placeholder="الاسم"
-                        className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
+                          validationErrors.name ? 'border-red-500' : 'border-[#DADADA]'
+                        }`}
                       />
+                      {validationErrors.name && (
+                        <p className="text-red-500 text-sm">{validationErrors.name}</p>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -210,12 +273,22 @@ export default function ContactUsForm() {
                       </label>
                       <div className="relative">
                         <Select
-                          className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                          className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${
+                            validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'
+                          }`}
                           allowClear
                           value={formData.country_id == "" ? undefined : formData.country_id}
                           style={{ width: "100%", height: "3rem" }}
                           placeholder="الرجاء إختيار الدولة"
-                          onChange={(value) => setFormData({ ...formData, country_id: value })}
+                          onChange={(value) => {
+                            setFormData({ ...formData, country_id: value });
+                            if (validationErrors.country_id) {
+                              setValidationErrors((prev) => ({
+                                ...prev,
+                                country_id: undefined,
+                              }));
+                            }
+                          }}
                           options={data?.data?.countries && data?.data?.countries?.map(country => {
                             return (
                               {
@@ -226,6 +299,9 @@ export default function ContactUsForm() {
                           })}
                         />
                       </div>
+                      {validationErrors.country_id && (
+                        <p className="text-red-500 text-sm">{validationErrors.country_id}</p>
+                      )}
                     </div>
                     
                     {/* <!-- Email and Phone Row --> */}
@@ -239,8 +315,13 @@ export default function ContactUsForm() {
                         maxLength={160}
                         onChange={handleChange}
                         placeholder="الرجاء إدخال البريد الإلكتروني."
-                        className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
+                          validationErrors.email ? 'border-red-500' : 'border-[#DADADA]'
+                        }`}
                       />
+                      {validationErrors.email && (
+                        <p className="text-red-500 text-sm">{validationErrors.email}</p>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -249,12 +330,26 @@ export default function ContactUsForm() {
                         dir="rtl"
                         type="number"
                         required
+                        maxLength={25}
                         value={formData.phone}
                         name="phone"
-                        onChange={(e) => setFormData({ ...formData, phone: String(e.target.value) })}
+                        onChange={(e) => {
+                          setFormData({ ...formData, phone: String(e.target.value) });
+                          if (validationErrors.phone) {
+                            setValidationErrors((prev) => ({
+                              ...prev,
+                              phone: undefined,
+                            }));
+                          }
+                        }}
                         placeholder="الرجاء إدخال رقم الجوال."
-                        className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
+                          validationErrors.phone ? 'border-red-500' : 'border-[#DADADA]'
+                        }`}
                       />
+                      {validationErrors.phone && (
+                        <p className="text-red-500 text-sm">{validationErrors.phone}</p>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -263,12 +358,22 @@ export default function ContactUsForm() {
                       </label>
                       <div className="relative">
                         <Select
-                          className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                          className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${
+                            validationErrors.service_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'
+                          }`}
                           allowClear
                           value={formData.service_id == "" ? undefined : formData.service_id } 
                           style={{ width: '100%', height: "3rem" }}
                           placeholder="اختر سبب التواصل"
-                          onChange={(value) => setFormData({...formData, service_id: value})}
+                          onChange={(value) => {
+                            setFormData({...formData, service_id: value});
+                            if (validationErrors.service_id) {
+                              setValidationErrors((prev) => ({
+                                ...prev,
+                                service_id: undefined,
+                              }));
+                            }
+                          }}
                           options={data?.data?.services && data?.data?.services?.map(service => {
                             return (
                               {
@@ -279,6 +384,9 @@ export default function ContactUsForm() {
                           })}
                         />
                       </div>
+                      {validationErrors.service_id && (
+                        <p className="text-red-500 text-sm">{validationErrors.service_id}</p>
+                      )}
                     </div>
 
                     {/* <!-- Subject Field --> */}
@@ -304,14 +412,18 @@ export default function ContactUsForm() {
                         name="message"
                         value={formData.message}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 placeholder:text-[16px] placeholder:text-[#B1B1B1] border border-[#DADADA] rounded-md  focus:outline-none focus:ring-2 focus:ring-[#EDA133] focus:border-transparent resize-none"
+                        className={`w-full px-3 py-2 placeholder:text-[16px] placeholder:text-[#B1B1B1] border rounded-md focus:outline-none focus:ring-2 focus:ring-[#EDA133] focus:border-transparent resize-none ${
+                          validationErrors.message ? 'border-red-500' : 'border-[#DADADA]'
+                        }`}
                       ></textarea>
+                      {validationErrors.message && (
+                        <p className="text-red-500 text-sm">{validationErrors.message}</p>
+                      )}
                     </div>
 
                     <button
                       type="submit"
                       disabled={mutation.isPending}
-                      onClick={() => mutation.mutate(formData)}
                       className="flex-1 px-4 py-2 bg-[#EDA133] w-full md:w-full h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
                     >
                       {mutation.isPending ? "جاري الإرسال..." : "إرسال"}

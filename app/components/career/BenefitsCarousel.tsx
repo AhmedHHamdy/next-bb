@@ -6,8 +6,13 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
+import { Benefit } from "@/app/utils/Types";
 
-export default function BenefitsCarousel() {
+export default function BenefitsCarousel( { benefits }: { benefits?: {
+  title: string;
+  desc: string;
+  benefits: Benefit[];
+}}) {
   return (
     <>
       <Swiper
@@ -42,10 +47,9 @@ export default function BenefitsCarousel() {
       >
         {/* <!-- Slides --> */}
         <SwiperSlide className="swiper-slide">
-          {/* <!-- Card 1 --> */}
           <div className="bg-[#EDA133] rounded-lg p-[24px] px-[13px] flex flex-col justify-between items-center w-full min-h-[509px] lg:col-span-1">
             <div className="flex flex-col gap-[19px] items-center w-full h-full">
-              <h2 className="text-[29px] font-bold text-white leading-[1.2]  w-full">المزايا</h2>
+              <h2 className="text-[29px] font-bold text-white leading-[1.2]  w-full">{benefits?.title}</h2>
 
               {/* <!-- Decorative Pattern --> */}
               <div className="flex flex-col gap-[6px] opacity-20">
@@ -69,7 +73,7 @@ export default function BenefitsCarousel() {
               {/* <!-- Bottom Content --> */}
               <div className="flex flex-col gap-[20px] w-full">
                 <p className="text-[13px] font-medium text-white leading-[1.5]  w-full">
-                  استفد من العديد من <br /> المزايا التي نقدمها للموظفين - من <br /> إجازات مدفوعة إلى مرافق المكتب.
+                 {benefits?.desc}
                 </p>
                 <button className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-full h-[56px] border border-[#FCF4E9] rounded-lg hover:bg-[#FCF4E9] text-white hover:text-[#EDA133] transition-colors">
                   <span className="text-[13px] font-medium">عرض جميع المزايا</span>
@@ -78,9 +82,34 @@ export default function BenefitsCarousel() {
             </div>
           </div>
         </SwiperSlide>
+        {
+          benefits?.benefits?.map(benefit => {
+            return (
+              <SwiperSlide key={benefit.id} className="swiper-slide">
+                <div className="flex flex-col justify-between items-end gap-12 w-full lg:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[509px] py-[25px]">
+                  <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
+                    <h3 className="text-[14px] font-extrabold text-black leading-[1.6] w-full">
+                      {benefit.title}
+                    </h3>
+                    <div
+                      className="w-full h-[202px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden"
+                      style={{
+                        backgroundImage: `url(${benefit.image_url})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }}
+                    ></div>
+                    <p className="text-[14px] font-medium text-black leading-[1.43]  w-full h-[110px]">
+                      {benefit.description}
+                    </p>
+                  </div>
+                </div>
+              </SwiperSlide>
+            )
+          })
+        }
 
-        <SwiperSlide className="swiper-slide">
-          {/* <!-- Card 2 --> */}
+        {/* <SwiperSlide className="swiper-slide">
           <div className="flex flex-col justify-between items-end gap-12 w-full lg:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[509px] py-[25px]">
             <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
               <h3 className="text-[14px] font-extrabold text-black leading-[1.6]  w-full">
@@ -104,7 +133,6 @@ export default function BenefitsCarousel() {
         </SwiperSlide>
 
         <SwiperSlide className="swiper-slide">
-          {/* <!-- Card 3 --> */}
           <div className="flex flex-col justify-between items-end gap-12 w-full lg:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[509px] py-[25px]">
             <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
               <h3 className="text-[14px] font-extrabold text-black leading-[1.6]  w-full">
@@ -128,7 +156,6 @@ export default function BenefitsCarousel() {
         </SwiperSlide>
 
         <SwiperSlide className="swiper-slide">
-          {/* <!-- Card 4 --> */}
           <div className="flex flex-col justify-between items-end gap-12 w-full lg:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[509px] py-[25px]">
             <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
               <h3 className="text-[14px] font-extrabold text-black leading-[1.6]  w-full">
@@ -149,7 +176,7 @@ export default function BenefitsCarousel() {
               </p>
             </div>
           </div>
-        </SwiperSlide>
+        </SwiperSlide> */}
 
         <section className="flex justify-center items-center md:hidden mt-[32px] gap-[13px] md:gap-[16px]">
           <div className="benefits-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">

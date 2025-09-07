@@ -60,7 +60,7 @@ export default async function Page() {
                 {data?.other?.header_title?.slice(0, 60)}
               </h1>
 
-              <div className="absolute z-[50] md:top-[31%] lg:top-[36%] xl:top-[38%] 2xl:top-[38%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
+              <div className="absolute z-[50] md:top-[31%] lg:top-[36%] xl:top-[38%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
                 <img src="/hero-vector-1393.svg" alt="decorative element" className="w-[247px] h-[28px]" />
               </div>
 

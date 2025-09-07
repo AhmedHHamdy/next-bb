@@ -2,5 +2,14 @@
   "HomePage": {
     "title": "Hello world!",
     "about": "Go to the about page"
+  },
+  "ContactForm": {
+    "nameRequired": "Name field is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "countryRequired": "Please select your country",
+    "phoneRequired": "Phone number is required",
+    "serviceRequired": "Please select a service",
+    "messageRequired": "Message is required"
   }
 }
