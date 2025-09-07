@@ -10,14 +10,10 @@ type Country = {
   id: number,
   name: string,
   country_code: string,
+  phone_length: string,
   flag: string
 };
 
-// const countries: Country[] = [
-//   { code: "+966", flag: "🇸🇦", img: "/sa-flag-icon.svg" },
-//   { code: "+971", flag: "🇦🇪", img: "/sa-flag-icon.svg" },
-//   { code: "+20", flag: "🇪🇬", img: "/sa-flag-icon.svg" },
-// ];
 
 export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
   setSelectedPhone?: (v: string) => void,
@@ -147,12 +143,22 @@ export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
 
         {/* Phone Input */}
         <input
-          type="number"
+          type="text"
           value={formDataValue}
           required
+          maxLength={
+            data?.data && selected?.id
+              ? Number(
+                  data?.data?.find(
+                    (e:any) => String(e.id) == String(selected?.id)
+                  )?.phone_length || ""
+                )
+              : 25
+          }
           onChange={(e) => {
             // setPhoneInputValue(e.target.value)
-            setSelectedPhone && setSelectedPhone(selected?.country_code + "-" + e.target.value)
+            const value = e.target.value.replace(/\D/g, "");
+            setSelectedPhone && setSelectedPhone(selected?.country_code + "-" + value)
           }}
           placeholder="الرجاء إدخال رقم الجوال"
           className="flex-1 px-3 py-2 text-end text-sm text-black placeholder-[#B1B1B1] focus:outline-none rtl:text-start ltr:text-start ltr:placeholder:text-start rtl:placeholder:text-start"

@@ -107,9 +107,9 @@ export default async function HomePage() {
 
       <Services servicesData={data?.our_services || []} />
 
-      <ProjectLogos logosData={data?.our_projects.projects} />
+      <ProjectLogos logosData={data?.our_products} />
 
-      <WhoAreWe />
+      <WhoAreWe dataInfo={data?.business_building} />
 
       <PreviousProjects />
 

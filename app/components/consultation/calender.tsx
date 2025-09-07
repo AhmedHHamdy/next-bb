@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 import CountryCodeInput from "../global/CountryCodeInput";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FormSettingsDataType } from "@/app/utils/Types";
 import { Select } from "antd";
@@ -19,6 +19,16 @@ interface FormData {
   country_code: string;
 }
 
+interface ValidationErrors {
+  name?: string;
+  email?: string;
+  country_id?: string;
+  phone?: string;
+  services?: string;
+  date?: string;
+  duration_id?: string;
+}
+
 export default function CalendarComponent({ durations }: { durations: {
   id: number;
   name: string;
@@ -28,6 +38,7 @@ export default function CalendarComponent({ durations }: { durations: {
 }[]}) {
 
   const locale = useLocale();
+  const t = useTranslations("ConsultationForm");
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -45,6 +56,7 @@ export default function CalendarComponent({ durations }: { durations: {
   const [successText, setSuccessText] = useState("");
 
   const [errorText, setErrorText] = useState("");
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -155,6 +167,76 @@ export default function CalendarComponent({ durations }: { durations: {
       ...prev,
       [name]: value,
     }));
+
+    if (validationErrors[name as keyof ValidationErrors]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+  };
+
+  const validateStepOne = (): boolean => {
+    const errors: ValidationErrors = {};
+    if (!formData.date) {
+      errors.date = t("dateRequired");
+    }
+    if (!formData.duration_id) {
+      errors.duration_id = t("durationRequired");
+    }
+    setValidationErrors((prev) => ({ ...prev, ...errors }));
+    return Object.keys(errors).length === 0;
+  };
+
+  const validateForm = (): boolean => {
+    const errors: ValidationErrors = {};
+    // Name
+    if (!formData.name.trim()) {
+      errors.name = t("nameRequired");
+    }
+    // Email
+    if (!formData.email.trim()) {
+      errors.email = t("emailRequired");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        errors.email = t("emailInvalid");
+      }
+    }
+    // Country
+    if (!formData.country_id) {
+      errors.country_id = t("countryRequired");
+    }
+    // Phone
+    if (!formData.phone.trim()) {
+      errors.phone = t("phoneRequired");
+    } else {
+      const phoneLength =
+        data && formData.country_id
+          ? Number(
+              data?.data?.countries?.find(
+                (e: any) => String(e.id) == formData.country_id
+              )?.phone_length || ""
+            )
+          : 25;
+      if (formData.phone.length !== phoneLength) {
+        errors.phone = t("phoneLengthError");
+      }
+    }
+    // Services
+    if (!formData.services || (formData.services as unknown as any[])?.length === 0) {
+      errors.services = t("servicesRequired");
+    }
+    // Step one requirements
+    if (!formData.date) {
+      errors.date = t("dateRequired");
+    }
+    if (!formData.duration_id) {
+      errors.duration_id = t("durationRequired");
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const fetchFormSettingsData = async (): Promise<FormSettingsDataType> => {
@@ -345,6 +427,9 @@ export default function CalendarComponent({ durations }: { durations: {
                             );
                           })}
                         </div>
+                        {validationErrors.date && (
+                          <p className="text-red-500 text-sm mt-2">{validationErrors.date}</p>
+                        )}
                       </div>
                     </div>
 
@@ -384,6 +469,9 @@ export default function CalendarComponent({ durations }: { durations: {
                             {slot.formatted_name}
                           </button>
                         ))}
+                        {validationErrors.duration_id && (
+                          <p className="text-red-500 text-sm">{validationErrors.duration_id}</p>
+                        )}
                       </div>
                     </div>
                   </section>
@@ -393,15 +481,11 @@ export default function CalendarComponent({ durations }: { durations: {
                     <section className="w-full flex flex-col md:flex-row gap-[16px] md:items-center pb-[16px]">
                       <button
                         className="px-4 py-2 bg-[#EDA133] flex justify-center items-center w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={!canProceed}
+                        disabled={false}
                         onClick={() => {
-                          // if (canProceed) {
-                          //   console.log("Selected:", {
-                          //     date: selectedDate?.toISOString(),
-                          //     time: selectedTimeSlot,
-                          //   });
-                          // }
-                          setNextSlide(true)
+                          if (validateStepOne()) {
+                            setNextSlide(true)
+                          }
                         }}
                       >
                         التالي
@@ -419,8 +503,11 @@ export default function CalendarComponent({ durations }: { durations: {
           <div className="px-4 pt-4 md:p-8">
             <div className="space-y-[32px] md:space-y-[48px]">
               <div className="space-y-12">
-                <form onClick={(e) => {
-                    e.preventDefault()
+                <form noValidate onSubmit={(e) => {
+                    e.preventDefault();
+                    if (validateForm()) {
+                      mutation.mutate(formData);
+                    }
                   }} className="space-y-[16px] md:space-y-6">
                   <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
                     معلومات عن الإستشارة
@@ -440,8 +527,11 @@ export default function CalendarComponent({ durations }: { durations: {
                         onChange={handleChange}
                         value={formData?.name}
                         placeholder="ادخل الاسم الكامل"
-                        className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.name ? 'border-red-500' : 'border-[#DADADA]'}`}
                       />
+                      {validationErrors.name && (
+                        <p className="text-red-500 text-sm">{validationErrors.name}</p>
+                      )}
                     </div>
 
                     {/* <!-- Country Field --> */}
@@ -451,12 +541,17 @@ export default function CalendarComponent({ durations }: { durations: {
                       </label>
                       <div className="relative">
                         <Select
-                          className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                          className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                           allowClear
                           value={formData.country_id == "" ? undefined : formData.country_id}
                           style={{ width: "100%", height: "3rem" }}
                           placeholder="الرجاء إختيار الدولة"
-                          onChange={(value) => setFormData({ ...formData, country_id: value })}
+                          onChange={(value) => {
+                            setFormData({ ...formData, country_id: value });
+                            if (validationErrors.country_id) {
+                              setValidationErrors((prev) => ({ ...prev, country_id: undefined }));
+                            }
+                          }}
                           options={data?.data?.countries && data?.data?.countries?.map(country => {
                             return (
                               {
@@ -467,9 +562,22 @@ export default function CalendarComponent({ durations }: { durations: {
                           })}
                         />
                       </div>
+                      {validationErrors.country_id && (
+                        <p className="text-red-500 text-sm">{validationErrors.country_id}</p>
+                      )}
                     </div>
 
-                    <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, country_code: value?.split("-")?.[0], phone: value?.split("-")?.[1]}))} formDataValue={formData.phone} />
+                    <section className="flex flex-col gap-[0.8rem]">
+                      <CountryCodeInput setSelectedPhone={(value: string) => {
+                        setFormData(previous => ({...previous, country_code: value?.split("-")?.[0], phone: value?.split("-")?.[1]}));
+                        if (validationErrors.phone) {
+                          setValidationErrors((prev) => ({ ...prev, phone: undefined }));
+                        }
+                      }} formDataValue={formData.phone} />
+                      {validationErrors.phone && (
+                        <p className="text-red-500 text-sm">{validationErrors.phone}</p>
+                      )}
+                    </section>
 
                     {/* <!-- Email Field --> */}
                     <div className="space-y-3">
@@ -484,23 +592,30 @@ export default function CalendarComponent({ durations }: { durations: {
                         onChange={handleChange}
                         value={formData.email}
                         placeholder="الرجاء إدخال البريد الإلكتروني."
-                        className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.email ? 'border-red-500' : 'border-[#DADADA]'}`}
                       />
+                      {validationErrors.email && (
+                        <p className="text-red-500 text-sm">{validationErrors.email}</p>
+                      )}
                     </div>
 
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
                       الخدمة المطلوبة <span className="text-[#FF6B6B]">*</span>
                       </label>
-                      <div className="relative">
                       <Select
                         mode="multiple"
-                        className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                        className={`w-full custom-select px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.services ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                         allowClear
                         value={formData["services"]} 
-                        style={{ width: '100%' }}
+                        style={{ width: '100%'}}
                         placeholder="اختر"
-                        onChange={(values) => setFormData({...formData, services: [...values]})}
+                        onChange={(values) => {
+                          setFormData({...formData, services: [...values]});
+                          if (validationErrors.services) {
+                            setValidationErrors((prev) => ({ ...prev, services: undefined }));
+                          }
+                        }}
                         options={data?.data?.services && data?.data?.services?.map(service => {
                           return (
                             {
@@ -510,7 +625,9 @@ export default function CalendarComponent({ durations }: { durations: {
                           )
                         })}
                       />
-                      </div>
+                      {validationErrors.services && (
+                        <p className="text-red-500 text-sm mt-3">{validationErrors.services}</p>
+                      )}
                     </div>
 
                     
@@ -532,7 +649,6 @@ export default function CalendarComponent({ durations }: { durations: {
                       <button
                         type="submit"
                         disabled={mutation.isPending}
-                        onClick={() => mutation.mutate(formData)}
                         className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors">
                         {mutation.isPending ? "جاري الإرسال..." : "إرسال"}
                       </button>

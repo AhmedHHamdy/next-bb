@@ -37,6 +37,8 @@ export default function Footer() {
     queryFn: fetchFooter,
   });
 
+  console.log(data)
+
 
   // if (isLoading) {
   //   return (
@@ -59,7 +61,7 @@ export default function Footer() {
     <>
     {/* mt-[64px] md:mt-[100px] */}
       <footer className="footer">
-      <a
+      {data?.data?.footer?.home_whatsapp_icon_status && <a
         href={`https://wa.me/${data?.data?.social?.whatsapp}`}
         target="_blank"
         rel="noopener noreferrer"
@@ -67,7 +69,7 @@ export default function Footer() {
         <section className="fixed bottom-2 right-4 z-[2000]">
           <img src="/whatsapp.svg" alt="whatsapp icon" />
         </section>
-      </a>
+      </a>}
 
 
         <div
@@ -151,12 +153,12 @@ export default function Footer() {
                             fill="#B1B1B1"
                           />
                         </svg>
-                        <a
-                          href="#"
+                        <Link
+                          href="/blogs"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          فريق العمل
-                        </a>
+                          المدونة
+                        </Link>
                       </li>
                       <li className="flex items-center gap-4">
                         <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -211,22 +213,26 @@ export default function Footer() {
                     <div className="flex gap-[85px]">
                       <div className="">
                         <ul className="list-none p-0 m-0 space-y-3">
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تطبيقات الهواتف للمطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
+                          {data?.data?.footer?.services && data?.data?.footer?.services?.slice(0, 5)?.map(service => {
+                            return (
+                              <li key={service.id} className="flex items-center gap-4">
+                                <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path
+                                    opacity="0.8"
+                                    d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
+                                    fill="#B1B1B1"
+                                  />
+                                </svg>
+                                <Link
+                                  href={`/services/${service.id}`}
+                                  className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
+                                >
+                                  {service.name.slice(0, 20)}
+                                </Link>
+                              </li>
+                            )
+                          })}
+                          {/* <li className="flex items-center gap-4">
                             <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path
                                 opacity="0.8"
@@ -285,13 +291,32 @@ export default function Footer() {
                             >
                               تصميم المواقع الإلكترونية
                             </a>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
 
                       <div className="flex-1">
                         <ul className="list-none p-0 m-0 space-y-3">
-                          <li className="flex items-center gap-4">
+                        {data?.data?.footer?.services && data?.data?.footer?.services?.slice(5)?.map(service => {
+                            return (
+                              <li key={service.id} className="flex items-center gap-4">
+                                <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path
+                                    opacity="0.8"
+                                    d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
+                                    fill="#B1B1B1"
+                                  />
+                                </svg>
+                                <Link
+                                  href={`/services/${service.id}`}
+                                  className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
+                                >
+                                  {service.name.slice(0, 20)}
+                                </Link>
+                              </li>
+                            )
+                          })}
+                          {/* <li className="flex items-center gap-4">
                             <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path
                                 opacity="0.8"
@@ -365,7 +390,7 @@ export default function Footer() {
                             >
                               تصوير احترافي لمنتجات الطعام والمطعم
                             </a>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </div>
@@ -378,7 +403,7 @@ export default function Footer() {
                     <div className="flex flex-col gap-[16px]">
                       <div className="">
                         <ul className="list-none p-0 m-0 space-y-3">
-                          <li className="flex items-center gap-2">
+                          {/* <li className="flex items-center gap-2">
                             <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path
                                 opacity="0.8"
@@ -452,11 +477,30 @@ export default function Footer() {
                             >
                               تصميم المواقع الإلكترونية
                             </a>
-                          </li>
+                          </li> */}
+                          {data?.data?.footer?.services && data?.data?.footer?.services?.map(service => {
+                            return (
+                              <li key={service.id} className="flex items-center gap-4">
+                                <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path
+                                    opacity="0.8"
+                                    d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
+                                    fill="#B1B1B1"
+                                  />
+                                </svg>
+                                <Link
+                                  href={`/services/${service.id}`}
+                                  className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
+                                  >
+                                  {service.name.slice(0, 20)}
+                                </Link>
+                              </li>
+                            )
+                          })}
                         </ul>
                       </div>
 
-                      <div className="flex-1">
+                      {/* <div className="flex-1">
                         <ul className="list-none p-0 m-0 space-y-3">
                           <li className="flex items-center gap-2">
                             <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -534,7 +578,7 @@ export default function Footer() {
                             </a>
                           </li>
                         </ul>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 
@@ -564,21 +608,6 @@ export default function Footer() {
                             fill="#B1B1B1"
                           />
                         </svg>
-                        <a
-                          href="#"
-                          className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                        >
-                          فريق العمل
-                        </a>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            opacity="0.8"
-                            d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                            fill="#B1B1B1"
-                          />
-                        </svg>
                         <Link
                           href="/career"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
@@ -594,12 +623,27 @@ export default function Footer() {
                             fill="#B1B1B1"
                           />
                         </svg>
-                        <a
-                          href="#"
+                        <Link
+                          href="/blogs"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          رؤيتنا ورسالتنا
-                        </a>
+                          المدونة
+                        </Link>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            opacity="0.8"
+                            d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
+                            fill="#B1B1B1"
+                          />
+                        </svg>
+                        <Link
+                          href="/faq"
+                          className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
+                        >
+                          الاسئلة الشائعة
+                        </Link>
                       </li>
                       <li className="flex items-center gap-2">
                         <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">

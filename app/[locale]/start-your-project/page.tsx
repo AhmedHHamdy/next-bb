@@ -5,8 +5,8 @@ import FileUpload from "@/app/components/global/FileUpload";
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { CountriesData, FormSettingsDataType } from "@/app/utils/Types";
-import { useLocale } from "next-intl";
+import { FormSettingsDataType } from "@/app/utils/Types";
+import { useLocale, useTranslations } from "next-intl";
 import PreviousProjects from "@/app/components/home/PreviousProjects";
 import { Select } from "antd";
 interface FormData {
@@ -26,9 +26,23 @@ interface FormData {
   country_code: number; 
 }
 
+interface ValidationErrors {
+  name?: string;
+  email?: string;
+  country_id?: string;
+  phone?: string;
+  communication_way?: string;
+  communication_lang?: string;
+  owner_identity?: string;
+  owner_role?: string;
+  project_name?: string;
+  services?: string;
+}
+
 export default function Page() {
 
   const locale = useLocale();
+  const t = useTranslations("StartProjectForm");
 
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState<FormData>({
@@ -50,6 +64,7 @@ export default function Page() {
 
   const [errorText, setErrorText] = useState("")
   const [successText, setSuccessText] = useState("");
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
 
   console.log(formData, "formData")
@@ -62,6 +77,12 @@ export default function Page() {
       ...prev,
       [name]: value,
     }));
+    if (validationErrors[name as keyof ValidationErrors]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
   };
 
   const fetchFormSettingsData = async (): Promise<FormSettingsDataType> => {
@@ -177,6 +198,71 @@ export default function Page() {
   });
 
 
+  const validateForm = (): boolean => {
+    const errors: ValidationErrors = {};
+
+    if (!formData.name.trim()) {
+      errors.name = t("nameRequired");
+    }
+
+    if (!formData.email.trim()) {
+      errors.email = t("emailRequired");
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        errors.email = t("emailInvalid");
+      }
+    }
+
+    if (!formData.country_id) {
+      errors.country_id = t("countryRequired");
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = t("phoneRequired");
+    } else {
+      const phoneLength =
+        data && formData.country_id
+          ? Number(
+              data?.data?.countries?.find(
+                (e: any) => String(e.country_code) == String(formData.country_code)
+              )?.phone_length || ""
+            )
+          : undefined;
+      if (phoneLength && formData.phone.length !== phoneLength) {
+        errors.phone = t("phoneLengthError");
+      }
+    }
+
+    if (!formData.communication_way) {
+      errors.communication_way = t("communicationWayRequired");
+    }
+
+    if (!formData.communication_lang) {
+      errors.communication_lang = t("communicationLangRequired");
+    }
+
+    if (!formData.owner_identity) {
+      errors.owner_identity = t("ownerIdentityRequired");
+    }
+
+    if (formData.owner_identity === "other" && !formData.owner_role.trim()) {
+      errors.owner_role = t("ownerRoleRequired");
+    }
+
+    if (!formData.project_name.trim()) {
+      errors.project_name = t("projectNameRequired");
+    }
+
+    if (!formData.services || formData.services.length === 0) {
+      errors.services = t("servicesRequired");
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+
   return (
     <>
       <div className="w-full bg-white px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem]">
@@ -215,9 +301,11 @@ export default function Page() {
           {/* <!-- Form Section --> */}
           <div className="max-w-[1300px] mx-auto bg-white border border-[#DADADA77] rounded-lg">
             <div className="p-2 md:p-8">
-              <form onSubmit={(e) => {
+              <form noValidate onSubmit={(e) => {
                 e.preventDefault()
-                mutation.mutate(formData)
+                if (validateForm()) {
+                  mutation.mutate(formData)
+                }
               }} className="space-y-[32px] md:space-y-[48px]">
                 <div className="space-y-12">
                   <div className="space-y-[16px] md:space-y-6">
@@ -240,8 +328,11 @@ export default function Page() {
                           maxLength={60}
                           onChange={handleChange}
                           placeholder="الرجاء إدخال اسمك."
-                          className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                          className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.name ? 'border-red-500' : 'border-[#DADADA]'}`}
                         />
+                        {validationErrors.name && (
+                          <p className="text-red-500 text-sm">{validationErrors.name}</p>
+                        )}
                       </div>
 
                       {/* <!-- Country Field --> */}
@@ -251,12 +342,17 @@ export default function Page() {
                         </label>
                         <div className="relative">
                           <Select
-                            className="w-full h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                            className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                             allowClear
                             value={formData.country_id == "" ? undefined : formData.country_id } 
                             style={{ width: '100%', height: "3rem" }}
                             placeholder="الرجاء إختيار الدولة"
-                            onChange={(value) => setFormData({...formData, country_id: value})}
+                            onChange={(value) => {
+                              setFormData({...formData, country_id: value})
+                              if (validationErrors.country_id) {
+                                setValidationErrors((prev) => ({...prev, country_id: undefined}))
+                              }
+                            }}
                             options={data?.data?.countries && data?.data?.countries.map(country => {
                               return (
                                 {
@@ -266,6 +362,9 @@ export default function Page() {
                               )
                             })}
                           />
+                          {validationErrors.country_id && (
+                            <p className="text-red-500 text-sm mt-3">{validationErrors.country_id}</p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -285,27 +384,47 @@ export default function Page() {
                           ما هي صفتك؟ <span className="text-[#FF6B6B]">*</span>
                         </h3>
                         <div id="role-buttons" className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
-                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "owner"}))} className={`${formData.owner_identity == "owner" ? 
+                          <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "owner"})) 
+                          if (validationErrors.owner_identity || validationErrors.owner_role) {
+                                setValidationErrors((prev) => ({...prev, owner_identity: undefined, owner_role: undefined}))
+                              }  
+                        } } className={`${formData.owner_identity == "owner" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             صاحب المشروع
                           </button>
-                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "representative"}))} className={`${formData.owner_identity == "representative" ? 
+                          <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "representative"})) 
+                          if (validationErrors.owner_identity || validationErrors.owner_role) {
+                                setValidationErrors((prev) => ({...prev, owner_identity: undefined, owner_role: undefined}))
+                              }  
+                        } } className={`${formData.owner_identity == "representative" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             ممثل عن الشركة
                           </button>
-                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "employee"}))} className={`${formData.owner_identity == "employee" ? 
+                          <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "employee"})) 
+                          if (validationErrors.owner_identity || validationErrors.owner_role) {
+                                setValidationErrors((prev) => ({...prev, owner_identity: undefined, owner_role: undefined}))
+                              }  
+                        } } className={`${formData.owner_identity == "employee" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             موظف
                           </button>
-                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "consulting"}))} className={`${formData.owner_identity == "consulting" ? 
+                          <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "consulting"})) 
+                          if (validationErrors.owner_identity || validationErrors.owner_role) {
+                                setValidationErrors((prev) => ({...prev, owner_identity: undefined, owner_role: undefined}))
+                              }  
+                        } } className={`${formData.owner_identity == "consulting" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             جهة استشارية
                           </button>
-                          <button onClick={() => setFormData((previousData) => ({...previousData, owner_identity: "other"}))}
+                          <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "other"})) 
+                          if (validationErrors.owner_identity || validationErrors.owner_role) {
+                                setValidationErrors((prev) => ({...prev, owner_identity: undefined, owner_role: undefined}))
+                              }  
+                        } }
                             id="other-button"
                             className={`${formData.owner_identity == "other" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
@@ -313,12 +432,16 @@ export default function Page() {
                           >
                             أخرى
                           </button>
+
                         </div>
+                        {validationErrors.owner_identity && (
+                            <p className="text-red-500 text-sm">{validationErrors.owner_identity}</p>
+                          )}
                       </div>
 
                       {/* <!-- Hidden by default --> */}
                       {formData.owner_identity == "other" && <div id="other-button-field" className="space-y-3">
-                        <label className="text-base font-medium text-black block">ما هي صفتك ?</label>
+                        <label className="text-base font-medium text-black block">ما هي صفتك ؟ </label>
                         <input
                           type="text"
                           name="owner_role"
@@ -330,6 +453,9 @@ export default function Page() {
                         />
                       </div>}
                     </div>
+                    {validationErrors.owner_role && (
+                      <p className="text-red-500 text-sm">{validationErrors.owner_role}</p>
+                    )}
                   </div>
 
                   <div className="space-y-[32px] md:space-b-[48px] md:space-t-[56px]">
@@ -341,7 +467,17 @@ export default function Page() {
                       {/* <!-- Name and Email Row --> */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-6">
                         {/* <!-- Phone Field --> */}
-                        <CountryCodeInput setSelectedPhone={(value: string) => setFormData(previous => ({...previous, country_code: Number(value?.split("-")?.[0]), phone: value?.split("-")?.[1]}))} formDataValue={formData.phone} />
+                        <section className="flex flex-col gap-[0.8rem]">
+                          <CountryCodeInput setSelectedPhone={(value: string) => {
+                            setFormData(previous => ({...previous, country_code: Number(value?.split("-")?.[0]), phone: value?.split("-")?.[1]}))
+                            if (validationErrors.phone) {
+                              setValidationErrors((prev) => ({...prev, phone: undefined}))
+                            }
+                          }} formDataValue={formData.phone} />
+                          {validationErrors.phone && (
+                            <p className="text-red-500 text-sm">{validationErrors.phone}</p>
+                          )}
+                        </section>
 
                         {/* <!-- Email Field --> */}
                         <div className="space-y-3">
@@ -356,8 +492,11 @@ export default function Page() {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="الرجاء إدخال البريد الإلكتروني."
-                            className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                            className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.email ? 'border-red-500' : 'border-[#DADADA]'}`}
                           />
+                          {validationErrors.email && (
+                            <p className="text-red-500 text-sm">{validationErrors.email}</p>
+                          )}
                         </div>
                       </div>
 
@@ -369,17 +508,30 @@ export default function Page() {
                             وسيلة التواصل المفضلة؟ <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
-                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_way: "whatsapp"}))} className={`${formData.communication_way == "whatsapp" ? 
+                            <button type="button" onClick={() => {
+                              setFormData((previousData) => ({...previousData, communication_way: "whatsapp"}))
+                              if (validationErrors.communication_way) {
+                                setValidationErrors((prev) => ({...prev, communication_way: undefined}))
+                              }
+                            }} className={`${formData.communication_way == "whatsapp" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                               واتساب
                             </button>
-                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_way: "call"}))} className={`${formData.communication_way == "call" ? 
+                            <button type="button" onClick={() => {
+                              setFormData((previousData) => ({...previousData, communication_way: "call"}))
+                              if (validationErrors.communication_way) {
+                                setValidationErrors((prev) => ({...prev, communication_way: undefined}))
+                              }
+                            }} className={`${formData.communication_way == "call" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                               اتصال
                             </button>
                           </div>
+                          {validationErrors.communication_way && (
+                              <p className="text-red-500 text-sm">{validationErrors.communication_way}</p>
+                            )}
                         </div>
 
                         {/* <!-- Role Field --> */}
@@ -388,19 +540,32 @@ export default function Page() {
                             ما اللغة التي تفضل التواصل بها؟ <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
-                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_lang: "arabic"}))} className={`px-6 py-3 border 
+                            <button type="button" onClick={() => {
+                              setFormData((previousData) => ({...previousData, communication_lang: "arabic"}))
+                              if (validationErrors.communication_lang) {
+                                setValidationErrors((prev) => ({...prev, communication_lang: undefined}))
+                              }
+                            }} className={`px-6 py-3 border 
                             border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] 
                             transition-colors ${formData.communication_lang == "arabic" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             }`}>
                               عربي
                             </button>
-                            <button onClick={() => setFormData((previousData) => ({...previousData, communication_lang: "english"}))} className={`px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors ${formData.communication_lang == "english" ? 
+                            <button type="button" onClick={() => {
+                              setFormData((previousData) => ({...previousData, communication_lang: "english"}))
+                              if (validationErrors.communication_lang) {
+                                setValidationErrors((prev) => ({...prev, communication_lang: undefined}))
+                              }
+                            }} className={`px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors ${formData.communication_lang == "english" ? 
                               "border-[#EDA133] bg-[#FAEAD1] text-black" : ""
                             }`}>
                               إنجليزي
                             </button>
                           </div>
+                          {validationErrors.communication_lang && (
+                              <p className="text-red-500 text-sm">{validationErrors.communication_lang}</p>
+                            )}
                         </div>
                       </div>
                     </div>
@@ -423,8 +588,11 @@ export default function Page() {
                             required
                             type="text"
                             placeholder="اسم المشروع"
-                            className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
+                            className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.project_name ? 'border-red-500' : 'border-[#DADADA]'}`}
                           />
+                          {validationErrors.project_name && (
+                            <p className="text-red-500 text-sm">{validationErrors.project_name}</p>
+                          )}
                         </div>
 
                         <div className="space-y-3">
@@ -434,12 +602,17 @@ export default function Page() {
                           <div className="relative">
                             <Select
                               mode="multiple"
-                              className="w-full min-h-12 px-3 py-2 border-0 border-[#DADADA] rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133]"
+                              className={`w-full custom-select px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.services ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                               allowClear
                               value={formData["services"]} 
                               style={{ width: '100%' }}
                               placeholder="اختر"
-                              onChange={(values) => setFormData({...formData, services: [...values]})}
+                              onChange={(values) => {
+                                setFormData({...formData, services: [...values]})
+                                if (validationErrors.services) {
+                                  setValidationErrors((prev) => ({...prev, services: undefined}))
+                                }
+                              }}
                               options={data?.data?.services && data?.data?.services?.map(service => {
                                 return (
                                   {
@@ -450,6 +623,9 @@ export default function Page() {
                               })}
                             />
                           </div>
+                          {validationErrors.services && (
+                            <p className="text-red-500 text-sm">{validationErrors.services}</p>
+                          )}
                         </div>
 
                         <div className="space-y-3 lg:col-span-2">
@@ -474,7 +650,7 @@ export default function Page() {
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
                             <button
                               id="upload-files"
-                              
+                              type="button"
                               onClick={() => {
                                 setOpen(true)
                                 setFormData((previousData) => ({...previousData, has_file: true}))
@@ -485,7 +661,7 @@ export default function Page() {
                             >
                               نعم
                             </button>
-                            <button onClick={() => {
+                            <button type="button" onClick={() => {
                               setOpen(false)
                               setFormData((previousData) => ({...previousData, has_file: false}))
                             }} className={`${formData.has_file == false ? 
@@ -516,7 +692,12 @@ export default function Page() {
                       <button
                         type="submit"
                         disabled={mutation.isPending}
-                        onClick={() => mutation.mutate(formData)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (validateForm()) {
+                            mutation.mutate(formData)
+                          }
+                        }}
                         className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
                       >
                         {mutation.isPending ? "جاري الإرسال..." : "إرسال"}

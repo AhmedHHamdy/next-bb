@@ -10,6 +10,33 @@
     "countryRequired": "Please select your country",
     "phoneRequired": "Phone number is required",
     "serviceRequired": "Please select a service",
-    "messageRequired": "Message is required"
+    "messageRequired": "Message is required",
+    "phoneLengthError": "Phone number is not valid"
+  },
+  "StartProjectForm": {
+    "nameRequired": "Name field is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "countryRequired": "Please select your country",
+    "phoneRequired": "Phone number is required",
+    "phoneLengthError": "Phone number is not valid",
+    "communicationWayRequired": "Select a preferred communication method",
+    "communicationLangRequired": "Select a preferred language",
+    "ownerIdentityRequired": "Select your role",
+    "ownerRoleRequired": "Please enter your role",
+    "projectNameRequired": "Project name is required",
+    "servicesRequired": "Select at least one service"
+  }
+  ,
+  "ConsultationForm": {
+    "nameRequired": "Name field is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format",
+    "countryRequired": "Please select your country",
+    "phoneRequired": "Phone number is required",
+    "phoneLengthError": "Phone number is not valid",
+    "servicesRequired": "Select at least one service",
+    "dateRequired": "Please select a consultation date",
+    "durationRequired": "Please select a time slot"
   }
 }
