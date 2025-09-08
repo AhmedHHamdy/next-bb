@@ -134,6 +134,62 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
     });
   };
 
+  function handleFileImage(input: string): string {
+    const extractExtension = (value: string): string => {
+      // If it's a MIME type like image/png, take the subtype
+      if (value.includes("/")) {
+        return value.split("/")[1]?.toLowerCase() ?? "";
+      }
+      // Otherwise treat as filename and take the part after the last dot
+      const lastDotIndex = value.lastIndexOf(".");
+      if (lastDotIndex === -1) return "";
+      return value.slice(lastDotIndex + 1).toLowerCase();
+    };
+
+    const ext = extractExtension(input);
+
+    switch (ext) {
+      // Images
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+      case "webp":
+      case "svg":
+        return "/img-svg.svg";
+
+      // Archives
+      case "rar":
+        return "/rar-svg.svg";
+      case "zip":
+        return "/zip-svg.svg";
+
+      // Videos
+      case "mp4":
+        return "/mp4-svg.svg";
+      case "mkv":
+      case "avi":
+      case "mov":
+      case "wmv":
+      case "flv":
+      case "webm":
+        return "/vlc-svg.svg";
+
+      // Documents
+      case "ppt":
+      case "pptx":
+        return "/ppt-svg.svg";
+      case "doc":
+      case "docx":
+        return "/doc-svg.svg";
+      case "pdf":
+        return "/pdf-doc.svg";
+
+      default:
+        return "/file.svg";
+    }
+  }
+
 
   return (
     <div
@@ -170,7 +226,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
             className="hidden"
             multiple
             disabled={files.length >= 5} // disable after 5 files
-            accept=".rar,.png,.jpg,.jpeg,.docx,.csv,.xls,.xlsx"
+            accept=".rar,.zip,.png,.jpg,.jpeg,.docx,.csv,.xls,.xlsx,.mp4"
             onChange={(e) => handleFiles(e.target.files)}
           />
           <div className="flex flex-col items-center gap-6">
@@ -182,7 +238,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
                   : "اسحب وأفلت ملفاتك، أو تصفح"}
               </p>
               <p className="text-sm text-center text-[#393939]">
-                الصيغة المدعومة: rar, png, jpg, docx, csv, excel
+                الصيغة المدعومة: JPG, PNG, DOCX, XLSX, RAR, ZIP, MP4
               </p>
             </div>
           </div>
@@ -197,7 +253,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img src="/pdf-doc.svg" alt="file icon" />
+                  <img src={handleFileImage(file.name || file.type)} alt="file icon" />
                   <div>
                     <p className="text-sm font-bold text-black">{file.name}</p>
                     <p className="text-xs text-[#4A4A4A]">
@@ -212,12 +268,12 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
                   <img src="/delete-icon.svg" alt="delete icon" />
                 </button>
               </div>
-              <div className="w-full h-2 bg-[#FCF4E9] rounded-full overflow-hidden mt-[12px]">
+              {progress !== 100 && <div className="w-full h-2 bg-[#FCF4E9] rounded-full overflow-hidden mt-[12px]">
                 <div
                   className="progress-bar h-full bg-[#EDA133] rounded-full"
                   style={{ width: `${progress}%` }}
                 ></div>
-              </div>
+              </div>}
             </section>
           ))}
         </div>

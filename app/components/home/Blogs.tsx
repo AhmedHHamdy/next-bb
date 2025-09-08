@@ -52,7 +52,7 @@ export default function Blogs({
             }}
           >
             {articles?.articles &&
-              articles?.articles?.map((article) => {
+              articles?.articles?.slice(0, 3)?.map((article) => {
                 return (
                   <SwiperSlide key={article.id} className="swiper-slide">
                     <Link href={`blogs/${article.id}`}>

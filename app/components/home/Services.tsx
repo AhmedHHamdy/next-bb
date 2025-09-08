@@ -10,6 +10,23 @@ export default function Services({
     services: ServiceType[];
   };
 }) {
+
+  function truncateText(text: string = "", maxLength: number): string {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "..."
+    }
+
+    return text
+  }
+
+  function truncate60(text: string = ""): string {
+    return truncateText(text, 60)
+  }
+
+  function truncate120(text: string = ""): string {
+    return truncateText(text, 120)
+  }
+
   return (
     <section className="relative bg-[#131A27] mt-[32px] md:mt-[64px] py-[72px] px-[15px] 2xl:px-0 overflow-hidden">
       <div className="absolute inset-0 top-[15px]">
@@ -36,9 +53,9 @@ export default function Services({
                     <img src={service.image_url} alt="service icon" />
                   </div>
                   <div className="flex flex-col gap-[10px] w-full md:w-[240px]">
-                    <h3 className="text-[16px] md:text-[21.5px] font-bold text-white ">{service.name}</h3>
+                    <h3 className="text-[16px] md:text-[21.5px] font-bold text-white break-words">{truncate60(service?.name)}</h3>
                     <p className="text-gray-300 text-[12px] md:text-[14px] break-words">
-                      {service?.description?.slice(0, 120)}
+                      {truncate120(service?.description)}
                     </p>
                     <Link
                       href={`/services/${service.id}`}
