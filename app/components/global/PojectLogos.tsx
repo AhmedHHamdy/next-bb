@@ -14,7 +14,7 @@ export default function ProjectLogos({ logosData }: { logosData?: Project[] }) {
     <section className="bg-white w-full h-[69px] md:h-[116px] overflow-hidden flex items-center px-[15px] md:px-0 max-w-[2560px] mx-auto">
         <Swiper
             spaceBetween={78}
-            slidesPerView={logosData ? logosData.length: 8}
+            slidesPerView={logosData && logosData.length < 8 ? logosData.length: 8}
             loop
             modules={[Autoplay]}
             autoplay={{
@@ -38,7 +38,7 @@ export default function ProjectLogos({ logosData }: { logosData?: Project[] }) {
                 },
                 1279: {
                     spaceBetween: 78,
-                    slidesPerView: logosData ? logosData.length: 8
+                    slidesPerView: logosData && logosData.length < 8 ? logosData.length: 8
                 }
             }}
             >

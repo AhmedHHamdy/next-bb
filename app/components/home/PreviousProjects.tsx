@@ -84,7 +84,7 @@ export default function PreviousProjects({ dataInfo }: {
             return (
               <SwiperSlide
                 key={project?.id}
-                style={{ backgroundImage: "url('project-image-background.jpg')" }}
+                style={{ backgroundImage: `url(${project?.image_url})` }}
                 className="swiper-slide h-[312px] md:h-[707px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 border border-gray-700 hover:border-[#EDA133] inset-shadow-lg"
               >
                 <div className="swiper-lazy-preloader"></div>
