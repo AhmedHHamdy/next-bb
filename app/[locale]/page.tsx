@@ -11,7 +11,8 @@ import Blogs from "../components/home/Blogs";
 import { getLocale, setRequestLocale } from "next-intl/server";
 // import { use } from "react";
 import { HomePageData } from "../utils/Types";
-import ReviewsDummy from "../components/global/ReviewDummy";
+import { Link } from "@/i18n/navigation";
+import ReviewsHome from "../components/home/ReviewsHome";
 
 // export function generateStaticParams() {
 //   return routing.locales.map((locale) => ({ locale }));
@@ -70,9 +71,9 @@ export default async function HomePage() {
           </div>
 
           <section className="flex items-center justify-center gap-4 mt-6">
-            <a
-              href="start-your-project.html"
-              className="bg-[#EDA133] w-full md:w-[238px] h-[48px] xl:h-[56px] rounded-[8px] flex items-center justify-center gap-2 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors"
+            <Link
+              href="/start-your-project"
+              className="bg-[#EDA133] text-center w-full md:w-[238px] h-[48px] xl:h-[56px] rounded-[8px] flex items-center justify-center gap-2 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors"
             >
               ابدأ مشروعك الآن
               <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -81,11 +82,11 @@ export default async function HomePage() {
                   fill="#FCF4E9"
                 />
               </svg>
-            </a>
+            </Link>
 
-            <button className="border w-full md:w-[150px] h-[48px] xl:h-[56px] rounded-[8px] border-orange-400 text-orange-400 px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors">
+            <Link href="/free-consultation" className="flex items-center justify-center border w-full md:w-[150px] h-[48px] xl:h-[56px] rounded-[8px] border-orange-400 text-orange-400 px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors">
               استشارة مجانية
-            </button>
+            </Link>
           </section>
 
           <section className="relative w-full overflow-hidden mt-[24px] md:mt-[56px] rounded-[8px]">
@@ -107,15 +108,13 @@ export default async function HomePage() {
 
       <Services servicesData={data?.our_services || []} />
 
-      <ProjectLogos logosData={data?.our_projects.projects} />
+      <ProjectLogos logosData={data?.our_products} />
 
-      <WhoAreWe />
+      <WhoAreWe dataInfo={data?.business_building} />
 
-      <PreviousProjects />
+      <PreviousProjects dataInfo={data?.our_projects} />
 
-      {/* <Reviews /> */}
-
-      <ReviewsDummy />
+      <ReviewsHome reviewsData={data?.our_clients} />
 
       <FAQ faqs={data?.faqs} homePageStatus={true} />
 

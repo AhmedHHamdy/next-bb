@@ -1,4 +1,31 @@
-export default function WhoAreWe() {
+export default function WhoAreWe({ dataInfo }: {
+  dataInfo: {
+    title: string;
+    desc: string;
+    features: {
+      one: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+      two: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+      three: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+      four: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+    }
+  }
+}) {
   return (
     <section className="relative bg-[#FCF4E9] py-[48px] md:py-[92px] overflow-hidden">
       <div className="absolute inset-0">
@@ -11,10 +38,9 @@ export default function WhoAreWe() {
             <div>
               <h3 className="text-[#F2B660] font-bold text-[20px] mb-[16px] ">بناء الأعمال</h3>
               <div>
-                <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[16px] ">نبني مستقبل أعمالك</h2>
+                <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[16px] ">{dataInfo?.title}</h2>
                 <p className="text-[14px] md:text-[18px] text-black font-medium leading-relaxed ">
-                  نحن شركة تقنية متخصصة في تقديم حلول برمجية وتسويقية متكاملة، نساعد الشركات على النمو، ونوفر بيئة
-                  احترافية تدعم كل مراحل التطوير والنجاح
+                  {dataInfo?.desc}
                 </p>
               </div>
             </div>
@@ -47,48 +73,48 @@ export default function WhoAreWe() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[24px]">
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src="/results.gif" alt="results gif" />
-                <h4 className="text-black font-medium text-[18px] md:text-[20px]">نتائج مثبتة</h4>
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.one?.image} alt="results gif" />
+                <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.one?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
                 <p className="text-black font-medium text-base leading-relaxed ">
-                  نُصمم حلولًا تسويقية وتقنية تتماشى مع طبيعة عملك وجمهورك وتحقق نتائج واقعية قابلة للقياس.
+                  {dataInfo?.features?.one?.desc}
                 </p>
               </div>
             </div>
 
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src="/growth.gif" alt="growth gif" />
-                <h4 className="text-black font-medium text-[18px] md:text-[20px]">دعم عملاء استثنائي</h4>
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.two?.image} alt="growth gif" />
+                <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.two?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
                 <p className="text-black font-medium text-base leading-relaxed ">
-                  اعمل مع فريق من المحترفين في وسائل التواصل الاجتماعي الذين يفهمون تفاصيل كل منصة.
+                  {dataInfo?.features?.two?.desc}
                 </p>
               </div>
             </div>
 
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src="/presentation.gif" alt="presentation gif" />
-                <h4 className="text-black font-medium text-[18px] md:text-[20px]">خطط مخصصة لأهدافك</h4>
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.three?.image} alt="presentation gif" />
+                <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.three?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
                 <p className="text-black font-medium text-base leading-relaxed ">
-                  نُصمم حلولًا تسويقية وتقنية تتماشى مع طبيعة عملك وجمهورك وتحقق نتائج واقعية قابلة للقياس.
+                  {dataInfo?.features?.three?.desc}
                 </p>
               </div>
             </div>
 
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src="/coding.gif" alt="coding gif" />
-                <h4 className="text-black font-medium text-[18px] md:text-[20px]">خبرة تقنية عميقة</h4>
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.four?.image} alt="coding gif" />
+                <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.four?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
                 <p className="text-black font-medium text-[16px] leading-relaxed ">
-                  اعمل مع فريق من المبرمجين والمصممين يملكون خبرة حقيقية في تطوير تطبيقات وأنظمة ذكية.
+                  {dataInfo?.features?.four?.desc}
                 </p>
               </div>
             </div>

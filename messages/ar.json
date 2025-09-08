@@ -10,6 +10,33 @@
     "countryRequired": "اختر دولتك",
     "phoneRequired": "رقم الجوال مطلوب",
     "serviceRequired": "اختر خدمة",
-    "messageRequired": "الرسالة مطلوبة"
+    "messageRequired": "الرسالة مطلوبة",
+    "phoneLengthError": "رقم الجوال غير صحيح"
+  },
+  "StartProjectForm": {
+    "nameRequired": "حقل الاسم مطلوب",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
+    "countryRequired": "اختر دولتك",
+    "phoneRequired": "رقم الجوال مطلوب",
+    "phoneLengthError": "رقم الجوال غير صحيح",
+    "communicationWayRequired": "اختر وسيلة التواصل",
+    "communicationLangRequired": "اختر لغة التواصل",
+    "ownerIdentityRequired": "اختر صفتك",
+    "ownerRoleRequired": "الرجاء إدخال صفتك",
+    "projectNameRequired": "اسم المشروع مطلوب",
+    "servicesRequired": "اختر خدمة واحدة على الأقل"
+  }
+  ,
+  "ConsultationForm": {
+    "nameRequired": "حقل الاسم مطلوب",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة",
+    "countryRequired": "اختر دولتك",
+    "phoneRequired": "رقم الجوال مطلوب",
+    "phoneLengthError": "رقم الجوال غير صحيح",
+    "servicesRequired": "اختر خدمة واحدة على الأقل",
+    "dateRequired": "يرجى اختيار تاريخ الاستشارة",
+    "durationRequired": "يرجى اختيار موعد الاستشارة"
   }
 }

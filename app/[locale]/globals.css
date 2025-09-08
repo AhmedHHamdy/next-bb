@@ -577,3 +577,10 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+
+/* Input Select */
+/* Ensure the selector has min-height but can expand */
+.custom-select .ant-select-selector {
+  min-height: 3rem; /* same as h-12 */
+}

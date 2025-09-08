@@ -6,8 +6,22 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
+import { Link } from "@/i18n/navigation";
 
-export default function PreviousProjects() {
+export default function PreviousProjects({ dataInfo }: {
+  dataInfo: {
+    title: string;
+    desc: string;
+    projects: {
+      id: number;
+      title: string;
+      short_description: string;
+      owner_name: string;
+      country_name: string;
+      image_url: string;
+    }[]
+  }
+}) {
   return (
     <section className="relative bg-[#131A27] py-[48px] md:py-[70px] md:h-[1123px] overflow-hidden">
       <div className="absolute inset-0 z-[1]">
@@ -16,9 +30,9 @@ export default function PreviousProjects() {
 
       <div className="relative z-20 previous-projects-container">
         <div className="text-center mb-[36px] md:mb-[49px]">
-          <h2 className="text-[24px] md:text-[40px] font-bold text-white mb-[12px] ">مشاريعنا السابقة</h2>
+          <h2 className="text-[24px] md:text-[40px] font-bold text-white mb-[12px] ">{dataInfo?.title}</h2>
           <p className="text-gray-300 text-[14px] md:text-[18px] max-w-[540px] mx-auto ">
-            نحن نفخر بنجاحنا في تنفيذ مشاريع متعددة في مختلف المجالات. إليك بعض من أعمالنا التي تعكس التميز والجودة
+            {dataInfo?.desc}
           </p>
         </div>
 
@@ -66,65 +80,79 @@ export default function PreviousProjects() {
             },
           }}
         >
-          <SwiperSlide
-            style={{ backgroundImage: "url('project-image-background.jpg')" }}
-            className="swiper-slide h-[312px] md:h-[707px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 border border-gray-700 hover:border-[#EDA133] inset-shadow-lg"
-          >
-            <div className="swiper-lazy-preloader"></div>
+          {dataInfo?.projects && dataInfo?.projects?.map(project => {
+            return (
+              <SwiperSlide
+                key={project?.id}
+                style={{ backgroundImage: "url('project-image-background.jpg')" }}
+                className="swiper-slide h-[312px] md:h-[707px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 border border-gray-700 hover:border-[#EDA133] inset-shadow-lg"
+              >
+                <div className="swiper-lazy-preloader"></div>
 
-            <div className="h-[270px] w-[235px] md:w-full md:h-[650px] flex flex-col items-start justify-end project-card">
-              <section className="w-full">
-                <h3 className="text-[16px] md:text-[40px] font-medium text-white">رينتال الاعمال</h3>
-                <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] lg:flex-row lg:items-center lg:justify-between w-full">
-                  <section className="flex items-center gap-[13px]">
-                    <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                      <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                      رينتال
-                    </h4>
+                <div className="h-[270px] w-[235px] md:w-full md:h-[650px] flex flex-col items-start justify-end project-card">
+                  <section className="w-full">
+                    <h3 className="text-[16px] md:text-[40px] font-medium text-white">{project?.title}</h3>
+                    <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] lg:flex-row lg:items-center lg:justify-between w-full">
+                      <section className="flex items-center gap-[13px]">
+                        {/* <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
+                          {project?.title}
+                        </h4> */}
 
-                    <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                      <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                      المملكة العربية السعودية
-                    </h4>
+                        <h4 className="flex justify-center  items-center gap-[8px] px-2 md:px-5  w-[150px] md:w-[250px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
+                          {project?.owner_name}
+                        </h4>
+
+                        {/* <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
+                          {project?.country_name}
+                        </h4> */}
+
+                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 w-full  h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
+                          {project?.country_name}
+                        </h4>
+                      </section>
+
+                      <section className="flex items-center gap-[13px]">
+                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[117px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          تطوير الويب
+                        </h4>
+
+                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          تصميم الويب
+                        </h4>
+                      </section>
+                    </section>
+                    <p className="hidden md:block mt-[18px] text-white text-[16px]">
+                      {project?.short_description}
+                    </p>
+                    <p className="block md:hidden mt-[12px] text-white text-[12px]">
+                      {project?.short_description}
+                    </p>
                   </section>
 
-                  <section className="flex items-center gap-[13px]">
-                    <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[117px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                      تطوير الويب
-                    </h4>
+                  <div className="mt-[16px] see-more-button">
+                    <Link
+                      href={`/projects/${project.id}`}
+                      className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[229px] h-[28px] md:h-[56px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
+                    >
+                      <span className="text-[14px] md:text-[16px] font-medium">رؤية المزيد</span>
+                      <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M7.27637 0.637695C7.59612 0.637695 7.86133 0.914793 7.86133 1.24902C7.86677 1.41589 7.79496 1.57124 7.69043 1.68066C7.58568 1.79015 7.44175 1.85938 7.27637 1.85938H2.15918L10.5186 10.5967C10.7443 10.8329 10.7442 11.2247 10.5186 11.4609C10.2925 11.6972 9.91744 11.6971 9.69141 11.4609L1.16797 2.55078V8.24414C1.16797 8.57837 0.903733 8.85547 0.583984 8.85547C0.264241 8.85546 0 8.57837 0 8.24414V1.24902C0 0.914796 0.264241 0.637701 0.583984 0.637695H7.27637Z"
+                          fill="#FCF4E9"
+                        />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              </SwiperSlide>
+            )
+          })}
 
-                    <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                      تصميم الويب
-                    </h4>
-                  </section>
-                </section>
-                <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                  "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                  كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير، نوفر لك كل ما ......
-                </p>
-                <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                  "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                </p>
-              </section>
-
-              <div className="mt-[16px] see-more-button">
-                <a
-                  href="project-details.html"
-                  className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[229px] h-[28px] md:h-[56px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                >
-                  <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                  <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M7.27637 0.637695C7.59612 0.637695 7.86133 0.914793 7.86133 1.24902C7.86677 1.41589 7.79496 1.57124 7.69043 1.68066C7.58568 1.79015 7.44175 1.85938 7.27637 1.85938H2.15918L10.5186 10.5967C10.7443 10.8329 10.7442 11.2247 10.5186 11.4609C10.2925 11.6972 9.91744 11.6971 9.69141 11.4609L1.16797 2.55078V8.24414C1.16797 8.57837 0.903733 8.85547 0.583984 8.85547C0.264241 8.85546 0 8.57837 0 8.24414V1.24902C0 0.914796 0.264241 0.637701 0.583984 0.637695H7.27637Z"
-                      fill="#FCF4E9"
-                    />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </SwiperSlide>
-
-          <SwiperSlide
+          {/* <SwiperSlide
             style={{ backgroundImage: "url('project-image-background.jpg')" }}
             className="swiper-slide h-[312px] md:h-[707px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 border border-gray-700 hover:border-[#EDA133] inset-shadow-lg"
           >
@@ -353,7 +381,7 @@ export default function PreviousProjects() {
                 </a>
               </div>
             </div>
-          </SwiperSlide>
+          </SwiperSlide> */}
         </Swiper>
       </div>
 

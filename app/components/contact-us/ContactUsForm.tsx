@@ -88,9 +88,33 @@ export default function ContactUsForm() {
       errors.country_id = t("countryRequired");
     }
 
+    // // Phone validation
+    // if (!formData.phone.trim()) {
+    //   errors.phone = t("phoneRequired");
+    // }
+
+    // // Phone validation Length
+    // const phoneLength = data && formData.country_id ? Number(data?.data?.countries?.find(e => String(e.id) == formData.country_id)?.phone_length || "") : 25
+    // if (formData.phone.length < phoneLength) {
+    //   errors.phone = t("phoneLengthError");
+    // }
+
     // Phone validation
     if (!formData.phone.trim()) {
       errors.phone = t("phoneRequired");
+    } else {
+      const phoneLength =
+        data && formData.country_id
+          ? Number(
+              data?.data?.countries?.find(
+                (e) => String(e.id) == formData.country_id
+              )?.phone_length || ""
+            )
+          : 25;
+
+      if (formData.phone.length !== phoneLength) {
+        errors.phone = t("phoneLengthError"); // e.g. "رقم الجوال يجب أن يكون {phoneLength} أرقام"
+      }
     }
 
     // Service validation
@@ -328,13 +352,24 @@ export default function ContactUsForm() {
                       <label className="block text-[16px] font-medium text-black">الجوال <span className="text-[#FF6B6B]">*</span></label>
                       <input
                         dir="rtl"
-                        type="number"
+                        type="text"
                         required
-                        maxLength={25}
+                        maxLength={
+                          data && formData.country_id
+                            ? Number(
+                                data?.data?.countries?.find(
+                                  (e) => String(e.id) == formData.country_id
+                                )?.phone_length || ""
+                              )
+                            : 25
+                        }
                         value={formData.phone}
                         name="phone"
                         onChange={(e) => {
-                          setFormData({ ...formData, phone: String(e.target.value) });
+                          // Only allow digits
+                          const value = e.target.value.replace(/\D/g, "");
+                          setFormData({ ...formData, phone: value });
+
                           if (validationErrors.phone) {
                             setValidationErrors((prev) => ({
                               ...prev,
@@ -344,7 +379,7 @@ export default function ContactUsForm() {
                         }}
                         placeholder="الرجاء إدخال رقم الجوال."
                         className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
-                          validationErrors.phone ? 'border-red-500' : 'border-[#DADADA]'
+                          validationErrors.phone ? "border-red-500" : "border-[#DADADA]"
                         }`}
                       />
                       {validationErrors.phone && (

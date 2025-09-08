@@ -16,6 +16,13 @@ export interface Footer {
   footer_logo_right_image: string;
   start_your_project_title: string;
   start_your_project_description: string;
+  home_whatsapp_icon_status: boolean;
+  services: {
+    description: string;
+    id: number;
+    image_url: string;
+    name: string
+  }[]
   branches: Branch[];
   copyright: string;
 }
@@ -106,11 +113,45 @@ export interface HomePage {
       value: string;
     }
   }
+  our_products: {
+    id: number;
+    image_url: string;
+  }[]
+  business_building: {
+    title: string;
+    desc: string;
+    features: {
+      one: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+      two: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+      three: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+      four: {
+        title: string;
+        desc: string;
+        image: string;
+      };
+    }
+  }
   our_projects: {
     title: string;
     desc: string;
     projects: {
       id: number;
+      title: string;
+      short_description: string;
+      owner_name: string;
+      country_name: string;
       image_url: string;
     }[]
   }
@@ -130,6 +171,19 @@ export interface HomePage {
     features: {
       title: string;
       desc: string;
+    }[]
+  }
+  our_clients: {
+    title: string;
+    desc: string;
+    clients: {
+      id: number;
+      username: string;
+      position: string;
+      quote: string;
+      image_url: string;
+      file_type: string;
+      file_url: string;
     }[]
   }
 }
@@ -267,6 +321,7 @@ export interface CountriesData {
     id: number,
     name: string,
     country_code: string,
+    phone_length: string,
     flag: string
   }[]
 }
@@ -401,6 +456,7 @@ export interface FormSettingsDataType {
       id: number;
       name: string;
       country_code: string;
+      phone_length: string;
       flag: string;
     }[];
     services: {
