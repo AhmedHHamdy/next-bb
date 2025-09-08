@@ -406,8 +406,8 @@ export default function PreviousProjects({ dataInfo }: {
         </section>
 
         <div className="flex items-center justify-center w-full md:w-[229px] relative z-[50]">
-          <a
-            href="previous-projects.html"
+          <Link
+            href="/projects"
             className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[229px] h-[56px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
           >
             <span className="text-[16px] font-medium">كل المشاريع</span>
@@ -417,7 +417,7 @@ export default function PreviousProjects({ dataInfo }: {
                 fill="#FCF4E9"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </section>
     </section>

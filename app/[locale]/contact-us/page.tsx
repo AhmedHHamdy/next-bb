@@ -84,9 +84,9 @@ export default async function Page() {
                   </svg>
                 </Link>
 
-                <button className="border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
+                <a href="#contact" className="text-center border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
                   اتصل بنا الآن
-                </button>
+                </a>
               </div>
             </div>
 
@@ -106,7 +106,7 @@ export default async function Page() {
       <ContactUsForm />
 
       {/* <!-- Contact Methods Section --> */}
-      <div className="w-full bg-white px-6 pb-[48px] md:pb-[72px]">
+      <div id="contact" className="w-full bg-white px-6 pb-[48px] md:pb-[72px]">
         <div className="max-w-[1300px] mx-auto">
           {/* <!-- Section Header --> */}
           <div className="flex flex-col items-center gap-3 mb-[32px] md:mb-[48px]">

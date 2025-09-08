@@ -61,13 +61,13 @@ export default async function Page({
 
               {/* <!-- Buttons --> */}
               <div className="flex flex-row gap-[16px] w-full md:w-auto">
-                <button className="w-full md:w-[230px] h-[56px] bg-[#EDA133] rounded-lg flex gap-2 items-center justify-center text-white font-medium text-[16px] hover:bg-[#F0AC49] transition-colors">
+                <Link href="/start-your-project" className="w-full md:w-[230px] h-[56px] bg-[#EDA133] rounded-lg flex gap-2 items-center justify-center text-white font-medium text-[16px] hover:bg-[#F0AC49] transition-colors">
                   ابدأ مشروعك الآن
                   <img src="/arrow-icon.svg" alt="arrow" />
-                </button>
-                <button className="w-full md:w-[150px] h-[56px] border border-[#EDA133] rounded-lg flex items-center justify-center text-[#EDA133] font-medium text-[16px] hover:bg-[#EDA13333] hover:text-white transition-colors">
+                </Link>
+                <Link href="/free-consultation" className="w-full md:w-[150px] h-[56px] border border-[#EDA133] rounded-lg flex items-center justify-center text-[#EDA133] font-medium text-[16px] hover:bg-[#EDA13333] hover:text-white transition-colors">
                   استشارة مجانية
-                </button>
+                </Link>
               </div>
             </div>
           </div>

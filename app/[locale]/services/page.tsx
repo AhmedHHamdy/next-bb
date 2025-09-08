@@ -68,7 +68,7 @@ export default async function Page() {
           <img className="h-[260px] lg:h-full" src="/services-page-bg-art.svg" alt="background art" />
         </div>
 
-        <div className="rounded-[8px] overflow-hidden">
+        <div className="rounded-[8px] overflow-hidden relative z-[80]">
           {/* <!-- Content --> */}
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-32 lg:p-12">
             {/* <!-- Left Side - Content --> */}
@@ -87,11 +87,16 @@ export default async function Page() {
               </p>
 
               {/* <!-- CTA Button --> */}
-              <div className="flex items-center gap-4">
-                <button className="px-6 py-4 bg-[#EDA133] w-full md:w-auto rounded-lg text-white text-[16px] font-medium flex justify-center items-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
+              <div className="flex items-center gap-4 ">
+                <Link href="/start-your-project" className="px-6 py-4 bg-[#EDA133] w-full md:w-auto rounded-lg text-white text-[16px] font-medium flex justify-center items-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
                   اطلب خدمة الآن
-                  <img src="/arrow-up-right.svg" alt="arrow" />
-                </button>
+                  <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M7.27637 0.5C7.59612 0.5 7.86133 0.777097 7.86133 1.11133C7.86677 1.27819 7.79496 1.43354 7.69043 1.54297C7.58568 1.65246 7.44175 1.72168 7.27637 1.72168H2.15918L10.5186 10.459C10.7443 10.6952 10.7442 11.087 10.5186 11.3232C10.2925 11.5595 9.91744 11.5594 9.69141 11.3232L1.16797 2.41309V8.10645C1.16797 8.44068 0.903733 8.71777 0.583984 8.71777C0.264241 8.71777 0 8.44067 0 8.10645V1.11133C0 0.777101 0.264241 0.500006 0.583984 0.5H7.27637Z"
+                      fill="#FCF4E9"
+                    />
+                  </svg>
+                </Link>
               </div>
             </div>
 
@@ -235,12 +240,12 @@ export default async function Page() {
 
             <section className="block md:hidden">
               {/* <!-- CTA Button --> */}
-              <button className="w-full mt-[32px] lg:w-[222px] h-[56px] bg-[#EDA133] rounded-lg flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
+              <Link href="/free-consultation" className="text-center w-full mt-[32px] lg:w-[222px] h-[56px] bg-[#EDA133] rounded-lg flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
                 <div className="flex items-center gap-3">
                   <span className="text-white text-[16px] font-medium">دعوة للانضمام</span>
                   <img src="/call-icon.svg" alt="call" className="w-5 h-5" />
                 </div>
-              </button>
+              </Link>
             </section>
           </div>
         </div>

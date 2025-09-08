@@ -92,7 +92,7 @@ export default function Footer() {
                 </p>
               </div>
               <section className="self-start px-[15px] 2xl:px-0 w-full">
-                <button className="bg-[#EDA133] text-white hover:bg-primary-hover rounded-lg px-4 py-2 flex items-center justify-center gap-2 no-underline transition-all duration-300 w-full md:w-[230px] h-[56px] hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40">
+                <Link href="/start-your-project" className="bg-[#EDA133] text-center text-white hover:bg-primary-hover rounded-lg px-4 py-2 flex items-center justify-center gap-2 no-underline transition-all duration-300 w-full md:w-[230px] h-[56px] hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40">
                   <span className=" font-medium text-[16px] leading-normal text-white">ابدأ مشروعك الآن</span>
 
                   <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,7 +101,7 @@ export default function Footer() {
                       fill="#FCF4E9"
                     />
                   </svg>
-                </button>
+                </Link>
               </section>
             </div>
           </div>
@@ -183,12 +183,12 @@ export default function Footer() {
                             fill="#B1B1B1"
                           />
                         </svg>
-                        <a
+                        <Link
                           href="/faq"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
                           الأسئلة الشائعة
-                        </a>
+                        </Link>
                       </li>
                       <li className="flex items-center gap-4">
                         <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">

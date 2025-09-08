@@ -1,3 +1,5 @@
+import { Link } from "@/i18n/navigation";
+
 export default function WhoAreWe({ dataInfo }: {
   dataInfo: {
     title: string;
@@ -46,7 +48,7 @@ export default function WhoAreWe({ dataInfo }: {
             </div>
 
             <div className="mt-[24px]">
-              <button className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-[230px] text-white font-medium py-3 px-6 rounded-lg transition-all duration-300  flex items-center justify-center gap-2">
+              <Link href="/start-your-project" className="bg-[#EDA133] text-center hover:bg-[#D1912A] w-full md:w-[230px] text-white font-medium py-3 px-6 rounded-lg transition-all duration-300  flex items-center justify-center gap-2">
                 <span className="text-[16px]">ابدأ مشروعك الآن</span>
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -54,7 +56,7 @@ export default function WhoAreWe({ dataInfo }: {
                     fill="#FCF4E9"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
           </div>
 
