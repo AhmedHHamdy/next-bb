@@ -27,6 +27,7 @@ interface ValidationErrors {
   services?: string;
   date?: string;
   duration_id?: string;
+  inquiry?: string;
 }
 
 export default function CalendarComponent({ durations }: { durations: {
@@ -39,6 +40,8 @@ export default function CalendarComponent({ durations }: { durations: {
 
   const locale = useLocale();
   const t = useTranslations("ConsultationForm");
+  const tCal = useTranslations("Calendar");
+  const tInputs = useTranslations("FormInputs");
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -85,12 +88,12 @@ export default function CalendarComponent({ durations }: { durations: {
   function formatMonthYearArabic(year: number, monthIndex: number) {
     const date = new Date(year, monthIndex, 1);
     try {
-      return new Intl.DateTimeFormat("ar", {
+      return new Intl.DateTimeFormat(locale, {
         month: "long",
         year: "numeric",
       }).format(date);
     } catch {
-      const months = [
+      const monthsAr = [
         "يناير",
         "فبراير",
         "مارس",
@@ -104,6 +107,21 @@ export default function CalendarComponent({ durations }: { durations: {
         "نوفمبر",
         "ديسمبر",
       ];
+      const monthsEn = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      const months = locale === "ar" ? monthsAr : monthsEn;
       return months[monthIndex] + " " + year;
     }
   }
@@ -176,17 +194,33 @@ export default function CalendarComponent({ durations }: { durations: {
     }
   };
 
+  // const validateStepOne = (): boolean => {
+  //   const errors: ValidationErrors = {};
+  //   if (!formData.date) {
+  //     errors.date = t("dateRequired");
+  //   }
+  //   if (!formData.duration_id) {
+  //     errors.duration_id = t("durationRequired");
+  //   }
+  //   setValidationErrors((prev) => ({ ...prev, ...errors }));
+  //   return Object.keys(errors).length === 0;
+  // };
+
   const validateStepOne = (): boolean => {
     const errors: ValidationErrors = {};
+    
     if (!formData.date) {
       errors.date = t("dateRequired");
     }
     if (!formData.duration_id) {
       errors.duration_id = t("durationRequired");
     }
-    setValidationErrors((prev) => ({ ...prev, ...errors }));
+  
+    setValidationErrors(errors); // reset with fresh errors
+  
     return Object.keys(errors).length === 0;
   };
+  
 
   const validateForm = (): boolean => {
     const errors: ValidationErrors = {};
@@ -198,7 +232,7 @@ export default function CalendarComponent({ durations }: { durations: {
     if (!formData.email.trim()) {
       errors.email = t("emailRequired");
     } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
       if (!emailRegex.test(formData.email)) {
         errors.email = t("emailInvalid");
       }
@@ -208,21 +242,42 @@ export default function CalendarComponent({ durations }: { durations: {
       errors.country_id = t("countryRequired");
     }
     // Phone
+    // if (!formData.phone.trim()) {
+    //   errors.phone = t("phoneRequired");
+    // } else {
+    //   const phoneLength =
+    //     data && formData.country_id
+    //       ? Number(
+    //           data?.data?.countries?.find(
+    //             (e: any) => String(e.id) == formData.country_id
+    //           )?.phone_length || ""
+    //         )
+    //       : 25;
+    //   if (formData.phone.length !== phoneLength) {
+    //     errors.phone = t("phoneLengthError");
+    //   }
+    // }
+
     if (!formData.phone.trim()) {
       errors.phone = t("phoneRequired");
     } else {
-      const phoneLength =
-        data && formData.country_id
-          ? Number(
-              data?.data?.countries?.find(
-                (e: any) => String(e.id) == formData.country_id
-              )?.phone_length || ""
-            )
-          : 25;
-      if (formData.phone.length !== phoneLength) {
+
+      const country = data?.data?.countries?.find(
+        (e: any) => String(e.country_code) === String(formData.country_code)
+      );
+
+      
+      const phoneLength = country ? Number(country?.phone_length || "") : undefined;
+
+      if (phoneLength && formData.phone.length !== phoneLength) {
         errors.phone = t("phoneLengthError");
       }
+
+      if (country && !formData.phone.startsWith(String(country.starts_with))) {
+        errors.phone = t("phoneFormatError");
+      }
     }
+    
     // Services
     if (!formData.services || (formData.services as unknown as any[])?.length === 0) {
       errors.services = t("servicesRequired");
@@ -233,6 +288,10 @@ export default function CalendarComponent({ durations }: { durations: {
     }
     if (!formData.duration_id) {
       errors.duration_id = t("durationRequired");
+    }
+
+    if (!formData.inquiry) {
+      errors.inquiry = t("inquiryRequired");
     }
 
     setValidationErrors(errors);
@@ -298,7 +357,7 @@ export default function CalendarComponent({ durations }: { durations: {
         country_code: ""
       })
 
-      setSuccessText("تم إرسال النموذج بنجاح!");
+      setSuccessText(t("successText"));
 
       setTimeout(() => {
         setSuccessText("");
@@ -308,7 +367,7 @@ export default function CalendarComponent({ durations }: { durations: {
       console.error("❌ Error submitting form:", error);
       console.log(error, "error")
 
-      setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
+      setErrorText(error.message || t("genericError"));
 
       setTimeout(() => {
         setErrorText("");
@@ -328,14 +387,14 @@ export default function CalendarComponent({ durations }: { durations: {
               <div className="space-y-12">
                 <div className="space-y-[16px] md:space-y-6">
                   <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
-                    تحديد موعد الإستشارة
+                    {tCal("stepOneTitle")}
                   </h3>
 
                   <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Date picker */}
                     <div className="w-full space-y-3 h-full">
                       <h4 className="text-[16px] font-medium text-black">
-                        تاريخ الإستشارة
+                        {tCal("dateLabel")}
                       </h4>
                       <div className="border border-[#DADADA] rounded-lg p-4">
                         {/* Month header */}
@@ -351,10 +410,14 @@ export default function CalendarComponent({ durations }: { durations: {
                               }
                             }}
                             className="w-8 h-8 grid place-items-center rounded hover:bg-[#FCF4E9]"
-                            aria-label="الشهر السابق"
+                            aria-label={tCal("prevMonthAria")}
                           >
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="rtl:block ltr:hidden" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M14 10.0002C14 10.5836 13.775 11.1669 13.3334 11.6086L7.90003 17.0419C7.65837 17.2836 7.25837 17.2836 7.0167 17.0419C6.77503 16.8002 6.77503 16.4002 7.0167 16.1586L12.45 10.7252C12.85 10.3252 12.85 9.67523 12.45 9.27523L7.0167 3.8419C6.77503 3.60023 6.77503 3.20023 7.0167 2.95856C7.25837 2.7169 7.65836 2.7169 7.90003 2.95856L13.3334 8.39189C13.775 8.83356 14 9.41689 14 10.0002Z" fill="#8B8B8B"/>
+                            </svg>
+
+                            <svg className="rtl:hidden ltr:block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M5.99997 10.0002C5.99997 10.5836 6.22497 11.1669 6.66663 11.6086L12.1 17.0419C12.3416 17.2836 12.7416 17.2836 12.9833 17.0419C13.225 16.8002 13.225 16.4002 12.9833 16.1586L7.54997 10.7252C7.14997 10.3252 7.14997 9.67523 7.54997 9.27523L12.9833 3.8419C13.225 3.60023 13.225 3.20023 12.9833 2.95856C12.7416 2.7169 12.3416 2.7169 12.1 2.95856L6.66663 8.39189C6.22497 8.83356 5.99997 9.41689 5.99997 10.0002Z" fill="#8B8B8B"/>
                             </svg>
                           </button>
                           <div className="text-[16px] font-medium text-black">
@@ -371,25 +434,29 @@ export default function CalendarComponent({ durations }: { durations: {
                               }
                             }}
                             className="w-8 h-8 grid place-items-center rounded hover:bg-[#FCF4E9]"
-                            aria-label="الشهر التالي"
+                            aria-label={tCal("nextMonthAria")}
                           > 
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg className="rtl:block ltr:hidden" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M5.99997 10.0002C5.99997 10.5836 6.22497 11.1669 6.66663 11.6086L12.1 17.0419C12.3416 17.2836 12.7416 17.2836 12.9833 17.0419C13.225 16.8002 13.225 16.4002 12.9833 16.1586L7.54997 10.7252C7.14997 10.3252 7.14997 9.67523 7.54997 9.27523L12.9833 3.8419C13.225 3.60023 13.225 3.20023 12.9833 2.95856C12.7416 2.7169 12.3416 2.7169 12.1 2.95856L6.66663 8.39189C6.22497 8.83356 5.99997 9.41689 5.99997 10.0002Z" fill="#8B8B8B"/>
                             </svg>
 
+
+                            <svg className="rtl:hidden ltr:block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M14 10.0002C14 10.5836 13.775 11.1669 13.3334 11.6086L7.90003 17.0419C7.65837 17.2836 7.25837 17.2836 7.0167 17.0419C6.77503 16.8002 6.77503 16.4002 7.0167 16.1586L12.45 10.7252C12.85 10.3252 12.85 9.67523 12.45 9.27523L7.0167 3.8419C6.77503 3.60023 6.77503 3.20023 7.0167 2.95856C7.25837 2.7169 7.65836 2.7169 7.90003 2.95856L13.3334 8.39189C13.775 8.83356 14 9.41689 14 10.0002Z" fill="#8B8B8B"/>
+                            </svg>
                           </button>
                         </div>
                         <div className="w-full h-px bg-[#DADADA] my-4"></div>
 
                         {/* Weekday header */}
                         <div className="grid grid-cols-7 text-center text-[9px] md:text-[14px] font-medium text-black">
-                          <div>الأحد</div>
-                          <div>الإثنين</div>
-                          <div>الثلاثاء</div>
-                          <div>الأربعاء</div>
-                          <div>الخميس</div>
-                          <div>الجمعة</div>
-                          <div>السبت</div>
+                          <div>{tCal("weekdays.sun")}</div>
+                          <div>{tCal("weekdays.mon")}</div>
+                          <div>{tCal("weekdays.tue")}</div>
+                          <div>{tCal("weekdays.wed")}</div>
+                          <div>{tCal("weekdays.thu")}</div>
+                          <div>{tCal("weekdays.fri")}</div>
+                          <div>{tCal("weekdays.sat")}</div>
                         </div>
 
                         {/* Days grid */}
@@ -436,7 +503,7 @@ export default function CalendarComponent({ durations }: { durations: {
                     {/* Time slots */}
                     <div className="w-full space-y-3">
                       <h4 className="text-[16px] font-medium text-black">
-                        موعد الإستشارة
+                        {tCal("timeLabel")}
                       </h4>
                       <div className="space-y-3 border border-[#DADADA] rounded-lg p-[32px] flex flex-col gap-[24px] h-full max-h-[504px] overflow-y-auto">
                         {/* {availableTimeSlots.map((slot) => (
@@ -488,7 +555,7 @@ export default function CalendarComponent({ durations }: { durations: {
                           }
                         }}
                       >
-                        التالي
+                        {tCal("nextButton")}
                       </button>
                     </section>
                   </section>
@@ -510,7 +577,7 @@ export default function CalendarComponent({ durations }: { durations: {
                     }
                   }} className="space-y-[16px] md:space-y-6">
                   <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
-                    معلومات عن الإستشارة
+                    {tCal("consultationInfoTitle")}
                   </h3>
 
                   {/* <!-- Name and country Row --> */}
@@ -518,7 +585,7 @@ export default function CalendarComponent({ durations }: { durations: {
                     {/* <!-- Name Field --> */}
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
-                        الأسم <span className="text-[#FF6B6B]">*</span>
+                        {tInputs("nameLabel")} <span className="text-[#FF6B6B]">*</span>
                       </label>
                       <input
                         type="text"
@@ -526,7 +593,7 @@ export default function CalendarComponent({ durations }: { durations: {
                         name="name"
                         onChange={handleChange}
                         value={formData?.name}
-                        placeholder="ادخل الاسم الكامل"
+                        placeholder={tInputs("namePlaceholder")}
                         className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.name ? 'border-red-500' : 'border-[#DADADA]'}`}
                       />
                       {validationErrors.name && (
@@ -537,15 +604,15 @@ export default function CalendarComponent({ durations }: { durations: {
                     {/* <!-- Country Field --> */}
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
-                        الدولة <span className="text-[#FF6B6B]">*</span>
+                        {tInputs("countryLabel")} <span className="text-[#FF6B6B]">*</span>
                       </label>
                       <div className="relative">
                         <Select
-                          className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
+                          className={`placeholderColor w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                           allowClear
                           value={formData.country_id == "" ? undefined : formData.country_id}
                           style={{ width: "100%", height: "3rem" }}
-                          placeholder="الرجاء إختيار الدولة"
+                          placeholder={tInputs("countryPlaceholder")} 
                           onChange={(value) => {
                             setFormData({ ...formData, country_id: value });
                             if (validationErrors.country_id) {
@@ -582,7 +649,7 @@ export default function CalendarComponent({ durations }: { durations: {
                     {/* <!-- Email Field --> */}
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
-                        البريد الإلكتروني <span className="text-[#FF6B6B]">*</span>
+                        {tInputs("emailLabel")} <span className="text-[#FF6B6B]">*</span>
                       </label>
                       <input
                         type="email"
@@ -591,7 +658,7 @@ export default function CalendarComponent({ durations }: { durations: {
                         name="email"
                         onChange={handleChange}
                         value={formData.email}
-                        placeholder="الرجاء إدخال البريد الإلكتروني."
+                        placeholder={tInputs("emailPlaceholder")}
                         className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.email ? 'border-red-500' : 'border-[#DADADA]'}`}
                       />
                       {validationErrors.email && (
@@ -601,15 +668,15 @@ export default function CalendarComponent({ durations }: { durations: {
 
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
-                      الخدمة المطلوبة <span className="text-[#FF6B6B]">*</span>
+                      {tInputs("servicesLabel")} <span className="text-[#FF6B6B]">*</span>
                       </label>
                       <Select
                         mode="multiple"
-                        className={`w-full custom-select px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.services ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
+                        className={`placeholderColor w-full custom-select px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.services ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                         allowClear
                         value={formData["services"]} 
                         style={{ width: '100%'}}
-                        placeholder="اختر"
+                        placeholder={tInputs("servicesPlaceholder")}
                         onChange={(values) => {
                           setFormData({...formData, services: [...values]});
                           if (validationErrors.services) {
@@ -632,15 +699,18 @@ export default function CalendarComponent({ durations }: { durations: {
 
                     
                     <div className="space-y-3 lg:col-span-2">
-                      <label className="text-[16px] font-medium text-black block">استفسارك أو احتياجك</label>
+                      <label className="text-[16px] font-medium text-black block">{tInputs("inquiryLabel")} <span className="text-[#FF6B6B]">*</span></label>
                       <textarea
                         maxLength={3000}
                         value={formData.inquiry}
                         onChange={handleChange}
                         name="inquiry"
-                        placeholder="اكتب باختصار موضوع الاستشارة..."
-                        className="w-full h-36 px-3 py-3 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] resize-none"
+                        placeholder={tInputs("inquiryPlaceholder")}
+                        className={`w-full h-36 px-3 py-3 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] resize-none ${validationErrors.inquiry ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                       ></textarea>
+                      {validationErrors.inquiry && (
+                        <p className="text-red-500 text-sm">{validationErrors.inquiry}</p>
+                      )}
                     </div>
                   </div>
                   {/* <!-- Form Actions --> */}
@@ -650,7 +720,7 @@ export default function CalendarComponent({ durations }: { durations: {
                         type="submit"
                         disabled={mutation.isPending}
                         className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors">
-                        {mutation.isPending ? "جاري الإرسال..." : "إرسال"}
+                        {mutation.isPending ? tCal("submitting") : tCal("submit")}
                       </button>
 
 
@@ -660,7 +730,7 @@ export default function CalendarComponent({ durations }: { durations: {
                         }}
                         className="px-4 py-2 w-full md:w-[268px] flex justify-center items-center h-[56px] text-[#EDA133] gap-[16px] rounded-lg text-base font-medium border border-[#EDA133] hover:bg-orange-50 transition-colors"
                       >
-                        رجوع
+                        {tCal("backButton")}
                       </button>
 
                       <div className="space-y-3">

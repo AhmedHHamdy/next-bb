@@ -77,7 +77,7 @@ export default function ContactUsForm() {
     if (!formData.email.trim()) {
       errors.email = t("emailRequired");
     } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
       if (!emailRegex.test(formData.email)) {
         errors.email = t("emailInvalid");
       }
@@ -100,20 +100,40 @@ export default function ContactUsForm() {
     // }
 
     // Phone validation
+    // if (!formData.phone.trim()) {
+    //   errors.phone = t("phoneRequired");
+    // } else {
+    //   const phoneLength =
+    //     data && formData.country_id
+    //       ? Number(
+    //           data?.data?.countries?.find(
+    //             (e) => String(e.id) == formData.country_id
+    //           )?.phone_length || ""
+    //         )
+    //       : 25;
+
+    //   if (formData.phone.length !== phoneLength) {
+    //     errors.phone = t("phoneLengthError"); // e.g. "رقم الجوال يجب أن يكون {phoneLength} أرقام"
+    //   }
+    // }
+
     if (!formData.phone.trim()) {
       errors.phone = t("phoneRequired");
     } else {
-      const phoneLength =
-        data && formData.country_id
-          ? Number(
-              data?.data?.countries?.find(
-                (e) => String(e.id) == formData.country_id
-              )?.phone_length || ""
-            )
-          : 25;
 
-      if (formData.phone.length !== phoneLength) {
-        errors.phone = t("phoneLengthError"); // e.g. "رقم الجوال يجب أن يكون {phoneLength} أرقام"
+      const country = data?.data?.countries?.find(
+        (e: any) => String(e.id) == String(formData.country_id)
+      );
+
+      
+      const phoneLength = country ? Number(country?.phone_length || "") : undefined;
+
+      if (phoneLength && formData.phone.length !== phoneLength) {
+        errors.phone = t("phoneLengthError");
+      }
+
+      if (country && !formData.phone.startsWith(String(country.starts_with))) {
+        errors.phone = t("phoneFormatError");
       }
     }
 

@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ApiResponse } from "../utils/Types";
 import { Skeleton, Spin } from "antd";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function Header() {
 
@@ -15,6 +15,8 @@ export default function Header() {
   const pathname = usePathname()
 
   const nextLocale = localeValue == "en" ? "ar" : "en";
+
+  const t = useTranslations("NavLinks");
 
   console.log(nextLocale, pathname, "localValue")
 
@@ -295,37 +297,37 @@ export default function Header() {
                       href="/"
                       className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
-                      الرئيسية
+                      {t("home")}
                     </Link>
                     <Link
                       href="/services"
                       className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/services" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900 "}`}
                     >
-                      خدماتنا
+                      {t("services")}
                     </Link>
                     <Link
                       href="/projects"
                       className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/projects" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
-                      مشاريعنا
+                      {t("projects")}
                     </Link>
                     <Link
                       href="/about-us"
                       className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/about-us" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
-                      من نحن
+                      {t("about")}
                     </Link>
                     <Link
                       href="/blogs"
                       className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/blogs" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
-                      مدونة
+                      {t("blogs")}
                     </Link>
                     <Link
                       href="/contact-us"
                       className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/contact-us" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
-                      تواصل معنا
+                      {t("contact")}
                     </Link>
                   </div>
                 </nav>
@@ -350,14 +352,14 @@ export default function Header() {
                   href="/free-consultation"
                   className="border border-[#EDA133] text-[#EDA133] px-4 py-2 rounded text-sm font-medium hover:bg-orange-50 transition-colors"
                 >
-                  استشارة مجانية
+                  {t("freeConsultation")}
                 </Link>
 
                 <Link
                   href="/start-your-project"
                   className="bg-[#EDA133] hover:bg-[#D1912A] text-white px-4 py-2 rounded text-sm font-medium cursor-pointer transition-colors"
                 >
-                  ابدأ مشروعك
+                  {t("startProject")}
                 </Link>
               </div>
             </div>
@@ -414,9 +416,12 @@ export default function Header() {
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
-                    الرئيسية
-                    <div>
+                    {t("home")}
+                    <div className="rtl:block ltr:hidden">
                       <img src="/arrow-left.svg" alt="arrow-left" />
+                    </div>
+                    <div className="rtl:hidden ltr:block">
+                      <img src="/arrow-right.svg" alt="arrow-right" />
                     </div>
                   </Link>
                 </li>
@@ -426,9 +431,12 @@ export default function Header() {
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
-                    خدماتنا
-                    <div>
+                    {t("services")}
+                    <div className="rtl:block ltr:hidden">
                       <img src="/arrow-left.svg" alt="arrow-left" />
+                    </div>
+                    <div className="rtl:hidden ltr:block">
+                      <img src="/arrow-right.svg" alt="arrow-right" />
                     </div>
                   </Link>
                 </li>
@@ -438,9 +446,12 @@ export default function Header() {
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
-                    مشاريعنا
-                    <div>
+                    {t("projects")}
+                    <div className="rtl:block ltr:hidden">
                       <img src="/arrow-left.svg" alt="arrow-left" />
+                    </div>
+                    <div className="rtl:hidden ltr:block">
+                      <img src="/arrow-right.svg" alt="arrow-right" />
                     </div>
                   </Link>
                 </li>
@@ -450,9 +461,12 @@ export default function Header() {
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
-                    من نحن
-                    <div>
+                    {t("about")}
+                    <div className="rtl:block ltr:hidden">
                       <img src="/arrow-left.svg" alt="arrow-left" />
+                    </div>
+                    <div className="rtl:hidden ltr:block">
+                      <img src="/arrow-right.svg" alt="arrow-right" />
                     </div>
                   </Link>
                 </li>
@@ -462,9 +476,12 @@ export default function Header() {
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
-                    مدونة
-                    <div>
+                    {t("blogs")}
+                    <div className="rtl:block ltr:hidden">
                       <img src="/arrow-left.svg" alt="arrow-left" />
+                    </div>
+                    <div className="rtl:hidden ltr:block">
+                      <img src="/arrow-right.svg" alt="arrow-right" />
                     </div>
                   </Link>
                 </li>
@@ -474,9 +491,12 @@ export default function Header() {
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
-                    تواصل معنا
-                    <div>
+                    {t("contact")}
+                    <div className="rtl:block ltr:hidden">
                       <img src="/arrow-left.svg" alt="arrow-left" />
+                    </div>
+                    <div className="rtl:hidden ltr:block">
+                      <img src="/arrow-right.svg" alt="arrow-right" />
                     </div>
                   </Link>
                 </li>
@@ -485,18 +505,23 @@ export default function Header() {
 
             <div className="mt-auto">
               <section className="flex items-center justify-center gap-3">
-                <Link href="/start-your-project" className="bg-[#EDA133] w-full h-[48px] rounded-[8px] flex items-center justify-center gap-1 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors">
-                  ابدأ مشروعك الآن
-                  <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <Link href="/start-your-project" className="text-center bg-[#EDA133] w-full h-[48px] rounded-[8px] flex items-center justify-center gap-1 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors">
+                  {t("startProject")}
+                  <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M12.6123 4.49951C12.9321 4.49951 13.1973 4.77661 13.1973 5.11084C13.2027 5.27771 13.1309 5.43305 13.0264 5.54248C12.9216 5.65197 12.7777 5.72119 12.6123 5.72119H7.49512L15.8545 14.4585C16.0802 14.6947 16.0802 15.0865 15.8545 15.3228C15.6285 15.559 15.2534 15.559 15.0273 15.3228L6.50391 6.4126V12.106C6.50391 12.4402 6.23967 12.7173 5.91992 12.7173C5.60018 12.7173 5.33594 12.4402 5.33594 12.106V5.11084C5.33594 4.77661 5.60018 4.49952 5.91992 4.49951H12.6123Z"
                       fill="#FCF4E9"
                     />
                   </svg>
+
+                  <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
+                  </svg>
+
                 </Link>
 
                 <Link href="/free-consultation" className="border text-center w-full h-[48px] rounded-[8px] border-[#EDA133] text-[#EDA133] px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors flex items-center justify-center">
-                  استشارة مجانية
+                  {t("freeConsultation")}
                 </Link>
               </section>
 

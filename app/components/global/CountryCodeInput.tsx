@@ -3,7 +3,7 @@
 import { CountriesData } from "@/app/utils/Types";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState, useRef, useEffect } from "react";
 
 type Country = {
@@ -24,6 +24,7 @@ export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [phoneInputValue, setPhoneInputValue] = useState("")
 
+  const t = useTranslations("FormInputs");
 
   const locale = useLocale();
 
@@ -87,7 +88,7 @@ export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
   return (
     <div className="space-y-3">
       <label className="text-base font-medium text-black block">
-        الجوال <span className="text-[#FF6B6B]">*</span>
+        {t("phoneLabel")} <span className="text-[#FF6B6B]">*</span>
       </label>
 
       <div className="flex items-center border border-[#DADADA] rounded-md h-12 relative py-[10px]">
@@ -160,7 +161,7 @@ export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
             const value = e.target.value.replace(/\D/g, "");
             setSelectedPhone && setSelectedPhone(selected?.country_code + "-" + value)
           }}
-          placeholder="الرجاء إدخال رقم الجوال"
+          placeholder={t("phonePlaceholder")}
           className="flex-1 px-3 py-2 text-end text-sm text-black placeholder-[#B1B1B1] focus:outline-none rtl:text-start ltr:text-start ltr:placeholder:text-start rtl:placeholder:text-start"
         />
       </div>

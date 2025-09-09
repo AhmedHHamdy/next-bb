@@ -584,3 +584,8 @@ input[type="number"] {
 .custom-select .ant-select-selector {
   min-height: 3rem; /* same as h-12 */
 }
+
+.placeholderColor .ant-select-selection-placeholder {
+  color: #a8a8a8;
+  opacity: 1;
+}

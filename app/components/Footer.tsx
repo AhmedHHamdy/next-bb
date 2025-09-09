@@ -7,12 +7,65 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import { Link } from "@/i18n/navigation";
 import { ApiResponse } from "../utils/Types";
-import { useQuery } from "@tanstack/react-query";
-import { useLocale } from "next-intl";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+
+interface FormData {
+  email: string;
+}
+interface ValidationErrors {
+  email?: string;
+}
 
 export default function Footer() {
 
   const localeValue = useLocale()
+
+  const t = useTranslations("FooterLinks");
+
+  const [formData, setFormData] = useState<FormData>({
+    email: ""
+  });
+
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+
+  const [successText, setSuccessText] = useState("");
+
+  const [errorText, setErrorText] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (validationErrors[name as keyof ValidationErrors]) {
+      setValidationErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const errors: ValidationErrors = {};
+
+    // Email
+    if (!formData.email.trim()) {
+      errors.email = t("emailRequired");
+    } else {
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      if (!emailRegex.test(formData.email)) {
+        errors.email = t("emailInvalid");
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
 
   const fetchFooter = async (): Promise<ApiResponse> => {
     const res = await fetch(
@@ -38,6 +91,51 @@ export default function Footer() {
   });
 
   console.log(data)
+
+  const mutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/setUserSubscribeInNewsletter`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          lang: localeValue
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        // Try to extract error message from API response
+        const errorData = await res.json().catch(() => null);
+        throw new Error(
+          errorData?.message || "فشل في إرسال ألايمل. حاول مرة أخرى."
+        );
+      }
+
+      return res.json();
+    },
+    onSuccess: (data) => {
+      console.log("✅ Form submitted successfully:", data);
+      setFormData({
+        email: ""
+      })
+
+      setSuccessText("تم إرسال ألايمل بنجاح!");
+
+      setTimeout(() => {
+        setSuccessText("");
+      }, 3000);
+    },
+    onError: (error: any) => {
+      console.error("❌ Error submitting form:", error);
+      console.log(error, "error")
+
+      setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
+
+      setTimeout(() => {
+        setErrorText("");
+      }, 3000);
+    },
+  });
 
 
   // if (isLoading) {
@@ -93,13 +191,17 @@ export default function Footer() {
               </div>
               <section className="self-start px-[15px] 2xl:px-0 w-full">
                 <Link href="/start-your-project" className="bg-[#EDA133] text-center text-white hover:bg-primary-hover rounded-lg px-4 py-2 flex items-center justify-center gap-2 no-underline transition-all duration-300 w-full md:w-[230px] h-[56px] hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40">
-                  <span className=" font-medium text-[16px] leading-normal text-white">ابدأ مشروعك الآن</span>
+                  <span className=" font-medium text-[16px] leading-normal text-white">{t("startYourProjectNow")}</span>
 
-                  <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
-                      d="M7.27637 0.5C7.59612 0.5 7.86133 0.777097 7.86133 1.11133C7.86677 1.27819 7.79496 1.43354 7.69043 1.54297C7.58568 1.65246 7.44175 1.72168 7.27637 1.72168H2.15918L10.5186 10.459C10.7443 10.6952 10.7442 11.087 10.5186 11.3232C10.2925 11.5595 9.91744 11.5594 9.69141 11.3232L1.16797 2.41309V8.10645C1.16797 8.44068 0.903733 8.71777 0.583984 8.71777C0.264241 8.71777 0 8.44067 0 8.10645V1.11133C0 0.777101 0.264241 0.500006 0.583984 0.5H7.27637Z"
+                      d="M12.6123 4.49951C12.9321 4.49951 13.1973 4.77661 13.1973 5.11084C13.2027 5.27771 13.1309 5.43305 13.0264 5.54248C12.9216 5.65197 12.7777 5.72119 12.6123 5.72119H7.49512L15.8545 14.4585C16.0802 14.6947 16.0802 15.0865 15.8545 15.3228C15.6285 15.559 15.2534 15.559 15.0273 15.3228L6.50391 6.4126V12.106C6.50391 12.4402 6.23967 12.7173 5.91992 12.7173C5.60018 12.7173 5.33594 12.4402 5.33594 12.106V5.11084C5.33594 4.77661 5.60018 4.49952 5.91992 4.49951H12.6123Z"
                       fill="#FCF4E9"
                     />
+                  </svg>
+
+                  <svg  className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
                   </svg>
                 </Link>
               </section>
@@ -128,100 +230,129 @@ export default function Footer() {
               <div className="flex flex-col md:flex-row justify-between w-full gap-8 mt-[32px] md:mt-[47px]">
                 <div className="hidden xl:flex flex-wrap gap-[90px] w-full">
                   <div className="">
-                    <h4 className=" font-bold text-base leading-normal text-white mb-4">عن الشركة</h4>
+                    <h4 className=" font-bold text-base leading-normal text-white mb-4">{t("aboutCompanyTitle")}</h4>
                     <ul className="list-none p-0 m-0 space-y-3">
                       <li className="flex items-center gap-4">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
                         </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
+                        </svg>
+
                         <Link
                           href="/about-us"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          من نحن
+                          {t("aboutUs")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-4">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
                         </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
+                        </svg>
+
                         <Link
                           href="/blogs"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          المدونة
+                          {t("blog")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-4">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
                         </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
+                        </svg>
+
                         <Link
                           href="/career"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          الفرص الوظيفية
+                          {t("careers")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-4">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
                         </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
+                        </svg>
+
                         <Link
                           href="/faq"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          الأسئلة الشائعة
+                          {t("faq")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-4">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
                         </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
+                        </svg>
+
                         <Link
                           href="/contact-us"
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          اتصل بنا
+                          {t("contactUs")}
                         </Link>
                       </li>
                     </ul>
                   </div>
 
                   <div className="flex-1 min-w-80">
-                    <h4 className=" font-bold text-base leading-normal text-white mb-4">خدماتنا</h4>
+                    <h4 className=" font-bold text-base leading-normal text-white mb-4">{t("ourServicesTitle")}</h4>
                     <div className="flex gap-[85px]">
                       <div className="">
                         <ul className="list-none p-0 m-0 space-y-3">
                           {data?.data?.footer?.services && data?.data?.footer?.services?.slice(0, 5)?.map(service => {
                             return (
                               <li key={service.id} className="flex items-center gap-4">
-                                <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path
                                     opacity="0.8"
                                     d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                                     fill="#B1B1B1"
                                   />
+                                </svg>
+
+                                <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
                                   href={`/services/${service.id}`}
@@ -232,66 +363,6 @@ export default function Footer() {
                               </li>
                             )
                           })}
-                          {/* <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              أنظمة الطلب عبر الإنترنت
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              منشئ مواقع المطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              أفضل مواقع المطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تصميم المواقع الإلكترونية
-                            </a>
-                          </li> */}
                         </ul>
                       </div>
 
@@ -300,12 +371,16 @@ export default function Footer() {
                         {data?.data?.footer?.services && data?.data?.footer?.services?.slice(5)?.map(service => {
                             return (
                               <li key={service.id} className="flex items-center gap-4">
-                                <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path
                                     opacity="0.8"
                                     d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                                     fill="#B1B1B1"
                                   />
+                                </svg>
+
+                                <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
                                   href={`/services/${service.id}`}
@@ -316,81 +391,6 @@ export default function Footer() {
                               </li>
                             )
                           })}
-                          {/* <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              دليل تسويق المطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تحسين محركات البحث للمطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              التسويق عبر البريد الإلكتروني
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              إدارة حسابات السوشيال ميديا للمطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-4">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تصوير احترافي لمنتجات الطعام والمطعم
-                            </a>
-                          </li> */}
                         </ul>
                       </div>
                     </div>
@@ -399,94 +399,23 @@ export default function Footer() {
 
                 <div className="xl:hidden flex flex-row justify-between w-full">
                   <div className="flex-1">
-                    <h4 className=" font-bold text-base leading-normal text-white mb-4">خدماتنا</h4>
+                    <h4 className=" font-bold text-base leading-normal text-white mb-4">{t("ourServicesTitle")}</h4>
                     <div className="flex flex-col gap-[16px]">
                       <div className="">
                         <ul className="list-none p-0 m-0 space-y-3">
-                          {/* <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تطبيقات الهواتف للمطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              أنظمة الطلب عبر الإنترنت
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              منشئ مواقع المطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              أفضل مواقع المطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تصميم المواقع الإلكترونية
-                            </a>
-                          </li> */}
                           {data?.data?.footer?.services && data?.data?.footer?.services?.map(service => {
                             return (
                               <li key={service.id} className="flex items-center gap-4">
-                                <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path
                                     opacity="0.8"
                                     d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                                     fill="#B1B1B1"
                                   />
+                                </svg>
+
+                                <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
                                   href={`/services/${service.id}`}
@@ -499,165 +428,105 @@ export default function Footer() {
                           })}
                         </ul>
                       </div>
-
-                      {/* <div className="flex-1">
-                        <ul className="list-none p-0 m-0 space-y-3">
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              دليل تسويق المطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تحسين محركات البحث للمطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              التسويق عبر البريد الإلكتروني
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              إدارة حسابات السوشيال ميديا للمطاعم
-                            </a>
-                          </li>
-                          <li className="flex items-center gap-2">
-                            <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                opacity="0.8"
-                                d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
-                                fill="#B1B1B1"
-                              />
-                            </svg>
-                            <a
-                              href="#"
-                              className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
-                            >
-                              تصوير احترافي لمنتجات الطعام والمطعم
-                            </a>
-                          </li>
-                        </ul>
-                      </div> */}
                     </div>
                   </div>
 
                   <div>
-                    <h4 className=" font-bold text-base leading-normal text-white mb-4">عن الشركة</h4>
+                    <h4 className=" font-bold text-base leading-normal text-white mb-4">{t("aboutCompanyTitle")}</h4>
                     <ul className="list-none p-0 m-0 space-y-3">
                       <li className="flex items-center gap-1">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
+                        </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
                           href="/about-us"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          من نحن
+                          {t("aboutUs")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-2">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
+                        </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
                           href="/career"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          الفرص الوظيفية
+                          {t("careers")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-2">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
+                        </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
                           href="/blogs"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          المدونة
+                          {t("blog")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-2">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
+                        </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
                           href="/faq"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          الاسئلة الشائعة
+                          {t("faq")}
                         </Link>
                       </li>
                       <li className="flex items-center gap-2">
-                        <svg width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="rtl:block ltr:hidden" width="5" height="7" viewBox="0 0 5 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path
                             opacity="0.8"
                             d="M0.601563 3.49511C0.601563 3.36965 0.649581 3.24421 0.745417 3.14856L3.76268 0.138716C3.95462 -0.0527493 4.26581 -0.0527492 4.45767 0.138716C4.64953 0.330105 4.64953 0.640471 4.45767 0.831953L1.78782 3.49511L4.45758 6.15827C4.64943 6.34974 4.64943 6.66008 4.45758 6.85145C4.26572 7.04301 3.95453 7.04301 3.76259 6.85145L0.745324 3.84165C0.649473 3.74595 0.601563 3.62051 0.601563 3.49511Z"
                             fill="#B1B1B1"
                           />
                         </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="4" height="7" viewBox="0 0 4 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
+                        </svg>
                         <Link
                           href="/contact-us"
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          اتصل بنا
+                          {t("contactUs")}
                         </Link>
                       </li>
                     </ul>
@@ -666,22 +535,73 @@ export default function Footer() {
 
                 <div className="flex flex-col items-end gap-5 w-full max-w-md mr-0 px-0">
                   <h3 className=" font-bold text-base leading-normal text-white w-full mb-0">
-                    اشترك في نشرتنا الإخبارية
+                    {t("newsletterTitle")}
                   </h3>
                   <div className="w-full">
-                    <div className="flex bg-white rounded-lg p-2 pr-4 items-center justify-between gap-3 w-full h-14">
+                    <form noValidate onSubmit={(e) => {
+                      e.preventDefault();
+                      if (validateForm()) {
+                        mutation.mutate(formData);
+                      }
+                    }} className="flex bg-white rounded-lg p-2 pr-4 items-center justify-between gap-3 w-full h-14">
                       <input
                         type="email"
-                        placeholder="أدخل بريدك الإلكتروني"
-                        className="border-none outline-none bg-transparent  font-medium text-sm leading-tight text-gray-600 placeholder:text-gray-600"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder={t("newsletterPlaceholder")}
+                        className="border-none outline-none bg-transparent  font-medium text-sm leading-tight text-gray-600 placeholder:text-gray-600 w-full"
                       />
                       <button
                         type="submit"
-                        className="bg-[#EDA133] hover:bg-primary-hover border-none rounded px-3 py-2  font-medium text-base leading-normal text-white w-26 h-10 cursor-pointer transition-all duration-300"
+                        className="bg-[#EDA133] hover:bg-primary-hover border-none rounded px-3 py-2 font-medium text-base leading-normal text-white min-w-26 h-10 cursor-pointer transition-all duration-300"
                       >
-                        اشترك
+                        {successText ? t("newsletterSent") : t("newsletterSubscribe")}
                       </button>
-                    </div>
+                    </form>
+                    {validationErrors.email && (
+                      <p className="text-red-500 text-sm mt-5">{validationErrors.email}</p>
+                    )}
+                    {errorText && (
+                        <div className="w-full h-[56px] flex items-center gap-2 rounded-lg border border-red-400 bg-red-50 px-4 py-3 text-red-700 mt-5">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 text-red-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L4.34 16c-.77 1.333.192 3 1.732 3z"
+                            />
+                          </svg>
+                          <p className="font-medium">{errorText}</p>
+                        </div>
+                      )}
+
+                      {successText && (
+                          <div className="w-full h-[56px] flex items-center gap-2 rounded-lg border border-green-400 bg-green-100 px-4 py-3 text-green-700 mt-5">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-5 w-5 text-green-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                            <p className="font-medium">{successText}</p>
+                          </div>
+                        )}
                   </div>
                   <div className="flex items-center gap-4 w-full">
                     <div className="flex-1">
@@ -689,8 +609,9 @@ export default function Footer() {
                         <img className="w-[65px] h-[65px] md:w-32 md:h-[120px]" src="/projects.gif" alt="projects gif" />
 
                         <section className="flex items-center xl:pe-[17px]">
-                          <h1 className="text-[16px] md:text-[20px] ml-3 md:ml-0">ابدأ مشروعك الرقمي الآن</h1>
+                          <h1 className="text-[16px] md:text-[20px] ml-3 md:ml-0">{t("startYourProjectNow")}</h1>
                           <svg
+                            className="rtl:block ltr:hidden"
                             width="65"
                             height="65"
                             viewBox="0 0 65 65"
@@ -711,6 +632,12 @@ export default function Footer() {
                               fillOpacity="0.76"
                             />
                           </svg>
+
+                          <svg className="rtl:hidden ltr:block" width="64" height="65" viewBox="0 0 64 65" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect y="32.2109" width="45.2405" height="45.2405" rx="22.6202" transform="rotate(-45 0 32.2109)" fill="white" fillOpacity="0.15"/>
+                            <path d="M37.4708 35.7255C37.4708 36.25 37.0473 36.676 36.5228 36.679C35.9942 36.6819 35.5642 36.2542 35.5642 35.7255L35.5643 30.0272L27.8953 37.6961C27.513 38.0785 26.8929 38.0785 26.5106 37.6961C26.1282 37.3137 26.1283 36.6937 26.5106 36.3114L34.1795 28.6425L28.4868 28.6472C27.9577 28.6476 27.5291 28.218 27.5305 27.6889C27.5319 27.1622 27.9593 26.736 28.486 26.736L36.9067 26.736C37.2182 26.736 37.4708 26.9885 37.4707 27.3L37.4708 35.7255Z" fill="white" fill-opacity="0.76"/>
+                          </svg>
+
                         </section>
                       </Link>
                     </div>
@@ -869,25 +796,25 @@ export default function Footer() {
                       href="/privacy-policy"
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      سياسة الخصوصية
+                      {t("privacyPolicy")}
                     </Link>
                     <Link
                       href="/terms-conditions"
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      الشروط والأحكام
+                      {t("termsConditions")}
                     </Link>
                     <Link
                       href="/user-agreement"
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      اتفاقية الاستخدام
+                      {t("userAgreement")}
                     </Link>
                     <Link
                       href="/accessibility"
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      إمكانية الوصول
+                      {t("accessibility")}
                     </Link>
                   </div>
 

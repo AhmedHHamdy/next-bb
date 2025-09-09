@@ -49,7 +49,7 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
     swiper.slides.forEach((slide: HTMLElement) => {
       slide.classList.remove(
         "translate-y-[-80px]",
-        "translate-y-[-20px]",
+        "translate-y-[5px]",
         "translate-y-[-40px]"
       );
   
@@ -92,7 +92,7 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
           "border-[#EDA133]"
         );
         img.style.transform = "scale(1.1)";
-        active.style.transform = "translateY(-20px)";
+        active.style.transform = "translateY(5px)";
       }
     }
   
@@ -139,6 +139,22 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
       swiperClientRef.current.slideToLoop(index, 500); // keep both in sync
     }
   };
+
+  function truncateText(text: string = "", maxLength: number): string {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "..."
+    }
+
+    return text
+  }
+
+  function truncate60(text: string = ""): string {
+    return truncateText(text, 60)
+  }
+
+  function truncate80(text: string = ""): string {
+    return truncateText(text, 80)
+  }
   return (
     <>
       <section className="bg-[#FAEAD1] pb-[50px] relative overflow-hidden">
@@ -146,7 +162,7 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
           <div className="relative text-center mb-[49px] pt-[50px] md:pt-[50px] h-[250px] md:h-[350px] xl:h-[360px] 2xl:h-[400px] bg-white  2xl:px-0">
             <h2 className="text-[24px] md:text-[40px] font-bold mb-[12px]">{reviewsData?.title}</h2>
             <p className="text-[#4A4A4A] text-[14px] md:text-[18px] max-w-[520px] font-medium mb-[20px] mx-auto">
-              {reviewsData?.desc}
+              {truncate80(reviewsData?.desc)}
             </p>
 
             <section className="relative z-[100] client-carousel max-w-[1400px] mx-auto">

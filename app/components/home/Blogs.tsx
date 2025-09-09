@@ -7,6 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { ArticleType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function Blogs({
   articles,
@@ -17,6 +18,8 @@ export default function Blogs({
     articles: ArticleType[];
   };
 }) {
+
+  const t = useTranslations("HomePage");
 
   function truncateText(text: string = "", maxLength: number): string {
     if (text.length > maxLength) {
@@ -144,17 +147,21 @@ export default function Blogs({
           </Swiper>
         </section>
 
-        <div className="px-0">
+        <div className="px-5 md:px-0">
           <Link
             href="/blogs"
             className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-[232px] h-[56px] text-white font-medium rounded-lg transition-all duration-300 flex items-center justify-center gap-2 mx-auto"
           >
-            <span className="text-[16px] font-medium">استكشف جميع المقالات</span>
-            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <span className="text-[16px] font-medium">{t("exploreAllArticles")}</span>
+            <svg className="rtl:block ltr:hidden" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
-                d="M7.27637 0.398438C7.59612 0.398438 7.86133 0.675535 7.86133 1.00977C7.86677 1.17663 7.79496 1.33198 7.69043 1.44141C7.58568 1.5509 7.44175 1.62012 7.27637 1.62012H2.15918L10.5186 10.3574C10.7443 10.5936 10.7442 10.9855 10.5186 11.2217C10.2925 11.4579 9.91744 11.4579 9.69141 11.2217L1.16797 2.31152V8.00488C1.16797 8.33911 0.903733 8.61621 0.583984 8.61621C0.264241 8.6162 0 8.33911 0 8.00488V1.00977C0 0.675538 0.264241 0.398444 0.583984 0.398438H7.27637Z"
+                d="M7.27637 0.637695C7.59612 0.637695 7.86133 0.914793 7.86133 1.24902C7.86677 1.41589 7.79496 1.57124 7.69043 1.68066C7.58568 1.79015 7.44175 1.85938 7.27637 1.85938H2.15918L10.5186 10.5967C10.7443 10.8329 10.7442 11.2247 10.5186 11.4609C10.2925 11.6972 9.91744 11.6971 9.69141 11.4609L1.16797 2.55078V8.24414C1.16797 8.57837 0.903733 8.85547 0.583984 8.85547C0.264241 8.85546 0 8.57837 0 8.24414V1.24902C0 0.914796 0.264241 0.637701 0.583984 0.637695H7.27637Z"
                 fill="#FCF4E9"
               />
+            </svg>
+
+            <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
             </svg>
           </Link>
         </div>

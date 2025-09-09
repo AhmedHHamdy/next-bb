@@ -47,16 +47,6 @@ export default function ProjectLogos({ logosData }: { logosData?: Project[] }) {
                     <SwiperSlide id={String(logo.id)}><img src={logo.image_url} alt="shine project logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
                 )
             })}
-            
-            {/* <SwiperSlide><img src="/garagePlus.svg" alt="garage plus logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/final.svg" alt="final logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/rental.svg" alt="rental logo" className="w-[140px] h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/exclusive.svg" alt="exclusive logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/shine.svg" alt="shine project logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/garagePlus.svg" alt="garage plus logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/final.svg" alt="final logo" className="h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/rental.svg" alt="rental logo" className="w-[140px] h-[32px] md:h-[50px]" /></SwiperSlide>
-            <SwiperSlide><img src="/exclusive.svg" alt="exclusive logo" className="h-[32px] md:h-[50px]" /></SwiperSlide> */}
         </Swiper>
     </section>
   );

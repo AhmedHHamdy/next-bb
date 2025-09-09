@@ -1,7 +1,60 @@
 {
   "HomePage": {
     "title": "مرحبا بك في الصفحة الرئيسية",
-    "about": "اذهب إلى صفحة المعلومات"
+    "about": "اذهب إلى صفحة المعلومات",
+    "freeConsultation": "استشارة مجانية",
+    "startProject": "ابدأ مشروعك",
+    "seeMore": "رؤية المزيد",
+    "allProjects": "كل المشاريع",
+    "serviceDetails": "تفاصيل الخدمة",
+    "allServices": "كل الخدمات",
+    "popularFaq": "الأسئلة الشائعة",
+    "faqDescription": "إذا كانت لديك أي أسئلة أخرى أو تحتاج إلى مزيد من التوضيح حول خدمات السيو، لا تتردد في الاطلاع على الإجابات هنا أو التواصل معنا مباشرة.",
+    "exploreAllArticles": "استكشف جميع المقالات"
+  },
+  "FormInputs": {
+    "nameLabel": "الاسم",
+    "namePlaceholder": "ادخل الاسم الكامل",
+    "countryLabel": "الدولة",
+    "countryPlaceholder": "الرجاء اختيار الدولة",
+    "phoneLabel": "رقم الجوال",
+    "emailLabel": "البريد الإلكتروني",
+    "emailPlaceholder": "الرجاء إدخال البريد الإلكتروني",
+    "servicesLabel": "الخدمة المطلوبة",
+    "servicesPlaceholder": "اختر",
+    "inquiryLabel": "استفسارك أو احتياجك",
+    "inquiryPlaceholder": "اكتب باختصار موضوع الاستشارة...",
+    "phonePlaceholder": "الرجاء إدخال رقم الجوال",
+    "projectNameLabel": "اسم المشروع",
+    "projectNamePlaceholder": "اسم المشروع",
+    "projectDescriptionLabel": "احكِ لنا نبذة مختصرة عن المشروع أو الفكرة",
+    "projectDescriptionPlaceholder": "الرجاء إدخال لنا نبذة مختصرة عن المشروع أو الفكرة.",
+    "readyToExplore": "هل أنت مستعد لإستكشاف إمكانيات جديدة للنمو؟",
+    "requestAndConsult": "اطلب واستشر خطة مع خبيرنا لتحقيق فريق مثالي مخصص لاحتياجات عملك",
+    "yourInfo": "معلومات عنك",
+    "applicantData": "بيانات المتقدم",
+    "whatIsYourTitle": "ما هي صفتك؟",
+    "contactDetails": "تفاصيل التواصل",
+    "preferredContactMethod": "وسيلة التواصل المفضلة؟",
+    "preferredLanguage": "ما اللغة التي تفضل التواصل بها؟",
+    "projectDetails": "تفاصيل المشروع",
+    "haveProjectFile": "هل لديك ملف مرفق يوضح فكرتك أو متطلباتك؟",
+    "attachProjectFile": "إرفاق ملف عن المشروع",
+    "send": "أرسال",
+    "dragAndDrop": "اسحب وأفلت ملفاتك أو تصفح",
+    "supportedFormat": "الصيغة المدعومة:",
+    "yes": "نعم",
+    "no": "لا",
+    "whatsapp": "واتساب",
+    "arabic": "عربي",
+    "english": "إنجليزي",
+    "projectOwner": "صاحب المشروع",
+    "companyRepresentative": "ممثل عن الشركة",
+    "employee": "موظف",
+    "consultingAgency": "جهة استشارية",
+    "other": "أخرى",
+    "call": "اتصال",
+    "enterYourRole": "الرجاء ادخال دورك في الشركة"
   },
   "ContactForm": {
     "nameRequired": "حقل الاسم مطلوب",
@@ -11,7 +64,8 @@
     "phoneRequired": "رقم الجوال مطلوب",
     "serviceRequired": "اختر خدمة",
     "messageRequired": "الرسالة مطلوبة",
-    "phoneLengthError": "رقم الجوال غير صحيح"
+    "phoneLengthError": "رقم الجوال غير صحيح",
+    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة"
   },
   "StartProjectForm": {
     "nameRequired": "حقل الاسم مطلوب",
@@ -25,7 +79,8 @@
     "ownerIdentityRequired": "اختر صفتك",
     "ownerRoleRequired": "الرجاء إدخال صفتك",
     "projectNameRequired": "اسم المشروع مطلوب",
-    "servicesRequired": "اختر خدمة واحدة على الأقل"
+    "servicesRequired": "اختر خدمة واحدة على الأقل",
+    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة"
   }
   ,
   "ConsultationForm": {
@@ -37,6 +92,67 @@
     "phoneLengthError": "رقم الجوال غير صحيح",
     "servicesRequired": "اختر خدمة واحدة على الأقل",
     "dateRequired": "يرجى اختيار تاريخ الاستشارة",
-    "durationRequired": "يرجى اختيار موعد الاستشارة"
+    "durationRequired": "يرجى اختيار موعد الاستشارة",
+    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة",
+    "inquiryRequired": "الاستفسار مطلوب",
+    "successText": "تم إرسال النموذج بنجاح!",
+    "genericError": "حدث خطأ أثناء إرسال النموذج."
+  },
+  "Calendar": {
+    "stepOneTitle": "تحديد موعد الإستشارة",
+    "dateLabel": "تاريخ الإستشارة",
+    "timeLabel": "موعد الإستشارة",
+    "prevMonthAria": "الشهر السابق",
+    "nextMonthAria": "الشهر التالي",
+    "weekdays": {
+      "sun": "الأحد",
+      "mon": "الإثنين",
+      "tue": "الثلاثاء",
+      "wed": "الأربعاء",
+      "thu": "الخميس",
+      "fri": "الجمعة",
+      "sat": "السبت"
+    },
+    "nextButton": "التالي",
+    "backButton": "رجوع",
+    "submitting": "جاري الإرسال...",
+    "submit": "إرسال",
+    "consultationInfoTitle": "معلومات عن الإستشارة"
+  },
+  "FooterForm": {
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة"
+  },
+  "NavLinks": {
+    "home": "الرئيسية",
+    "services": "خدماتنا",
+    "projects": "مشاريعنا",
+    "about": "من نحن",
+    "blogs": "مدونة",
+    "contact": "تواصل معنا",
+    "freeConsultation": "استشارة مجانية",
+    "startProject": "ابدأ مشروعك",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsConditions": "الشروط والأحكام",
+    "userAgreement": "اتفاقية الاستخدام",
+    "accessibility": "إمكانية الوصول"
+  },
+  "FooterLinks": {
+    "aboutCompanyTitle": "عن الشركة",
+    "ourServicesTitle": "خدماتنا",
+    "newsletterTitle": "اشترك في نشرتنا الإخبارية",
+    "newsletterPlaceholder": "أدخل بريدك الإلكتروني",
+    "newsletterSubscribe": "اشترك",
+    "newsletterSent": "تم الارسال",
+    "startYourProjectNow": "ابدأ مشروعك الرقمي الآن",
+    "privacyPolicy": "سياسة الخصوصية",
+    "termsConditions": "الشروط والأحكام",
+    "userAgreement": "اتفاقية الاستخدام",
+    "accessibility": "إمكانية الوصول",
+    "aboutUs": "من نحن",
+    "blog": "المدونة",
+    "careers": "الفرص الوظيفية",
+    "faq": "الأسئلة الشائعة",
+    "contactUs": "اتصل بنا"
   }
 }

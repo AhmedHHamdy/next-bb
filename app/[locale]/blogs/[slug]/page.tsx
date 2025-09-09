@@ -141,7 +141,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <div className="max-w-[1360px] mx-auto md:px-0">
           <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-[32px] md:gap-12">
             {/* <!-- Sidebar --> */}
-            <div className="lg:col-span-1 xl:col-span-1 self-start">
+            {/* <div className="lg:col-span-1 xl:col-span-1 self-start">
               <div className="block md:w-[310px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
                 <h3 className="text-[16px] text-[#4A4A4A] font-medium">محتوى المقالة</h3>
 
@@ -233,7 +233,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="lg:col-span-2 xl:col-span-3">
               <div className="mb-[48px] lg:mb-[64px]">

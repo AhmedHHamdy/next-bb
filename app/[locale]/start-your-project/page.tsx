@@ -43,6 +43,8 @@ export default function Page() {
 
   const locale = useLocale();
   const t = useTranslations("StartProjectForm");
+  const nav = useTranslations("NavLinks");
+  const tInputs = useTranslations("FormInputs");
 
   const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState<FormData>({
@@ -208,7 +210,7 @@ export default function Page() {
     if (!formData.email.trim()) {
       errors.email = t("emailRequired");
     } else {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
       if (!emailRegex.test(formData.email)) {
         errors.email = t("emailInvalid");
       }
@@ -221,16 +223,20 @@ export default function Page() {
     if (!formData.phone.trim()) {
       errors.phone = t("phoneRequired");
     } else {
-      const phoneLength =
-        data && formData.country_id
-          ? Number(
-              data?.data?.countries?.find(
-                (e: any) => String(e.country_code) == String(formData.country_code)
-              )?.phone_length || ""
-            )
-          : undefined;
+
+      const country = data?.data?.countries?.find(
+        (e: any) => String(e.country_code) === String(formData.country_code)
+      );
+
+      
+      const phoneLength = country ? Number(country?.phone_length || "") : undefined;
+
       if (phoneLength && formData.phone.length !== phoneLength) {
         errors.phone = t("phoneLengthError");
+      }
+
+      if (country && !formData.phone.startsWith(String(country.starts_with))) {
+        errors.phone = t("phoneFormatError");
       }
     }
 
@@ -269,17 +275,22 @@ export default function Page() {
         <div className="max-w-[1400px] mx-auto xl:px-[24px]">
           <div className="flex items-center gap-2">
             <Link href="/" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
-              الرئيسية
+              {nav("home")}
             </Link>
-            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <svg className="rtl:block ltr:hidden" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M10.0603 14.281C10.1869 14.281 10.3136 14.2343 10.4136 14.1343C10.6069 13.941 10.6069 13.621 10.4136 13.4277L6.06693 9.08099C5.74693 8.76099 5.74693 8.24099 6.06693 7.92099L10.4136 3.57432C10.6069 3.38099 10.6069 3.06099 10.4136 2.86766C10.2203 2.67432 9.90026 2.67432 9.70693 2.86766L5.36026 7.21432C5.02026 7.55432 4.82693 8.01432 4.82693 8.50099C4.82693 8.98766 5.01359 9.44766 5.36026 9.78766L9.70693 14.1343C9.80693 14.2277 9.93359 14.281 10.0603 14.281Z"
                 fill="#8B8B8B"
               />
             </svg>
 
+            <svg className="rtl:hidden ltr:block" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
+            </svg>
+
             <Link href="/start-your-project" className="text-black text-[15px] font-medium leading-[1.65]">
-              ابدأ مشروعك الآن
+              {nav("startProject")}
             </Link>
           </div>
         </div>
@@ -291,10 +302,10 @@ export default function Page() {
           {/* <!-- Section Header --> */}
           <div className="text-center mb-[29px] md:mb-[48px] px-[15px] 2xl:px-0 max-w-[636px] mx-auto">
             <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[12px]">
-              هل أنت مستعد لإستكشاف إمكانيات جديدة للنمو؟
+              {tInputs("readyToExplore")}
             </h2>
             <p className="text-[14px] md:text-[18px] text-[#4A4A4A] font-medium leading-relaxed max-w-3xl mx-auto">
-              اطلب واستشر خطة مع خبيرنا لتحقيق فريق مثالي مخصص لاحتياجات عملك
+              {tInputs("requestAndConsult")}
             </p>
           </div>
 
@@ -310,7 +321,7 @@ export default function Page() {
                 <div className="space-y-12">
                   <div className="space-y-[16px] md:space-y-6">
                     <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
-                      معلومات عنك
+                      {tInputs("yourInfo")}
                     </h3>
 
                     {/* <!-- Name and country Row --> */}
@@ -318,7 +329,7 @@ export default function Page() {
                       {/* <!-- Name Field --> */}
                       <div className="space-y-3">
                         <label className="text-base font-medium text-black block">
-                          الأسم <span className="text-[#FF6B6B]">*</span>
+                          {tInputs("nameLabel")} <span className="text-[#FF6B6B]">*</span>
                         </label>
                         <input
                           type="text"
@@ -327,7 +338,7 @@ export default function Page() {
                           required
                           maxLength={60}
                           onChange={handleChange}
-                          placeholder="الرجاء إدخال اسمك."
+                          placeholder={tInputs("namePlaceholder")}
                           className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.name ? 'border-red-500' : 'border-[#DADADA]'}`}
                         />
                         {validationErrors.name && (
@@ -338,15 +349,15 @@ export default function Page() {
                       {/* <!-- Country Field --> */}
                       <div className="space-y-3">
                         <label className="text-base font-medium text-black block">
-                          الدولة <span className="text-[#FF6B6B]">*</span>
+                          {tInputs("countryLabel")} <span className="text-[#FF6B6B]">*</span>
                         </label>
                         <div className="relative">
                           <Select
-                            className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
+                            className={`placeholderColor w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.country_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                             allowClear
                             value={formData.country_id == "" ? undefined : formData.country_id } 
                             style={{ width: '100%', height: "3rem" }}
-                            placeholder="الرجاء إختيار الدولة"
+                            placeholder={tInputs("countryPlaceholder")}
                             onChange={(value) => {
                               setFormData({...formData, country_id: value})
                               if (validationErrors.country_id) {
@@ -374,14 +385,14 @@ export default function Page() {
                 <div className="space-y-12">
                   <div className="space-y-[16px] md:space-y-6">
                     <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
-                      بيانات المتقدم
+                      {tInputs("applicantData")}
                     </h3>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-6">
                       {/* <!-- Description Section --> */}
                       <div className="space-y-6 col-span-2">
                         <h3 className="text-[16px] font-bold text-black">
-                          ما هي صفتك؟ <span className="text-[#FF6B6B]">*</span>
+                        {tInputs("whatIsYourTitle")} <span className="text-[#FF6B6B]">*</span>
                         </h3>
                         <div id="role-buttons" className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
                           <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "owner"})) 
@@ -391,7 +402,7 @@ export default function Page() {
                         } } className={`${formData.owner_identity == "owner" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                            صاحب المشروع
+                            {tInputs("projectOwner")}
                           </button>
                           <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "representative"})) 
                           if (validationErrors.owner_identity || validationErrors.owner_role) {
@@ -400,7 +411,7 @@ export default function Page() {
                         } } className={`${formData.owner_identity == "representative" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                            ممثل عن الشركة
+                            {tInputs("companyRepresentative")}
                           </button>
                           <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "employee"})) 
                           if (validationErrors.owner_identity || validationErrors.owner_role) {
@@ -409,7 +420,7 @@ export default function Page() {
                         } } className={`${formData.owner_identity == "employee" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                            موظف
+                            {tInputs("employee")}
                           </button>
                           <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "consulting"})) 
                           if (validationErrors.owner_identity || validationErrors.owner_role) {
@@ -418,7 +429,7 @@ export default function Page() {
                         } } className={`${formData.owner_identity == "consulting" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                            جهة استشارية
+                            {tInputs("consultingAgency")}
                           </button>
                           <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "other"})) 
                           if (validationErrors.owner_identity || validationErrors.owner_role) {
@@ -430,7 +441,7 @@ export default function Page() {
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}
                           >
-                            أخرى
+                            {tInputs("other")}
                           </button>
 
                         </div>
@@ -441,14 +452,14 @@ export default function Page() {
 
                       {/* <!-- Hidden by default --> */}
                       {formData.owner_identity == "other" && <div id="other-button-field" className="space-y-3">
-                        <label className="text-base font-medium text-black block">ما هي صفتك ؟ </label>
+                        <label className="text-base font-medium text-black block">{tInputs("whatIsYourTitle")}</label>
                         <input
                           type="text"
                           name="owner_role"
                           required
                           value={formData.owner_role}
                           onChange={handleChange}
-                          placeholder="الرجاء إدخال دورك في الشركة."
+                          placeholder={tInputs("enterYourRole")}
                           className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
                         />
                       </div>}
@@ -461,7 +472,7 @@ export default function Page() {
                   <div className="space-y-[32px] md:space-b-[48px] md:space-t-[56px]">
                     <div className="space-y-[16px] md:space-y-6">
                       <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] m:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
-                        تفاصيل التواصل
+                        {tInputs("contactDetails")}
                       </h3>
 
                       {/* <!-- Name and Email Row --> */}
@@ -482,7 +493,7 @@ export default function Page() {
                         {/* <!-- Email Field --> */}
                         <div className="space-y-3">
                           <label className="text-base font-medium text-black block">
-                            البريد الإلكتروني <span className="text-[#FF6B6B]">*</span>
+                            {tInputs("emailLabel")} <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <input
                             type="email"
@@ -491,7 +502,7 @@ export default function Page() {
                             maxLength={160}
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="الرجاء إدخال البريد الإلكتروني."
+                            placeholder={tInputs("emailPlaceholder")}
                             className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.email ? 'border-red-500' : 'border-[#DADADA]'}`}
                           />
                           {validationErrors.email && (
@@ -505,7 +516,7 @@ export default function Page() {
                         {/* <!-- How did you hear about us --> */}
                         <div className="space-y-3">
                           <label className="text-base font-medium text-black block">
-                            وسيلة التواصل المفضلة؟ <span className="text-[#FF6B6B]">*</span>
+                          {tInputs("preferredContactMethod")} <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
                             <button type="button" onClick={() => {
@@ -516,7 +527,7 @@ export default function Page() {
                             }} className={`${formData.communication_way == "whatsapp" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                              واتساب
+                              {tInputs("whatsapp")}
                             </button>
                             <button type="button" onClick={() => {
                               setFormData((previousData) => ({...previousData, communication_way: "call"}))
@@ -526,7 +537,7 @@ export default function Page() {
                             }} className={`${formData.communication_way == "call" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                              اتصال
+                              {tInputs("call")}
                             </button>
                           </div>
                           {validationErrors.communication_way && (
@@ -537,7 +548,7 @@ export default function Page() {
                         {/* <!-- Role Field --> */}
                         <div className="space-y-3">
                           <label className="text-base font-medium text-black block">
-                            ما اللغة التي تفضل التواصل بها؟ <span className="text-[#FF6B6B]">*</span>
+                          {tInputs("preferredLanguage")} <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
                             <button type="button" onClick={() => {
@@ -550,7 +561,7 @@ export default function Page() {
                             transition-colors ${formData.communication_lang == "arabic" ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             }`}>
-                              عربي
+                              {tInputs("arabic")}
                             </button>
                             <button type="button" onClick={() => {
                               setFormData((previousData) => ({...previousData, communication_lang: "english"}))
@@ -560,7 +571,7 @@ export default function Page() {
                             }} className={`px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors ${formData.communication_lang == "english" ? 
                               "border-[#EDA133] bg-[#FAEAD1] text-black" : ""
                             }`}>
-                              إنجليزي
+                              {tInputs("english")}
                             </button>
                           </div>
                           {validationErrors.communication_lang && (
@@ -575,19 +586,19 @@ export default function Page() {
                   <div className="space-y-[32px] md:space-b-[48px] md:space-t-[56px]">
                     <div className="space-y-[16px] md:space-y-6">
                       <h3 className="text-[20px] md:text-[24px] font-bold text-black pb-[16px] md:pb-[24px] border-b-[0.5px] border-[#DADADA77]">
-                        تفاصيل المشروع
+                        {tInputs("projectDetails")}
                       </h3>
 
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[16px] md:gap-6">
                         <div className="space-y-3">
-                          <label className="text-base font-medium text-black block">اسم المشروع</label>
+                          <label className="text-base font-medium text-black block">{tInputs("projectNameLabel")}</label>
                           <input
                             value={formData.project_name} 
                             onChange={handleChange}
                             name="project_name"
                             required
                             type="text"
-                            placeholder="اسم المشروع"
+                            placeholder={tInputs("projectNamePlaceholder")}
                             className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${validationErrors.project_name ? 'border-red-500' : 'border-[#DADADA]'}`}
                           />
                           {validationErrors.project_name && (
@@ -597,16 +608,16 @@ export default function Page() {
 
                         <div className="space-y-3">
                           <label className="text-base font-medium text-black block">
-                            ما نوع الخدمة التي تحتاجها؟ <span className="text-[#FF6B6B]">*</span>
+                            {tInputs("servicesLabel")} <span className="text-[#FF6B6B]">*</span>
                           </label>
                           <div className="relative">
                             <Select
                               mode="multiple"
-                              className={`w-full custom-select px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.services ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
+                              className={`placeholderColor w-full custom-select px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${validationErrors.services ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'}`}
                               allowClear
                               value={formData["services"]} 
                               style={{ width: '100%' }}
-                              placeholder="اختر"
+                              placeholder={tInputs("servicesPlaceholder")}
                               onChange={(values) => {
                                 setFormData({...formData, services: [...values]})
                                 if (validationErrors.services) {
@@ -630,14 +641,14 @@ export default function Page() {
 
                         <div className="space-y-3 lg:col-span-2">
                           <label className="text-[16px] font-medium text-black block">
-                            احكِ لنا نبذة مختصرة عن المشروع أو الفكرة
+                            {tInputs("projectDescriptionLabel")}
                           </label>
                           <textarea
                             value={formData.project_description}
                             onChange={handleChange}
                             maxLength={3000}
                             name="project_description"
-                            placeholder="الرجاء إدخال لنا نبذة مختصرة عن المشروع أو الفكرة."
+                            placeholder={tInputs("projectDescriptionPlaceholder")}
                             className="w-full h-36 px-3 py-3 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] resize-none"
                           ></textarea>
                         </div>
@@ -645,7 +656,7 @@ export default function Page() {
                         {/* <!-- file input Field settings --> */}
                         <div className="space-y-3">
                           <label className="text-base font-medium text-black block">
-                            هل لديك ملف مرفق يوضح فكرتك أو متطلباتك؟
+                            {tInputs("haveProjectFile")}
                           </label>
                           <div className="flex flex-row flex-wrap gap-[16px] md:gap-[25px] w-full">
                             <button
@@ -659,7 +670,7 @@ export default function Page() {
                                 "border-[#EDA133] bg-[#faead1] text-black" : ""
                               } file-input-settings px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}
                             >
-                              نعم
+                              {tInputs("yes")}
                             </button>
                             <button type="button" onClick={() => {
                               setOpen(false)
@@ -667,7 +678,7 @@ export default function Page() {
                             }} className={`${formData.has_file == false ? 
                               "border-[#EDA133] bg-[#faead1] text-black" : ""
                             } file-input-settings px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
-                              لا
+                              {tInputs("no")}
                             </button>
                           </div>
                         </div>
@@ -682,7 +693,7 @@ export default function Page() {
                             project_description_file: values, 
                           }))
                         }
-                        title="إرفاق ملف عن المشروع"
+                        title={tInputs("attachProjectFile")}
                         required={false}
                       />}
                     </div>
@@ -700,7 +711,7 @@ export default function Page() {
                         }}
                         className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
                       >
-                        {mutation.isPending ? "جاري الإرسال..." : "إرسال"}
+                        {mutation.isPending ? tInputs("send") + "..." : tInputs("send")}
                       </button>
 
                       <div className="space-y-3 w-fit">

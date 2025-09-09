@@ -1,7 +1,60 @@
 {
   "HomePage": {
     "title": "Hello world!",
-    "about": "Go to the about page"
+    "about": "Go to the about page",
+    "freeConsultation": "Free Consultation",
+    "startProject": "Start Your Project",
+    "seeMore": "See More",
+    "allProjects": "All Projects",
+    "serviceDetails": "Service Details",
+    "allServices": "All Services",
+    "popularFaq": "Popular FAQ",
+    "faqDescription": "If you have any other questions or need more clarification about our services, please feel free to check out our answers here or contact us directly.",
+    "exploreAllArticles": "Explore All Articles"
+  },
+  "FormInputs": {
+    "nameLabel": "Name",
+    "namePlaceholder": "Enter full name",
+    "countryLabel": "Country",
+    "countryPlaceholder": "Please select a country",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Please enter your email",
+    "servicesLabel": "Requested Service",
+    "servicesPlaceholder": "Select",
+    "inquiryLabel": "Your inquiry or need",
+    "inquiryPlaceholder": "Briefly describe the consultation topic...",
+    "phonePlaceholder": "Please enter your phone number",
+    "projectNameLabel": "Project Name",
+    "projectNamePlaceholder": "Enter the project name",
+    "projectDescriptionLabel": "Tell us briefly about the project or idea",
+    "projectDescriptionPlaceholder": "Please enter a brief about the project or idea.",
+    "readyToExplore": "Are you ready to explore new possibilities for growth?",
+    "requestAndConsult": "Request and consult a plan with our expert to achieve a perfect team tailored to your business needs.",
+    "yourInfo": "Your Information",
+    "applicantData": "Applicant Data",
+    "whatIsYourTitle": "What is your title?",
+    "contactDetails": "Contact Details",
+    "preferredContactMethod": "Preferred method of contact?",
+    "preferredLanguage": "Which language do you prefer to communicate in?",
+    "projectDetails": "Project Details",
+    "haveProjectFile": "Do you have an attached file that explains your idea or requirements?",
+    "attachProjectFile": "Attach a project file",
+    "send": "Send",
+    "dragAndDrop": "Drag and drop your files or browse",
+    "supportedFormat": "Supported format:",
+    "yes": "Yes",
+    "no": "No",
+    "whatsapp": "WhatsApp",
+    "arabic": "Arabic",
+    "english": "English",
+    "projectOwner": "Project owner",
+    "companyRepresentative": "Company representative",
+    "employee": "Employee",
+    "consultingAgency": "Consulting agency",
+    "other": "Other",
+    "call": "Call",
+    "enterYourRole": "Please enter your role in the company"
   },
   "ContactForm": {
     "nameRequired": "Name field is required",
@@ -11,7 +64,8 @@
     "phoneRequired": "Phone number is required",
     "serviceRequired": "Please select a service",
     "messageRequired": "Message is required",
-    "phoneLengthError": "Phone number is not valid"
+    "phoneLengthError": "Phone number is not valid",
+    "phoneFormatError": "Phone number must start with country code"
   },
   "StartProjectForm": {
     "nameRequired": "Name field is required",
@@ -25,7 +79,8 @@
     "ownerIdentityRequired": "Select your role",
     "ownerRoleRequired": "Please enter your role",
     "projectNameRequired": "Project name is required",
-    "servicesRequired": "Select at least one service"
+    "servicesRequired": "Select at least one service",
+    "phoneFormatError": "Phone number must start with country code"
   }
   ,
   "ConsultationForm": {
@@ -37,6 +92,67 @@
     "phoneLengthError": "Phone number is not valid",
     "servicesRequired": "Select at least one service",
     "dateRequired": "Please select a consultation date",
-    "durationRequired": "Please select a time slot"
+    "durationRequired": "Please select a time slot",
+    "phoneFormatError": "Phone number must start with country code",
+    "inquiryRequired": "Inquiry is required",
+    "successText": "Form submitted successfully!",
+    "genericError": "An error occurred while submitting the form."
+  },
+  "Calendar": {
+    "stepOneTitle": "Schedule Consultation",
+    "dateLabel": "Consultation Date",
+    "timeLabel": "Consultation Time",
+    "prevMonthAria": "Previous month",
+    "nextMonthAria": "Next month",
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "nextButton": "Next",
+    "backButton": "Back",
+    "submitting": "Sending...",
+    "submit": "Submit",
+    "consultationInfoTitle": "Consultation Information"
+  },
+  "FooterForm": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format"
+  },
+  "NavLinks": {
+    "home": "Home",
+    "services": "Services",
+    "projects": "Projects",
+    "about": "About Us",
+    "blogs": "Blog",
+    "contact": "Contact Us",
+    "freeConsultation": "Free Consultation",
+    "startProject": "Start Your Project",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "userAgreement": "User Agreement",
+    "accessibility": "Accessibility"
+  },
+  "FooterLinks": {
+    "aboutCompanyTitle": "About the Company",
+    "ourServicesTitle": "Our Services",
+    "newsletterTitle": "Subscribe to our newsletter",
+    "newsletterPlaceholder": "Enter your email",
+    "newsletterSubscribe": "Subscribe",
+    "newsletterSent": "Sent",
+    "startYourProjectNow": "Start your digital project now",
+    "privacyPolicy": "Privacy Policy",
+    "termsConditions": "Terms & Conditions",
+    "userAgreement": "User Agreement",
+    "accessibility": "Accessibility",
+    "aboutUs": "About Us",
+    "blog": "Blog",
+    "careers": "Careers",
+    "faq": "FAQ",
+    "contactUs": "Contact Us"
   }
 }

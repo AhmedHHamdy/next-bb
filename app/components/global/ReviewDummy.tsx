@@ -48,7 +48,7 @@ export default function ReviewsDummy({ reviewsData }: { reviewsData?: {
     swiper.slides.forEach((slide: HTMLElement) => {
       slide.classList.remove(
         "translate-y-[-80px]",
-        "translate-y-[-20px]",
+        "translate-y-[10px]",
         "translate-y-[-40px]"
       );
   
@@ -91,7 +91,7 @@ export default function ReviewsDummy({ reviewsData }: { reviewsData?: {
           "border-[#EDA133]"
         );
         img.style.transform = "scale(1.1)";
-        active.style.transform = "translateY(-20px)";
+        active.style.transform = "translateY(10px)";
       }
     }
   

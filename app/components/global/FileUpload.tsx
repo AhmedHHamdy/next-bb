@@ -1,5 +1,7 @@
 'use client'
 
+import { Modal } from "antd";
+import { useTranslations } from "next-intl";
 import React, { useState, useRef } from "react";
 
 interface UploadedFile {
@@ -10,6 +12,29 @@ interface UploadedFile {
 export default function FileUpload({ title, required, setSelectedFiles }: { title: string, required: boolean, setSelectedFiles?: (values: File[]) => void }) {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [previewFile, setPreviewFile] = useState<File | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const tInputs = useTranslations("FormInputs");
+
+  // const showModal = () => {
+  //   setIsModalOpen(true);
+  // };
+
+  // const handleOk = () => {
+  //   setIsModalOpen(false);
+  // };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handlePreview = (file: File) => {
+    setPreviewFile(file);
+    setIsModalOpen(true);
+  };
 
   // Handle file selection
   // const handleFiles = (selectedFiles: FileList | null) => {
@@ -164,6 +189,12 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
       case "zip":
         return "/zip-svg.svg";
 
+      // Excel
+      case "csv":
+        return "/csv-svg.svg";
+      case "xlsx":
+        return "/xlsx-svg.svg";
+
       // Videos
       case "mp4":
         return "/mp4-svg.svg";
@@ -186,7 +217,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
         return "/pdf-doc.svg";
 
       default:
-        return "/file.svg";
+        return "/file-svg-icon.svg";
     }
   }
 
@@ -235,7 +266,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
               <p className="text-lg font-medium text-black">
                 {files.length >= 5
                   ? "تم الوصول إلى الحد الأقصى (5 ملفات)"
-                  : "اسحب وأفلت ملفاتك، أو تصفح"}
+                  : "اسحب وأفلت ملفاتك أو تصفح"}
               </p>
               <p className="text-sm text-center text-[#393939]">
                 الصيغة المدعومة: JPG, PNG, DOCX, XLSX, RAR, ZIP, MP4
@@ -243,6 +274,87 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
             </div>
           </div>
         </div>
+
+        <Modal
+          title="File Preview"
+          // closable={{ 'aria-label': 'Custom Close Button' }}
+          closable={true}   // ✅ must be boolean
+          open={isModalOpen}
+          // onOk={handleOk}
+          okButtonProps={{ hidden: true }}
+          onCancel={handleCancel}
+          cancelButtonProps={{ hidden: true }}
+        >
+          {previewFile && (
+            <>
+            {/* Image Preview */}
+            {previewFile.type.startsWith("image/") && (
+              <img
+                src={URL.createObjectURL(previewFile)}
+                alt={previewFile.name}
+                className="max-h-[70vh] mx-auto"
+              />
+            )}
+      
+            {/* PDF Preview */}
+            {previewFile.type === "application/pdf" && (
+              <iframe
+                src={URL.createObjectURL(previewFile)}
+                title="PDF Preview"
+                className="w-full h-[70vh]"
+              ></iframe>
+            )}
+      
+            {/* Video Preview */}
+            {previewFile.type.startsWith("video/") && (
+              <video
+                controls
+                className="w-full max-h-[70vh] rounded-lg shadow"
+              >
+                <source src={URL.createObjectURL(previewFile)} type={previewFile.type} />
+                Your browser does not support the video tag.
+              </video>
+            )}
+      
+            {/* Excel Preview (just download for now) */}
+            {(previewFile.type ===
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+              previewFile.type === "text/csv") && (
+              <p className="text-gray-600">
+                Excel preview is not supported in the browser.{" "}
+                <a
+                  href={URL.createObjectURL(previewFile)}
+                  download={previewFile.name}
+                  className="text-blue-600 underline"
+                >
+                  Download {previewFile.name}
+                </a>
+              </p>
+            )}
+      
+            {/* Fallback for unsupported files */}
+            {!(
+              previewFile.type.startsWith("image/") ||
+              previewFile.type === "application/pdf" ||
+              previewFile.type.startsWith("video/") ||
+              previewFile.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+              previewFile.type === "text/csv"
+            ) && (
+              <p className="text-gray-600">
+                Preview not available.{" "}
+                <a
+                  href={URL.createObjectURL(previewFile)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline"
+                >
+                  Download instead
+                </a>
+              </p>
+            )}
+          </>
+          )}
+        </Modal>
 
         {/* Uploaded Files Display */}
         <div id="file-list" className="space-y-4 w-full">
@@ -255,7 +367,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
                 <div className="flex items-center gap-3">
                   <img src={handleFileImage(file.name || file.type)} alt="file icon" />
                   <div>
-                    <p className="text-sm font-bold text-black">{file.name}</p>
+                    <p className="text-sm font-bold text-black underline cursor-pointer" onClick={() => handlePreview(file)}>{file.name}</p>
                     <p className="text-xs text-[#4A4A4A]">
                       {(file.size / 1024).toFixed(1)} KB
                     </p>

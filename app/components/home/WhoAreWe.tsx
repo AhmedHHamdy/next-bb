@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 
-export default function WhoAreWe({ dataInfo }: {
+export default async function WhoAreWe({ dataInfo }: {
   dataInfo: {
     title: string;
     desc: string;
@@ -28,6 +29,9 @@ export default function WhoAreWe({ dataInfo }: {
     }
   }
 }) {
+
+  const t = await getTranslations('HomePage');
+
   return (
     <section className="relative bg-[#FCF4E9] py-[48px] md:py-[92px] overflow-hidden">
       <div className="absolute inset-0">
@@ -49,13 +53,18 @@ export default function WhoAreWe({ dataInfo }: {
 
             <div className="mt-[24px]">
               <Link href="/start-your-project" className="bg-[#EDA133] text-center hover:bg-[#D1912A] w-full md:w-[230px] text-white font-medium py-3 px-6 rounded-lg transition-all duration-300  flex items-center justify-center gap-2">
-                <span className="text-[16px]">ابدأ مشروعك الآن</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <span className="text-[16px]">{t("startProject")}</span>
+                <svg className="rtl:block ltr:hidden" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M8.21387 0.768555C8.53362 0.768555 8.79883 1.04565 8.79883 1.37988C8.80427 1.54675 8.73246 1.7021 8.62793 1.81152C8.52318 1.92101 8.37925 1.99023 8.21387 1.99023H3.09668L11.4561 10.7275C11.6818 10.9637 11.6817 11.3556 11.4561 11.5918C11.23 11.828 10.8549 11.828 10.6289 11.5918L2.10547 2.68164V8.375C2.10547 8.70923 1.84123 8.98633 1.52148 8.98633C1.20174 8.98632 0.9375 8.70923 0.9375 8.375V1.37988C0.9375 1.04566 1.20174 0.768561 1.52148 0.768555H8.21387Z"
                     fill="#FCF4E9"
                   />
                 </svg>
+                
+                <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
+                </svg>
+
               </Link>
             </div>
           </div>
