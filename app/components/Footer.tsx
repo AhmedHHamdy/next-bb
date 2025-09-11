@@ -66,32 +66,6 @@ export default function Footer() {
     return Object.keys(errors).length === 0;
   };
 
-  // const fetchAccessibili = async (): Promise<ApiResponse> => {
-  //   const res = await fetch(
-  //     `${process.env.NEXT_PUBLIC_API_URL}/api/getAppSettings`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         lang: localeValue,
-  //       },
-  //     }
-  //   );    
-
-  //   if (!res.ok) {
-  //     throw new Error("Failed to website settings");
-  //   }
-  //   return res.json();
-  // };
-
-  // const { data, isLoading, isError } = useQuery({
-  //   queryKey: ["footer"],
-  //   queryFn: fetchFooter,
-  // });
-
-  
-
-
   const fetchFooter = async (): Promise<ApiResponse> => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/getAppSettings`,
@@ -817,29 +791,32 @@ export default function Footer() {
                 <div className="w-full h-px bg-gray-600 mb-6"></div>
                 <div className="flex flex-col items-start md:flex-row md:justify-between md:items-center">
                   <div className="grid grid-cols-2 justify-items-start md:flex md:items-center gap-6 ps-3 md:ps-0">
+                   
                     <Link
-                      href="/privacy-policy"
+                      href={`/privacy-policy/${data?.data?.footer?.pages?.[0]?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {t("privacyPolicy")}
+                      {data?.data?.footer?.pages?.[0]?.title}
+                    </Link>
+                      
+             
+                    <Link
+                      href={`/terms-conditions/${data?.data?.footer?.pages?.[1]?.slug}`}
+                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
+                    >
+                      {data?.data?.footer?.pages?.[1]?.title}
                     </Link>
                     <Link
-                      href="/terms-conditions"
+                      href={`/user-agreement/${data?.data?.footer?.pages?.[2]?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {t("termsConditions")}
+                      {data?.data?.footer?.pages?.[2]?.title}
                     </Link>
                     <Link
-                      href="/user-agreement"
+                      href={`/accessibility/${data?.data?.footer?.pages?.[3]?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {t("userAgreement")}
-                    </Link>
-                    <Link
-                      href="/accessibility"
-                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
-                    >
-                      {t("accessibility")}
+                      {data?.data?.footer?.pages?.[3]?.title}
                     </Link>
                   </div>
 

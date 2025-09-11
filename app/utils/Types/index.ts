@@ -26,6 +26,12 @@ export interface Footer {
     meta_description: string;
     meta_tags: string;
   }[]
+  pages: {
+    title: string;
+    slug: string;
+    mete_tags: string;
+    meta_description: string;
+  }[],
   branches: Branch[];
   copyright: string;
 }

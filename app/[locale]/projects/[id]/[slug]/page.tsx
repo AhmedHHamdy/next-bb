@@ -116,7 +116,8 @@ export default async function Page({
               <hr className="my-[16px] md:my-[23px] text-[#DADADA44]"></hr>
 
               <div className="flex flex-col w-full gap-[24px] md:gap-[48px]">
-                <p dangerouslySetInnerHTML={{ __html: data?.project?.description }}  className="text-[16px] break-words md:text-[18px] font-medium text-[#4A4A4A] leading-relaxed opacity-80">
+                {/* className="text-[16px] break-words md:text-[18px] font-medium text-[#4A4A4A] leading-relaxed opacity-80" */}
+                <p dangerouslySetInnerHTML={{ __html: data?.project?.description }}  >
                 </p>
 
                 {/* <p className="text-[16px] md:text-[18px] font-medium text-[#4A4A4A] leading-relaxed opacity-80">
