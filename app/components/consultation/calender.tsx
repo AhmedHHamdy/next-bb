@@ -1,9 +1,9 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CountryCodeInput from "../global/CountryCodeInput";
 import { useLocale, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { FormSettingsDataType } from "@/app/utils/Types";
+import { FormSettingsDataType, FreeConsultationDataType } from "@/app/utils/Types";
 import { Select } from "antd";
 import dayjs from "dayjs";
 
@@ -30,13 +30,14 @@ interface ValidationErrors {
   inquiry?: string;
 }
 
-export default function CalendarComponent({ durations }: { durations: {
-  id: number;
-  name: string;
-  from: string;
-  to: string;
-  formatted_name: string;
-}[]}) {
+// { durations }: { durations: {
+//   id: number;
+//   name: string;
+//   from: string;
+//   to: string;
+//   formatted_name: string;
+// }[]}
+export default function CalendarComponent() {
 
   const locale = useLocale();
   const t = useTranslations("ConsultationForm");
@@ -75,15 +76,43 @@ export default function CalendarComponent({ durations }: { durations: {
 
   console.log(formData, "formData");
 
-  
-  const availableTimeSlots = [
-    "09:00 - 09:30 ( BST )",
-    "10:00 - 10:30 ( BST )",
-    "11:00 - 11:30 ( BST )",
-    "12:00 - 12:30 ( BST )",
-    "13:00 - 13:30 ( BST )",
-  ];
+  useEffect(() => {
+    setFormData((previousData) => ({
+      ...previousData, date: dayjs(new Date()).format("YYYY-MM-DD")
+    }))
+  }, [])
 
+  
+  // const availableTimeSlots = [
+  //   "09:00 - 09:30 ( BST )",
+  //   "10:00 - 10:30 ( BST )",
+  //   "11:00 - 11:30 ( BST )",
+  //   "12:00 - 12:30 ( BST )",
+  //   "13:00 - 13:30 ( BST )",
+  // ];
+
+  const fetchDurations = async (): Promise<FreeConsultationDataType> => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/getConsultationPageInfo`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          lang: locale,
+        },
+      }
+    );  
+    
+    if (!res.ok) {
+      throw new Error("Failed to website settings");
+    }
+    return res.json();
+  };
+
+  const { data: durationsData } = useQuery({
+    queryKey: ["Durations"],
+    queryFn: fetchDurations,
+  });
 
   function formatMonthYearArabic(year: number, monthIndex: number) {
     const date = new Date(year, monthIndex, 1);
@@ -274,7 +303,8 @@ export default function CalendarComponent({ durations }: { durations: {
       }
 
       if (country && !formData.phone.startsWith(String(country.starts_with))) {
-        errors.phone = t("phoneFormatError");
+        const expected = String(country.starts_with ?? "").replace(/^\+/, "").trim();
+        errors.phone = t("phoneFormatError", { code: `${expected}` });
       }
     }
     
@@ -521,7 +551,7 @@ export default function CalendarComponent({ durations }: { durations: {
                             {slot}
                           </button>
                         ))} */}
-                        {durations.map((slot) => (
+                        {durationsData?.data?.durations && durationsData?.data?.durations.map((slot) => (
                           <button
                             key={slot.id}
                             type="button"

@@ -1,7 +1,9 @@
+import FAQ from '@/app/components/global/FAQ';
 import { ProjectsPageDataType } from '@/app/utils/Types';
 import { Link } from '@/i18n/navigation';
 import {routing} from '@/i18n/routing';
-import { getLocale, setRequestLocale } from "next-intl/server";
+import { Metadata } from 'next';
+import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { use } from "react";
 
 // export function generateStaticParams() {
@@ -9,12 +11,27 @@ import { use } from "react";
 // }
 
 // {params}:{ params: Promise<{ locale: string }>}
+
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('HomePage');
+
+  return {
+    title: t("projects"),
+    description: t("projects"),
+    keywords: t("projects")
+  };
+}
+
+
 export default async function Page() {
   // const {locale} = use(params);
 
   // setRequestLocale(locale);
 
   const locale = await getLocale();
+
+  const t = await getTranslations('HomePage');
 
   // setRequestLocale(locale);
 
@@ -94,12 +111,19 @@ export default async function Page() {
 
                     <div className="mt-[16px] see-more-button">
                       <Link
-                        href={`/projects/${project?.id}`}
+                        href={`/projects/${project?.id}/${project?.slug}`}
                         className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
                       >
-                        <span className="text-[14px] md:text-[16px] font-medium">رؤية المزيد</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                          <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
+                        <span className="text-[14px] md:text-[16px] font-medium">{t("seeMore")}</span>
+                        <svg className="rtl:block ltr:hidden" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M7.27637 0.637695C7.59612 0.637695 7.86133 0.914793 7.86133 1.24902C7.86677 1.41589 7.79496 1.57124 7.69043 1.68066C7.58568 1.79015 7.44175 1.85938 7.27637 1.85938H2.15918L10.5186 10.5967C10.7443 10.8329 10.7442 11.2247 10.5186 11.4609C10.2925 11.6972 9.91744 11.6971 9.69141 11.4609L1.16797 2.55078V8.24414C1.16797 8.57837 0.903733 8.85547 0.583984 8.85547C0.264241 8.85546 0 8.57837 0 8.24414V1.24902C0 0.914796 0.264241 0.637701 0.583984 0.637695H7.27637Z"
+                            fill="#FCF4E9"
+                          />
+                        </svg>
+
+                        <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
                         </svg>
                       </Link>
                     </div>
@@ -107,335 +131,9 @@ export default async function Page() {
                 </div>
               )
             })}
-
-            {/* <div
-              style={{ backgroundImage: "url('/previous-project-img-2.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{ backgroundImage: "url('/previous-project-img-3.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{ backgroundImage: "url('/previous-project-img.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{ backgroundImage: "url('/previous-project-img-2.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{ backgroundImage: "url('/previous-project-img-3.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{ backgroundImage: "url('/previous-project-img.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{ backgroundImage: "url('/previous-project-img-2.png'" }}
-              className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
-            >
-              <div className="h-[270px] w-[235px] md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
-                <section className="w-full">
-                  <h3 className="text-[16px] md:text-[24px] font-medium text-white">رينتال الاعمال</h3>
-                  <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
-                    <section className="flex items-center gap-[13px]">
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                        رينتال
-                      </h4>
-
-                      <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                        <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                        المملكة العربية السعودية
-                      </h4>
-                    </section>
-                  </section>
-                  <p className="hidden md:block mt-[18px] text-white text-[16px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية بكل سهولة وسرعة. سواء
-                    كنت مصور فوتوغرافي، صانع محتوى، مخرج، أو صاحب مشروع تصوير......
-                  </p>
-                  <p className="block md:hidden mt-[12px] text-white text-[12px]">
-                    "رينتال" هو المنصة السعودية الأولى المتخصصة في تأجير معدات التصوير الاحترافية ...
-                  </p>
-                </section>
-
-                <div className="mt-[16px] see-more-button">
-                  <a
-                    href="project-details.html"
-                    className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
-                  >
-                    <span className="text-[14px] md:text-[16px] font-normal">رؤية المزيد</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M7.77734 0.5C8.09709 0.5 8.3623 0.777097 8.3623 1.11133C8.36775 1.27819 8.29593 1.43354 8.19141 1.54297C8.08666 1.65246 7.94273 1.72168 7.77734 1.72168H2.66016L11.0195 10.459C11.2452 10.6952 11.2452 11.087 11.0195 11.3232C10.7935 11.5595 10.4184 11.5594 10.1924 11.3232L1.66895 2.41309V8.10645C1.66895 8.44068 1.40471 8.71777 1.08496 8.71777C0.765217 8.71777 0.500977 8.44067 0.500977 8.10645V1.11133C0.500977 0.777101 0.765217 0.500006 1.08496 0.5H7.77734Z" fill="#FCF4E9"/>
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
-
-        {/* <section className="flex justify-center gap-[12px] w-full mt-[32px]">
-          <div className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] flex justify-center items-center cursor-pointer">
-            <img src="/pagination-arrow-right.svg" alt="pagination arrow right" />
-          </div>
-
-          <div className="border border-[#131A27] rounded-[8px] p-[19px] hover:text-white hover:bg-[#131A27] cursor-pointer h-[44px] w-[44px] flex justify-center items-center">
-            <h3 className="text-[20px] font-medium">1</h3>
-          </div>
-
-          <div className="border border-[#131A27] rounded-[8px] p-[19px] hover:text-white hover:bg-[#131A27] cursor-pointer h-[44px] w-[44px] flex justify-center items-center">
-            <h3 className="text-[20px] font-medium">2</h3>
-          </div>
-
-          <div className="border border-[#131A27] rounded-[8px] p-[19px] hover:text-white hover:bg-[#131A27] cursor-pointer h-[44px] w-[44px] flex justify-center items-center">
-            <h3 className="text-[20px] font-medium">3</h3>
-          </div>
-
-          <div className="border border-[#131A27] rounded-[8px] p-[19px] hover:text-white hover:bg-[#131A27] cursor-pointer h-[44px] w-[44px] flex justify-center items-center">
-            <h3 className="text-[20px] font-medium">...</h3>
-          </div>
-
-          <div className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] cursor-pointer flex justify-center items-center">
-            <img src="/pagination-arrow-left.svg" alt="pagination arrow left" />
-          </div>
-        </section> */}
+        {data?.faqs?.length > 0 && <FAQ faqs={data?.faqs} />}
       </div>
     </section>
   );

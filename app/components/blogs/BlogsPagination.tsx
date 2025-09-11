@@ -4,7 +4,7 @@ import { ArticleListResponse, SectionCategory } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import BlogsCategories from "./Blogs-Categories";
 
@@ -15,6 +15,10 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
   const [selectedSectionId, setSelectedSectionId] = useState("");
 
   console.log(selectedSectionId, "fg");
+
+  const t = useTranslations("Blogs");
+
+  const tError = useTranslations("Errors404");
 
   const locale = useLocale();
 
@@ -124,10 +128,10 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
 
             <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
               <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
-                حدث خطأ أثناء تحميل المحتوى
+                {tError("errorLoadingContent")}
               </h1>
               <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
-                عذرًا، واجهنا مشكلة مؤقتة. يرجى تحديث الصفحة أو المحاولة لاحقًا.
+                {tError("sorryTemporaryProblem")}
               </p>
             </div>
 
@@ -135,7 +139,7 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
               onClick={() => refetch()}
               className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
             >
-              تحديث الصفحة
+              {tError("refreshPage")}
             </button>
           </div>
         </div>
@@ -212,7 +216,7 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
                 </clipPath>
               </defs>
             </svg>
-            <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium">الكل</span>
+            <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium">{t("all")}</span>
             <div className="indicator absolute -bottom-6 w-20 h-0.5 bg-transparent rounded-full"></div>
           </div>
 
@@ -326,7 +330,7 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="بحث بإسم المدونة"
+                  placeholder={t("searchByBlogName")}
                   className="flex-1 bg-transparent border-none outline-none text-[#4A4A4A] placeholder-[#4A4A4A] text-sm font-medium"
                 />
                 <div onClick={() => refetch()} className="cursor-pointer">
@@ -342,7 +346,7 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
         {data?.data?.data &&
           data?.data?.data?.map((article) => {
             return (
-              <Link key={article.id} href={`/blogs/${article?.id}`}>
+              <Link key={article.id} href={`/blogs/${article.id}/${article.slug}`}>
                 <div className="bg-white pb-[24px] xl:pb-0 h-full 2xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                   <div className="relative">
                     <div
@@ -402,7 +406,9 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] flex justify-center items-center cursor-pointer disabled:opacity-50"
         >
-          <img src="/pagination-arrow-right.svg" alt="pagination arrow right" />
+          <img className="rtl:block ltr:hidden" src="/pagination-arrow-right.svg" alt="pagination arrow right" />
+
+          <img className="rtl:hidden ltr:block" src="/pagination-arrow-left.svg" alt="pagination arrow left" />
         </button>
 
         {/* Page Numbers with Ellipsis */}
@@ -433,7 +439,9 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] flex justify-center items-center cursor-pointer disabled:opacity-50"
         >
-          <img src="/pagination-arrow-left.svg" alt="pagination arrow left" />
+          <img className="rtl:block ltr:hidden" src="/pagination-arrow-left.svg" alt="pagination arrow left" />
+
+          <img className="rtl:hidden ltr:block" src="/pagination-arrow-right.svg" alt="pagination arrow right" />
         </button>
       </div>
     </>

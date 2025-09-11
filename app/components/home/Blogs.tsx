@@ -74,7 +74,7 @@ export default function Blogs({
               articles?.articles?.slice(0, 3)?.map((article) => {
                 return (
                   <SwiperSlide key={article.id} className="swiper-slide">
-                    <Link href={`blogs/${article.id}`}>
+                    <Link href={`/blogs/${article.id}/${article.slug}`}>
                       <div className="bg-white h-full pb-[30px] xl:pb-0 xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                         <div className="relative">
                           <div

@@ -42,7 +42,7 @@ export default async function WhoAreWe({ dataInfo }: {
         <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap- px-[15px] 2xl:px-0">
           <div className="flex-1 max-w-2xl">
             <div>
-              <h3 className="text-[#F2B660] font-bold text-[20px] mb-[16px] ">بناء الأعمال</h3>
+              <h3 className="text-[#F2B660] font-bold text-[20px] mb-[16px] ">{t("businessBuilding")}</h3>
               <div>
                 <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[16px] ">{dataInfo?.title}</h2>
                 <p className="text-[14px] md:text-[18px] text-black font-medium leading-relaxed ">

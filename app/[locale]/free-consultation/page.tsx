@@ -76,7 +76,8 @@ export default async function Page() {
 
           
           {/* Calender */}
-          <CalendarComponent durations={data?.durations || []} />
+          {/* durations={data?.durations || []} */}
+          <CalendarComponent />
         </div>
       </section>
 

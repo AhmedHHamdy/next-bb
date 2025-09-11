@@ -62,10 +62,10 @@ export const pingFont = localFont({
   display: "swap",
 })
 
-export const metadata: Metadata = {
-  title: "Business Building",
-  description: "Business Building For Information Technology",
-};
+// export const metadata: Metadata = {
+//   title: "Business Building",
+//   description: "Business Building For Information Technology",
+// };
 
 export default async function RootLayout({
   children,

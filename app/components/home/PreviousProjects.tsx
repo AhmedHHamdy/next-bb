@@ -18,6 +18,8 @@ export default function PreviousProjects({ dataInfo }: {
       title: string;
       short_description: string;
       owner_name: string;
+      slug: string
+      meta_tags: string
       country_name: string;
       image_url: string;
     }[]
@@ -68,7 +70,7 @@ export default function PreviousProjects({ dataInfo }: {
             },
             1024: {
               spaceBetween: 20,
-              slidesPerView: 1.15,
+              slidesPerView: 1.1,
             },
             1280: {
               spaceBetween: 20,
@@ -80,7 +82,11 @@ export default function PreviousProjects({ dataInfo }: {
             },
             1536: {
               spaceBetween: 48,
-              slidesPerView: 1.53,
+              slidesPerView: 1.35,
+            },
+            1920: {
+              spaceBetween: 48,
+              slidesPerView: 1.68,
             },
           }}
         >
@@ -91,8 +97,6 @@ export default function PreviousProjects({ dataInfo }: {
                 style={{ backgroundImage: `url(${project?.image_url})` }}
                 className="swiper-slide h-[312px] md:h-[707px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 border border-gray-700 hover:border-[#EDA133] inset-shadow-lg"
               >
-                <div className="swiper-lazy-preloader"></div>
-
                 <div className="h-[270px] w-[235px] md:w-full md:h-[650px] flex flex-col items-start justify-end project-card">
                   <section className="w-full">
                     <h3 className="text-[16px] md:text-[40px] font-medium text-white">{project?.title}</h3>
@@ -139,7 +143,7 @@ export default function PreviousProjects({ dataInfo }: {
 
                   <div className="mt-[16px] see-more-button">
                     <Link
-                      href={`/projects/${project.id}`}
+                      href={`/projects/${project?.id}/${project?.slug}`}
                       className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[229px] h-[28px] md:h-[56px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
                     >
                       <span className="text-[14px] md:text-[16px] font-medium">{t("seeMore")}</span>
@@ -162,7 +166,7 @@ export default function PreviousProjects({ dataInfo }: {
         </Swiper>
       </div>
 
-      <section className="flex justify-between items-center max-w-[1225px] mx-auto mt-[32px] md:mt-[48px] px-[15px] 2xl:px-0 relative z-[50]">
+      <section className="flex flex-col md:flex-row justify-between items-center max-w-[1225px] gap-[22px] md:gap-0 mx-auto mt-[32px] md:mt-[48px] px-[15px] 2xl:px-0 relative z-[50]">
         <section className="hidden md:flex items-center gap-[16px] rtl:flex ltr:hidden">
           <div className="swiper-3-button-prev-1 border border-[white] rounded-[8px] p-[19px] cursor-pointer">
             <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -10,8 +10,9 @@ import { useEffect, useRef } from "react";
 import { Review } from "@/app/utils/Types";
 
 export default function Reviews({ reviewsData }: { reviewsData?: {
-  description: string,
-  reviews: Review[]
+  title: string;
+  description: string;
+  reviews: Review[];
 }}) {
   const swiperRef = useRef<any>(null);
   const swiperClientRef = useRef<any>(null); // second swiper if you want sync
@@ -138,12 +139,29 @@ export default function Reviews({ reviewsData }: { reviewsData?: {
       swiperClientRef.current.slideToLoop(index, 500); // keep both in sync
     }
   };
+
+  function truncateText(text: string = "", maxLength: number): string {
+    if (text.length > maxLength) {
+      return text.slice(0, maxLength) + "..."
+    }
+
+    return text
+  }
+
+  function truncate60(text: string = ""): string {
+    return truncateText(text, 60)
+  }
+
+  function truncate80(text: string = ""): string {
+    return truncateText(text, 80)
+  }
+
   return (
     <>
       <section className="bg-[#FAEAD1] pb-[50px] relative overflow-hidden">
         <div className="relative customers-reviews-container">
           <div className="relative text-center mb-[49px] pt-[50px] md:pt-[50px] h-[250px] md:h-[350px] xl:h-[360px] 2xl:h-[400px] bg-white  2xl:px-0">
-            <h2 className="text-[24px] md:text-[40px] font-bold mb-[12px]">ماذا يقول عملاؤنا</h2>
+            <h2 className="text-[24px] md:text-[40px] font-bold mb-[12px]">{reviewsData?.title}</h2>
             <p className="text-[#4A4A4A] text-[14px] md:text-[18px] max-w-[520px] font-medium mb-[20px] mx-auto">
               {reviewsData?.description}
             </p>

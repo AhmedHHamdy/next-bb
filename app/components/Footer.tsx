@@ -66,6 +66,31 @@ export default function Footer() {
     return Object.keys(errors).length === 0;
   };
 
+  // const fetchAccessibili = async (): Promise<ApiResponse> => {
+  //   const res = await fetch(
+  //     `${process.env.NEXT_PUBLIC_API_URL}/api/getAppSettings`,
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         lang: localeValue,
+  //       },
+  //     }
+  //   );    
+
+  //   if (!res.ok) {
+  //     throw new Error("Failed to website settings");
+  //   }
+  //   return res.json();
+  // };
+
+  // const { data, isLoading, isError } = useQuery({
+  //   queryKey: ["footer"],
+  //   queryFn: fetchFooter,
+  // });
+
+  
+
 
   const fetchFooter = async (): Promise<ApiResponse> => {
     const res = await fetch(
@@ -355,7 +380,7 @@ export default function Footer() {
                                   <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
-                                  href={`/services/${service.id}`}
+                                  href={`/services/${service.id}/${service.slug}`}
                                   className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                                 >
                                   {service.name.slice(0, 20)}
@@ -383,7 +408,7 @@ export default function Footer() {
                                   <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
-                                  href={`/services/${service.id}`}
+                                  href={`/services/${service.id}/${service.slug}`}
                                   className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                                 >
                                   {service.name.slice(0, 20)}
@@ -418,7 +443,7 @@ export default function Footer() {
                                   <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
-                                  href={`/services/${service.id}`}
+                                  href={`/services/${service.id}/${service.slug}`}
                                   className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                                   >
                                   {service.name.slice(0, 20)}
@@ -635,7 +660,7 @@ export default function Footer() {
 
                           <svg className="rtl:hidden ltr:block" width="64" height="65" viewBox="0 0 64 65" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect y="32.2109" width="45.2405" height="45.2405" rx="22.6202" transform="rotate(-45 0 32.2109)" fill="white" fillOpacity="0.15"/>
-                            <path d="M37.4708 35.7255C37.4708 36.25 37.0473 36.676 36.5228 36.679C35.9942 36.6819 35.5642 36.2542 35.5642 35.7255L35.5643 30.0272L27.8953 37.6961C27.513 38.0785 26.8929 38.0785 26.5106 37.6961C26.1282 37.3137 26.1283 36.6937 26.5106 36.3114L34.1795 28.6425L28.4868 28.6472C27.9577 28.6476 27.5291 28.218 27.5305 27.6889C27.5319 27.1622 27.9593 26.736 28.486 26.736L36.9067 26.736C37.2182 26.736 37.4708 26.9885 37.4707 27.3L37.4708 35.7255Z" fill="white" fill-opacity="0.76"/>
+                            <path d="M37.4708 35.7255C37.4708 36.25 37.0473 36.676 36.5228 36.679C35.9942 36.6819 35.5642 36.2542 35.5642 35.7255L35.5643 30.0272L27.8953 37.6961C27.513 38.0785 26.8929 38.0785 26.5106 37.6961C26.1282 37.3137 26.1283 36.6937 26.5106 36.3114L34.1795 28.6425L28.4868 28.6472C27.9577 28.6476 27.5291 28.218 27.5305 27.6889C27.5319 27.1622 27.9593 26.736 28.486 26.736L36.9067 26.736C37.2182 26.736 37.4708 26.9885 37.4707 27.3L37.4708 35.7255Z" fill="white" fillOpacity="0.76"/>
                           </svg>
 
                         </section>

@@ -10,7 +10,69 @@
     "allServices": "All Services",
     "popularFaq": "Popular FAQ",
     "faqDescription": "If you have any other questions or need more clarification about our services, please feel free to check out our answers here or contact us directly.",
-    "exploreAllArticles": "Explore All Articles"
+    "exploreAllArticles": "Explore All Articles",
+    "businessBuilding": "Business Building",
+    "projects": "projects",
+    "home": "home"
+  },
+  "ProjectDetails": {
+    "popularProjects": "Popular Projects",
+    "seeMore": "See More"
+  },
+  "Services": {
+    "freeConsultation": "Free Consultation",
+    "startProject": "Start Your Project",
+    "askService": "Request a service now",
+    "services": "Services",
+    "ourServicesTitle": "Our Tech Services: Innovative Solutions for Your Business",
+    "ourServicesDescription": "We offer a range of digital services tailored for all types of companies, to help you achieve your goals in innovative and easy ways.",
+    "serviceDetails": "Service Details",
+    "stepsToReality": "Steps to Turn Your Ideas into Reality",
+    "joinUs": "Invitation to Join"
+  },
+  "Blogs": {
+    "home": "Home",
+    "blogs": "Blogs",
+    "searchByBlogName": "Search by blog name",
+    "all": "All",
+    "tags": "Tags",
+    "shareVia": "Share via:",
+    "relatedArticles": "Related Articles",
+    "discoverRelatedArticles": "Discover similar articles that might interest you and complement what you've just read."
+  },
+  "AboutUs": {
+    "whoAreWe": "Who Are We?",
+    "businessBuildingDescription": "We are Business Building. We operate in the Saudi and Egyptian markets to provide high-quality digital solutions, including website and application development, smart marketing strategies, and professional customer service. Our goal is to empower companies and institutions to achieve an effective digital transformation that keeps pace with growth ambitions.",
+    "ourVision": "Our Vision",
+    "ourMission": "Our Mission",
+    "ourCoreValues": "Our Core Values",
+    "whyUs": "Why Us?",
+    "competitiveAdvantage": "Competitive Advantage",
+    "whoWeServe": "Who We Serve?",
+    "viewPastProjects": "View Past Projects",
+    "viewSuccessStories": "View Success Stories",
+    "whatOurClientsSay": "What Our Clients Say",
+    "bookFreeConsultation": "Book a Free Consultation",
+    "viewOurWork": "View Our Work"
+  },
+  "ContactUs": {
+    "startYourProjectNow": "Start Your Project Now",
+    "callUsNow": "Call Us Now",
+    "sendUsYourMessage": "Send Us Your Message",
+    "fillFormToContact": "Please fill out the following form to get in touch with our specialized team. We are here to answer your inquiries and provide the support you need.",
+    "pleaseFillTheForm": "Please fill out the following form",
+    "fillDataBelow": "Please fill out the data below so our team can assist you faster. We are always here to answer all your questions and provide the consultations you need for the success of your project.",
+    "fromOver500Reviews": "From over 500 reviews",
+    "availableContactMethods": "Available Contact Methods",
+    "contactMethodsDescription": "We offer you multiple options to contact us, whether by email, phone, or by visiting our branches. Choose the most suitable method for you and we will be happy to assist you.",
+    "emailInquiries": "Email Inquiries",
+    "sendYourQuestions": "Send us your questions and we will respond quickly",
+    "contactTeamForSupport": "Contact our team for immediate support",
+    "interestedInPartnership": "Are you interested in partnering with us? Let's discuss your ideas.",
+    "ourBranchesNearYou": "Our Branch Locations Near You",
+    "viewBranchesDescription": "Browse all our widespread branches and register your details or contact the nearest branch to you with complete ease.",
+    "chatWithSupport": "Chat with Support",
+    "scheduleACall": "Schedule a Call"
   },
   "FormInputs": {
     "nameLabel": "Name",
@@ -42,7 +104,9 @@
     "attachProjectFile": "Attach a project file",
     "send": "Send",
     "dragAndDrop": "Drag and drop your files or browse",
-    "supportedFormat": "Supported format:",
+    "supportedFormat": "Supported format: JPG, PNG, DOCX, XLSX, RAR, ZIP, MP4",
+    "limitFiles": "The maximum limit has been reached (5 files)",
+    "filePreview": "filePreview",
     "yes": "Yes",
     "no": "No",
     "whatsapp": "WhatsApp",
@@ -54,7 +118,34 @@
     "consultingAgency": "Consulting agency",
     "other": "Other",
     "call": "Call",
-    "enterYourRole": "Please enter your role in the company"
+    "enterYourRole": "Please enter your role in the company",
+    "reasonForContact": "Reason for your contact",
+    "chooseReason": "Choose a reason for contact",
+    "subject": "Subject",
+    "message": "Message",
+    "enterMessageText": "Please enter the message text"
+  },
+  "Career": {
+    "sendYourCV": "Send Your CV",
+    "viewJobs": "View Jobs"
+  },
+  "Errors404": {
+    "contentTemporarilyUnavailable": "Content is temporarily unavailable",
+    "makingImprovements": "We're making some improvements. Thank you for your patience, we'll be back soon.",
+    "home": "Home",
+    "blog": "Blogs",
+    "noArticlesFound": "No articles found",
+    "tryDifferentKeywords": "Try using different keywords or browse other sections.",
+    "refreshPage": "Refresh Page",
+    "noServerConnection": "No server connection",
+    "checkInternetConnection": "Check your internet connection and try again later.",
+    "errorLoadingContent": "An error occurred while loading content",
+    "sorryTemporaryProblem": "Sorry, we've encountered a temporary problem."
+  },
+  "AboutUsMarquee": {
+    "digitalMarketing": "Digital Marketing",
+    "softwareSolutions": "Software Solutions",
+    "customerService": "Customer Service"
   },
   "ContactForm": {
     "nameRequired": "Name field is required",
@@ -65,7 +156,7 @@
     "serviceRequired": "Please select a service",
     "messageRequired": "Message is required",
     "phoneLengthError": "Phone number is not valid",
-    "phoneFormatError": "Phone number must start with country code"
+    "phoneFormatError": "Phone number must start with {code}"
   },
   "StartProjectForm": {
     "nameRequired": "Name field is required",
@@ -80,7 +171,7 @@
     "ownerRoleRequired": "Please enter your role",
     "projectNameRequired": "Project name is required",
     "servicesRequired": "Select at least one service",
-    "phoneFormatError": "Phone number must start with country code"
+    "phoneFormatError": "Phone number must start with {code}"
   }
   ,
   "ConsultationForm": {
@@ -93,7 +184,7 @@
     "servicesRequired": "Select at least one service",
     "dateRequired": "Please select a consultation date",
     "durationRequired": "Please select a time slot",
-    "phoneFormatError": "Phone number must start with country code",
+    "phoneFormatError": "Phone number must start with {code}",
     "inquiryRequired": "Inquiry is required",
     "successText": "Form submitted successfully!",
     "genericError": "An error occurred while submitting the form."
@@ -128,14 +219,15 @@
     "services": "Services",
     "projects": "Projects",
     "about": "About Us",
-    "blogs": "Blog",
+    "blogs": "Blogs",
     "contact": "Contact Us",
     "freeConsultation": "Free Consultation",
     "startProject": "Start Your Project",
     "privacyPolicy": "Privacy Policy",
     "termsConditions": "Terms & Conditions",
     "userAgreement": "User Agreement",
-    "accessibility": "Accessibility"
+    "accessibility": "Accessibility",
+    "faq": "FAQ"
   },
   "FooterLinks": {
     "aboutCompanyTitle": "About the Company",
@@ -150,9 +242,11 @@
     "userAgreement": "User Agreement",
     "accessibility": "Accessibility",
     "aboutUs": "About Us",
-    "blog": "Blog",
+    "blog": "Blogs",
     "careers": "Careers",
     "faq": "FAQ",
-    "contactUs": "Contact Us"
+    "contactUs": "Contact Us",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email format"
   }
 }

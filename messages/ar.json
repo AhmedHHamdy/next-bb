@@ -10,7 +10,69 @@
     "allServices": "كل الخدمات",
     "popularFaq": "الأسئلة الشائعة",
     "faqDescription": "إذا كانت لديك أي أسئلة أخرى أو تحتاج إلى مزيد من التوضيح حول خدمات السيو، لا تتردد في الاطلاع على الإجابات هنا أو التواصل معنا مباشرة.",
-    "exploreAllArticles": "استكشف جميع المقالات"
+    "exploreAllArticles": "استكشف جميع المقالات",
+    "businessBuilding": "بناء الأعمال",
+    "projects": "مشاريعنا",
+    "home": "الرئيسية"
+  },
+  "ProjectDetails": {
+    "popularProjects": "المشاريع المشابهة",
+    "seeMore": "رؤية المزيد"
+  },
+  "Services": {
+    "freeConsultation": "استشارة مجانية",
+    "startProject": "ابدأ مشروعك",
+    "askService": "اطلب خدمة الآن",
+    "services": "خدمات",
+    "ourServicesTitle": "خدماتنا التقنية: حلول مبتكرة لأعمالك",
+    "ourServicesDescription": "نحن نقدم مجموعة من الخدمات الرقمية المخصصة لكل أنواع الشركات، لتساعدك في تحقيق أهدافك بطرق مبتكرة وسهلة.",
+    "serviceDetails": "تفاصيل الخدمة",
+    "stepsToReality": "خطوات لتحويل أفكارك إلى واقع",
+    "joinUs": "دعوة للانضمام"
+  },
+  "Blogs": {
+    "home": "الرئيسية",
+    "blogs": "مدونة",
+    "searchByBlogName": "بحث بإسم المدونة",
+    "all": "الكل",
+    "tags": "الوسوم",
+    "shareVia": "مشاركة عبر:",
+    "relatedArticles": "مقالات ذات صلة",
+    "discoverRelatedArticles": "اكتشف مقالات مشابهة قد تهمك وتكمل ما قرأته الآن."
+  },
+  "AboutUs": {
+    "whoAreWe": "من نحن؟",
+    "businessBuildingDescription": "نحن شركة Business Building. نعمل في السوقين السعودي والمصري لتقديم حلول رقمية عالية الجودة، تشمل تطوير المواقع والتطبيقات، استراتيجيات التسويق الذكية، وخدمة عملاء احترافية. نهدف إلى تمكين الشركات والمؤسسات من تحقيق تحول رقمي فعّال يواكب طموحات النمو.",
+    "ourVision": "رؤيتنا",
+    "ourMission": "مهمتنا",
+    "ourCoreValues": "قيمنا الاساسية",
+    "whyUs": "لماذا نحن؟",
+    "competitiveAdvantage": "الفرق التنافسي",
+    "whoWeServe": "من نخدم؟",
+    "viewPastProjects": "شاهد المشاريع السابقة",
+    "viewSuccessStories": "استعرض قصص النجاح",
+    "whatOurClientsSay": "ماذا يقول عملاؤنا",
+    "bookFreeConsultation": "حجز استشارة مجانية",
+    "viewOurWork": "شاهد أعمالنا"
+  },
+  "ContactUs": {
+    "startYourProjectNow": "ابدأ مشروعك الآن",
+    "callUsNow": "اتصل بنا الآن",
+    "sendUsYourMessage": "أرسل لنا رسالتك",
+    "fillFormToContact": "رجاء تعبئة النموذج التالي للتواصل مع فريقنا المتخصص. نحن هنا للرد على استفساراتك وتقديم الدعم الذي تحتاجه.",
+    "pleaseFillTheForm": "يرجى ملء النموذج التالي",
+    "fillDataBelow": "قم بتعبئة البيانات أدناه ليتمكن فريقنا من مساعدتك بشكل أسرع. نحن هنا دائمًا للإجابة على جميع أسئلتك وتقديم الاستشارات التي تحتاجها لنجاح مشروعك.",
+    "fromOver500Reviews": "من أكثر من 500 تقييم",
+    "availableContactMethods": "طرق التواصل المتاحة",
+    "contactMethodsDescription": "نوفر لك خيارات متعددة للتواصل معنا، سواء عبر البريد الإلكتروني، الهاتف أو من خلال زيارة فروعنا. اختر الطريقة الأنسب لك وسنكون سعداء بمساعدتك.",
+    "emailInquiries": "استفسارات البريد الإلكتروني",
+    "sendYourQuestions": "أرسل لنا اسئلتك وسنقوم بالرد عليها بسرعة",
+    "contactTeamForSupport": "تواصل مع فريقنا للحصول على دعم فوري",
+    "interestedInPartnership": "هل أنت مهتم بالشراكة معنا؟ دعنا نناقش أفكارك.",
+    "ourBranchesNearYou": "أماكن فروعنا بالقرب منك",
+    "viewBranchesDescription": "استعرض جميع فروعنا المنتشرة وسجّل بياناتك أو تواصل مباشرة مع أقرب فرع لك بسهولة تامة.",
+    "chatWithSupport": "الدردشة مع الدعم",
+    "scheduleACall": "جدولة مكالمة"
   },
   "FormInputs": {
     "nameLabel": "الاسم",
@@ -42,7 +104,9 @@
     "attachProjectFile": "إرفاق ملف عن المشروع",
     "send": "أرسال",
     "dragAndDrop": "اسحب وأفلت ملفاتك أو تصفح",
-    "supportedFormat": "الصيغة المدعومة:",
+    "supportedFormat": "الصيغة المدعومة: JPG, PNG, DOCX, XLSX, RAR, ZIP, MP4",
+    "limitFiles": "تم الوصول إلى الحد الأقصى (5 ملفات)",
+    "filePreview": "معاينة الملف",
     "yes": "نعم",
     "no": "لا",
     "whatsapp": "واتساب",
@@ -54,7 +118,34 @@
     "consultingAgency": "جهة استشارية",
     "other": "أخرى",
     "call": "اتصال",
-    "enterYourRole": "الرجاء ادخال دورك في الشركة"
+    "enterYourRole": "الرجاء ادخال دورك في الشركة",
+    "reasonForContact": "ما سبب تواصلك",
+    "chooseReason": "اختر سبب التواصل",
+    "subject": "الموضوع",
+    "message": "الرسالة",
+    "enterMessageText": "الرجاء ادخال نص الرسالة"
+  },
+  "Career": {
+    "sendYourCV": "أرسل سيرتك",
+    "viewJobs": "عرض الوظائف"
+  },
+  "Errors404": {
+    "contentTemporarilyUnavailable": "المحتوى غير متاح مؤقتًا",
+    "makingImprovements": "نقوم ببعض التحسينات. شكرًا لصبرك، سنعود قريبًا.",
+    "home": "الرئيسية",
+    "blog": "المدونة",
+    "noArticlesFound": "لم يتم العثور على مقالات",
+    "tryDifferentKeywords": "جرّب استخدام كلمات مفتاحية مختلفة أو تصفح الأقسام الأخرى.",
+    "refreshPage": "تحديث الصفحة",
+    "noServerConnection": "لا يوجد اتصال بالسيرفر",
+    "checkInternetConnection": "تحقق من اتصالك بالإنترنت وأعد المحاولة لاحقًا.",
+    "errorLoadingContent": "حدث خطأ أثناء تحميل المحتوى",
+    "sorryTemporaryProblem": "عذرًا، واجهنا مشكلة مؤقتة. يرجى تحديث الصفحة أو المحاولة لاحقًا."
+  },
+  "AboutUsMarquee": {
+    "digitalMarketing": "تسويق رقمي",
+    "softwareSolutions": "حلول برمجية",
+    "customerService": "خدمة عملاء"
   },
   "ContactForm": {
     "nameRequired": "حقل الاسم مطلوب",
@@ -65,7 +156,7 @@
     "serviceRequired": "اختر خدمة",
     "messageRequired": "الرسالة مطلوبة",
     "phoneLengthError": "رقم الجوال غير صحيح",
-    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة"
+    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة {code}"
   },
   "StartProjectForm": {
     "nameRequired": "حقل الاسم مطلوب",
@@ -80,7 +171,7 @@
     "ownerRoleRequired": "الرجاء إدخال صفتك",
     "projectNameRequired": "اسم المشروع مطلوب",
     "servicesRequired": "اختر خدمة واحدة على الأقل",
-    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة"
+    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة {code}"
   }
   ,
   "ConsultationForm": {
@@ -93,7 +184,7 @@
     "servicesRequired": "اختر خدمة واحدة على الأقل",
     "dateRequired": "يرجى اختيار تاريخ الاستشارة",
     "durationRequired": "يرجى اختيار موعد الاستشارة",
-    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة",
+    "phoneFormatError": "رقم الجوال يجب أن يبدأ برمز الدولة {code}",
     "inquiryRequired": "الاستفسار مطلوب",
     "successText": "تم إرسال النموذج بنجاح!",
     "genericError": "حدث خطأ أثناء إرسال النموذج."
@@ -135,7 +226,8 @@
     "privacyPolicy": "سياسة الخصوصية",
     "termsConditions": "الشروط والأحكام",
     "userAgreement": "اتفاقية الاستخدام",
-    "accessibility": "إمكانية الوصول"
+    "accessibility": "إمكانية الوصول",
+    "faq": "الأسئلة الشائعة"
   },
   "FooterLinks": {
     "aboutCompanyTitle": "عن الشركة",
@@ -153,6 +245,8 @@
     "blog": "المدونة",
     "careers": "الفرص الوظيفية",
     "faq": "الأسئلة الشائعة",
-    "contactUs": "اتصل بنا"
+    "contactUs": "اتصل بنا",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "emailInvalid": "صيغة البريد الإلكتروني غير صحيحة"
   }
 }

@@ -1,37 +1,62 @@
 import BlogsCarousel from "@/app/components/blogs/Blogs-Carousel";
 import { Link } from "@/i18n/navigation";
 import { BlogDetailsPageDataType } from "@/app/utils/Types";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const locale = await getLocale();
+async function getBlogDetails(locale: string, id: string): Promise<BlogDetailsPageDataType> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getArticleById`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      lang: locale,
+    },
+    body: JSON.stringify({
+      article_id: id,
+    }),
+  });
 
-  const { slug } = await params;
-
-  async function getBlogDetails(locale: string): Promise<BlogDetailsPageDataType> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getArticleById`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        lang: locale,
-      },
-      body: JSON.stringify({
-        article_id: slug,
-      }),
-    });
-
-    if (!res.ok) {
-      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
-        throw new Error("Failed to fetch Server issue");
-      } else {
-        throw new Error("Failed to fetch Service Details data");
-      }
+  if (!res.ok) {
+    if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+      throw new Error("Failed to fetch Server issue");
+    } else {
+      throw new Error("Failed to fetch Service Details data");
     }
-
-    return res.json();
   }
 
-  const { data } = await getBlogDetails(locale);
+  return res.json();
+}
+
+export async function generateMetadata({ params }: { params:  Promise<{ id: string; slug: string }> }): Promise<Metadata> {
+  const locale = await getLocale();
+  const { id } = await params;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getArticleById`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", lang: locale },
+    body: JSON.stringify({ article_id: id }),
+  });
+
+  const { data } = await res.json();
+
+  return {
+    title: data?.article?.title,
+    description: data?.article?.short_description,
+    keywords: data?.article?.meta_tags?.split(",") || [],
+  };
+}
+
+
+export default async function Page({ params }: { params: Promise<{  id: string; slug: string }> }) {
+  const locale = await getLocale();
+
+  const { id, slug } = await params;
+
+  const t = await getTranslations('Blogs');
+
+
+
+  const { data } = await getBlogDetails(locale, id);
 
   return (
     <>
@@ -39,25 +64,33 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <div className="max-w-[1400px] mx-auto xl:px-[24px]">
           <div className="flex flex-wrap items-center gap-2">
             <Link href="/" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
-              الرئيسية
+              {t("home")}
             </Link>
 
-            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg className="rtl:block ltr:hidden" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M10.0603 14.281C10.1869 14.281 10.3136 14.2343 10.4136 14.1343C10.6069 13.941 10.6069 13.621 10.4136 13.4277L6.06693 9.08099C5.74693 8.76099 5.74693 8.24099 6.06693 7.92099L10.4136 3.57432C10.6069 3.38099 10.6069 3.06099 10.4136 2.86766C10.2203 2.67432 9.90026 2.67432 9.70693 2.86766L5.36026 7.21432C5.02026 7.55432 4.82693 8.01432 4.82693 8.50099C4.82693 8.98766 5.01359 9.44766 5.36026 9.78766L9.70693 14.1343C9.80693 14.2277 9.93359 14.281 10.0603 14.281Z"
                 fill="#8B8B8B"
               />
             </svg>
 
+            <svg className="rtl:hidden ltr:block" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
+            </svg>
+
             <Link href="/blogs" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
-              المدونة
+              {t("blogs")}
             </Link>
 
-            <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg className="rtl:block ltr:hidden" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M10.0603 14.281C10.1869 14.281 10.3136 14.2343 10.4136 14.1343C10.6069 13.941 10.6069 13.621 10.4136 13.4277L6.06693 9.08099C5.74693 8.76099 5.74693 8.24099 6.06693 7.92099L10.4136 3.57432C10.6069 3.38099 10.6069 3.06099 10.4136 2.86766C10.2203 2.67432 9.90026 2.67432 9.70693 2.86766L5.36026 7.21432C5.02026 7.55432 4.82693 8.01432 4.82693 8.50099C4.82693 8.98766 5.01359 9.44766 5.36026 9.78766L9.70693 14.1343C9.80693 14.2277 9.93359 14.281 10.0603 14.281Z"
                 fill="#8B8B8B"
               />
+            </svg>
+
+            <svg className="rtl:hidden ltr:block" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
             </svg>
 
             <Link href={`/blogs/${slug}`} className="text-black text-[15px] font-medium leading-[1.65]">
@@ -235,7 +268,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               </div>
             </div> */}
 
-            <div className="lg:col-span-2 xl:col-span-3">
+{/* xl:col-span-3 */}
+            <div className="lg:col-span-2 xl:col-span-4 w-full">
               <div className="mb-[48px] lg:mb-[64px]">
                 <div>
                   {/* <img
@@ -250,13 +284,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                         كيف تساهم هذه الحلول في تحقيق أهداف عملك؟
                       </h2> */}
                       <div className="text-[#686868] md:text-black text-base leading-7">
-                        <div>
+                        {/* without classes */}
+                        <div className="max-w-[800px] mx-auto">
                           {/* <h3 className="">1. توفير الوقت والجهد</h3> */}
                           {/* <p>
                             من خلال أتمتة المهام المتكررة مثل إرسال الفواتير، إدارة المخزون، أو جدولة الاجتماعات، تستطيع
                             الشركات أن تُعيد توزيع الوقت والموارد البشرية نحو أعمال أكثر استراتيجية وإبداعية.
                           </p> */}
-                          <p dangerouslySetInnerHTML={{__html: data?.article?.description}}>
+                          <p className="text-center" dangerouslySetInnerHTML={{__html: data?.article?.description}}>
                             {/* من خلال أتمتة المهام المتكررة مثل إرسال الفواتير، إدارة المخزون، أو جدولة الاجتماعات، تستطيع
                             الشركات أن تُعيد توزيع الوقت والموارد البشرية نحو أعمال أكثر استراتيجية وإبداعية. */}
                           </p>
@@ -376,7 +411,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             <div className="flex flex-col gap-6">
               <div className="w-full">
                 <div className="flex flex-col gap-4 mb-4">
-                  <h3 className="text-[18px] md:text-[24px] font-bold text-[#232323]">الوسوم</h3>
+                  <h3 className="text-[18px] md:text-[24px] font-bold text-[#232323]">{t("tags")}</h3>
                   <div className="w-full h-px bg-[#DADADA]"></div>
                 </div>
                 <div className="flex flex-wrap gap-4">
@@ -439,7 +474,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               <div className="w-full h-px bg-[#DADADA]"></div>
 
               <div className="flex items-center gap-4">
-                <span className="text-[#4A4A4A] font-medium text-sm">مشاركة عبر:</span>
+                <span className="text-[#4A4A4A] font-medium text-sm">{t("shareVia")}</span>
                 <div className="flex items-center gap-2">
                   <a
                     href="#"

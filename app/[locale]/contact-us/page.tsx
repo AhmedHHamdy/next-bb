@@ -3,32 +3,46 @@ import MapComponent from "@/app/components/contact-us/MapComponent";
 import FAQ from "@/app/components/global/FAQ";
 import { ContactUsPageDataType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { Metadata } from "next";
+
+async function getContactUsPageData(locale: string): Promise<ContactUsPageDataType> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getContactUsInfo`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      lang: locale,
+    }
+  });
+
+  if (!res.ok) {
+    console.log(res, "res")
+    console.log("Server responded with error code:", res.status);
+    if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+      throw new Error("Failed to fetch Server issue");
+    } else {
+      throw new Error("Failed to fetch homepage data");
+    }
+  }
+
+  return res.json();
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { data } = await getContactUsPageData(locale);
+
+  return {
+    title: data?.title,
+    description: data?.meta_description,
+    keywords: data?.meta_keywords
+  };
+}
 
 export default async function Page() {
   const locale = await getLocale();
 
-  async function getContactUsPageData(locale: string): Promise<ContactUsPageDataType> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getContactUsInfo`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        lang: locale,
-      }
-    });
-  
-    if (!res.ok) {
-      console.log(res, "res")
-      console.log("Server responded with error code:", res.status);
-      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
-        throw new Error("Failed to fetch Server issue");
-      } else {
-        throw new Error("Failed to fetch homepage data");
-      }
-    }
-  
-    return res.json();
-  }
+  const t = await getTranslations('ContactUs');
 
   // fetch typed data
   const { data } = await getContactUsPageData(locale);
@@ -75,17 +89,21 @@ export default async function Page() {
               {/* <!-- Buttons --> */}
               <div className="flex flex-row gap-4 w-full relative z-[50]">
                 <Link href="/start-your-project" className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
-                  ابدأ مشروعك الآن
-                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  {t("startYourProjectNow")}
+                  <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M12.6123 4.49951C12.9321 4.49951 13.1973 4.77661 13.1973 5.11084C13.2027 5.27771 13.1309 5.43305 13.0264 5.54248C12.9216 5.65197 12.7777 5.72119 12.6123 5.72119H7.49512L15.8545 14.4585C16.0802 14.6947 16.0802 15.0865 15.8545 15.3228C15.6285 15.559 15.2534 15.559 15.0273 15.3228L6.50391 6.4126V12.106C6.50391 12.4402 6.23967 12.7173 5.91992 12.7173C5.60018 12.7173 5.33594 12.4402 5.33594 12.106V5.11084C5.33594 4.77661 5.60018 4.49952 5.91992 4.49951H12.6123Z"
-                      fill="white"
+                      fill="#FCF4E9"
                     />
+                  </svg>
+
+                  <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
                   </svg>
                 </Link>
 
                 <a href="#contact" className="text-center border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
-                  اتصل بنا الآن
+                  {t("callUsNow")}
                 </a>
               </div>
             </div>
@@ -93,7 +111,7 @@ export default async function Page() {
 
             <div className="w-full h-[350px] md:h-[655px] relative mt-[24px] lg:mt-0 2xl:col-span-2">
               <img
-                src="/contact-us-bg.png.png"
+                src={data?.other?.header_image}
                 alt="hero image"
                 className="w-full h-full object-cover lg:rounded-[8px]"
               />
@@ -103,17 +121,16 @@ export default async function Page() {
       </section>
 
       {/* <!-- From Section --> */}
-      <ContactUsForm />
+      <ContactUsForm translationData={data?.other?.form} />
 
       {/* <!-- Contact Methods Section --> */}
       <div id="contact" className="w-full bg-white px-6 pb-[48px] md:pb-[72px]">
         <div className="max-w-[1300px] mx-auto">
           {/* <!-- Section Header --> */}
           <div className="flex flex-col items-center gap-3 mb-[32px] md:mb-[48px]">
-            <h2 className="text-[24px] md:text-[40px] font-bold text-black text-center">طرق التواصل المتاحة</h2>
+            <h2 className="text-[24px] md:text-[40px] font-bold text-black text-center">{t("availableContactMethods")}</h2>
             <p className="text-[14px] md:text-[18px] font-medium text-[#4A4A4A] leading-[1.5] text-center max-w-[724px]">
-              نوفر لك خيارات متعددة للتواصل معنا، سواء عبر البريد الإلكتروني، الهاتف أو من خلال زيارة فروعنا. اختر
-              الطريقة الأنسب لك وسنكون سعداء بمساعدتك.
+              {t("contactMethodsDescription")}
             </p>
           </div>
 
@@ -128,13 +145,11 @@ export default async function Page() {
 
                   {/* <!-- Content --> */}
                   <div className="space-y-2">
-                    <h3 className="text-[18px] font-medium text-black">جدولة مكالمة</h3>
+                    <h3 className="text-[18px] font-medium text-black"> {data?.other?.communication?.first?.title}</h3>
                     <p className="text-[14px] font-medium text-[#4A4A4A] leading-[1.4]">
-                      هل أنت مهتم بالشراكة معنا؟
-                      <br />
-                      دعنا نناقش أفكارك.
+                      {data?.other?.communication?.first?.desc}
                     </p>
-                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.phone}</p>
+                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.first?.value}</p>
                   </div>
                 </div>
               </div>
@@ -149,13 +164,11 @@ export default async function Page() {
 
                   {/* <!-- Content --> */}
                   <div className="space-y-2">
-                    <h3 className="text-[18px] font-medium text-black">الدردشة مع الدعم</h3>
+                    <h3 className="text-[18px] font-medium text-black">{data?.other?.communication?.second?.title}</h3>
                     <p className="text-[14px] font-medium text-[#4A4A4A] leading-[1.4]">
-                      تواصل مع فريقنا للحصول على
-                      <br />
-                      دعم فوري
+                      {data?.other?.communication?.second?.desc}
                     </p>
-                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.support_mail}</p>
+                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.second?.value}</p>
                   </div>
                 </div>
               </div>
@@ -170,13 +183,11 @@ export default async function Page() {
 
                   {/* <!-- Content --> */}
                   <div className="space-y-2">
-                    <h3 className="text-[18px] font-medium text-black">استفسارات البريد الإلكتروني</h3>
+                    <h3 className="text-[18px] font-medium text-black">{data?.other?.communication?.third?.title}</h3>
                     <p className="text-[14px] font-medium text-[#4A4A4A] leading-[1.4]">
-                      أرسل لنا اسئلتك وسنقوم
-                      <br />
-                      بالرد عليها بسرعة.
+                      {data?.other?.communication?.third?.desc}
                     </p>
-                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.contact_email}</p>
+                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.third?.value}</p>
                   </div>
                 </div>
               </div>
@@ -190,9 +201,9 @@ export default async function Page() {
         <div className="max-w-[1300px] mx-auto">
           {/* <!-- Section Header --> */}
           <div className="flex flex-col items-center gap-3 mb-[32px] md:mb-[48px] px-[15px] lg:px-0">
-            <h2 className="text-[24px] md:text-[40px] font-bold text-black text-center">أماكن فروعنا بالقرب منك</h2>
+            <h2 className="text-[24px] md:text-[40px] font-bold text-black text-center">{t("ourBranchesNearYou")}</h2>
             <p className="text-[14px] md:text-[18px] font-medium text-[#4A4A4A] leading-[1.5] text-center max-w-[724px]">
-              استعرض جميع فروعنا المنتشرة وسجّل بياناتك أو تواصل مباشرة مع أقرب فرع لك بسهولة تامة.
+              {t("viewBranchesDescription")}
             </p>
           </div>
 

@@ -236,7 +236,8 @@ export default function Page() {
       }
 
       if (country && !formData.phone.startsWith(String(country.starts_with))) {
-        errors.phone = t("phoneFormatError");
+        const expected = String(country.starts_with ?? "").replace(/^\+/, "").trim();
+        errors.phone = t("phoneFormatError", { code: `${expected}` });
       }
     }
 

@@ -22,6 +22,9 @@ export interface Footer {
     id: number;
     image_url: string;
     name: string
+    slug: string;
+    meta_description: string;
+    meta_tags: string;
   }[]
   branches: Branch[];
   copyright: string;
@@ -82,6 +85,8 @@ export interface ArticleType {
   section_name: string;
   published_at: string;
   views: number;
+  slug: string;
+  meta_tags: string;
 }
 
 export interface ServiceType {
@@ -89,6 +94,9 @@ export interface ServiceType {
   name: string;
   description: string;
   image_url: string;      
+  slug: string,
+  meta_description: string
+  meta_tags: string
 }
 export interface HomePage {
   app_hero_title: string;
@@ -151,6 +159,8 @@ export interface HomePage {
       title: string;
       short_description: string;
       owner_name: string;
+      slug: string,
+      meta_tags: string,
       country_name: string;
       image_url: string;
     }[]
@@ -245,7 +255,13 @@ interface Value {
 
 interface WhyUs {
   description: string;
-  differences: string[];
+  title: string;
+  image: string;
+  differences: {
+    id: number;
+    title: string;
+    description: string;
+  }[];
 }
 
 interface StatisticItem {
@@ -262,6 +278,8 @@ export interface Statistics {
 
 interface WhoWeServe {
   description: string,
+  title: string;
+  image: string;
   clients: {
     id: number,
     name: string
@@ -286,17 +304,26 @@ export interface Review {
 interface Other {
   header_title: string;
   header_description: string;
-  expressions: Expression[];
+  header_image: string;
+  expressions_section: {
+    title: string;
+    subtitle: string;
+    desc: string;
+    image: string;
+    expressions: Expression[]
+  };
   our_vision: string;
   our_mission: string;
   our_values: Value;
+  our_mission_image: string;
   why_us: WhyUs;
   statistics: Statistics;
   who_we_serve: WhoWeServe;
   projects: Project[];
   our_clients: {
-    description: string,
-    reviews: Review[]
+    title: string;
+    description: string;
+    reviews: Review[];
   };
 }
 
@@ -330,6 +357,11 @@ export interface ServiceTypeData {
   id: number;
   name: string;
   description: string;
+  slug: string;
+  main_title: string;
+  main_desc: string;
+  meta_description: string;
+  meta_tags: string;
   image_url: string;
 }
 
@@ -344,8 +376,14 @@ interface StepType {
 }
 export interface ServicesPageDataType {
   data: {
+    header: {
+      title: string;
+      desc: string
+      image: string
+    },
     title: string;
     desc: string;
+    faq: FAQItemType[] 
     services: ServiceTypeData[];
     projects: ProjectType[];
     steps: StepType[];
@@ -367,6 +405,8 @@ export interface ProjectTypeData {
   title: string;
   short_description: string;
   description: string;
+  slug: string;
+  meta_tags: string;
   owner_name: string;
   country_name: string;
   image_url: string;
@@ -375,6 +415,7 @@ export interface ProjectsPageDataType {
   data: {
     title: string;
     desc: string;
+    faqs: FAQItemType[]
     projects: ProjectTypeData[];
   };
   status: boolean;
@@ -429,12 +470,29 @@ export interface ContactUsPageDataType {
     meta_description: string;
     meta_keywords: string;
     other: {
-      header_title: "نبني مستقبلًا رقميًا يليق بطموحاتك",
-      header_description: "شركة سعودية-مصرية متخصصة في الحلول الرقمية المتكاملة: البرمجة، التسويق، وخدمة العملاء – نُقدم لك خبرة، ابتكار، ودعم مستمر لتطوير أعمالك.Z",
+      header_title: string;
+      header_description: string;
+      header_image: string;
       communication: {
-          phone: string;
-          support_mail: string;
-          contact_email: string;
+        first: {
+          title: string
+          desc: string
+          value: string
+        },
+        second: {
+          title: string
+          desc: string
+          value: string
+        },
+        third: {
+          title: string
+          desc: string
+          value: string
+        }
+      },
+      form: {
+        title: string;
+        desc: string;
       },
       branches: Branch[];
       locations: {
@@ -477,11 +535,17 @@ export interface FreeConsultationDataType {
   data: {
     title: string;
     desc: string
-    durations: []
-  },
-  status: true,
-  message: "الطلب تم بنجاح",
-  error: ""
+    durations: {
+      id: number;
+      name: string;
+      from: string;
+      to: string;
+      formatted_name: string;
+    }[]
+  };
+  status: boolean;
+  message: string;
+  error: string;
 }
 
 interface SectionContent {

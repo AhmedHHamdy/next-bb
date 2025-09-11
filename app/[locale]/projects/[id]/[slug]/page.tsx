@@ -3,14 +3,41 @@ import { ProjectDetailsPageDataType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
 import { getLocale } from "next-intl/server";
 
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params:  Promise<{ id: string; slug: string }> }): Promise<Metadata> {
+  const locale = await getLocale();
+  const { id } = await params;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getProjectById`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      lang: locale,
+    },
+    body: JSON.stringify({
+      project_id: id
+    })
+  });
+
+
+  const { data } = await res.json();
+
+  return {
+    title: data?.project?.title,
+    description: data?.project?.short_description,
+    keywords: data?.project?.meta_tags?.split(",") || [],
+  };
+}
+
 export default async function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ id: string; slug: string }>
 }) {
   const locale = await getLocale();
 
-  const {slug} = await params
+  const {id, slug} = await params
 
 
   async function getProjectDetails(locale: string): Promise<ProjectDetailsPageDataType> {
@@ -21,7 +48,7 @@ export default async function Page({
         lang: locale,
       },
       body: JSON.stringify({
-        project_id: slug
+        project_id: id
       })
     });
 
@@ -44,13 +71,13 @@ export default async function Page({
         <section className="container mx-auto px-4 max-w-[1400px] ">
           <div className="flex flex-col items-center gap-[32px]">
             {/* <!-- Project Image --> */}
-            <div className="w-40 h-20">
+            {/* <div className="w-40 h-20">
               <img
                 src="/project-hero-image-2ea3a1.png"
                 alt="Stylus Medicine Project"
                 className="w-full h-full object-cover rounded-lg"
               />
-            </div>
+            </div> */}
 
             {/* <!-- Project Title --> */}
             {/* dangerouslySetInnerHTML={{ __html: data.project.description }} */}
@@ -60,7 +87,7 @@ export default async function Page({
             </h1>
           </div>
 
-{/* block */}
+          {/* block */}
           <section className="hidden md:hidden px-[15px] xl:px-0 w-full mt-[16px]">
             <button className="bg-[#EDA133] text-white font-medium text-base px-4 py-3 rounded-lg hover:bg-[#D8912A] transition-colors flex items-center justify-center gap-2 w-50 h-14">
               <span>تصفح المشروع</span>

@@ -589,3 +589,7 @@ input[type="number"] {
   color: #a8a8a8;
   opacity: 1;
 }
+
+[dir="ltr"] .placeholderAlign {
+  direction: ltr;
+}

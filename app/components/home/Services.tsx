@@ -54,15 +54,16 @@ export default async function Services({
                   className="bg-[#313B4D] w-full h-full flex items-start justify-start gap-[16px] md:gap-[35px] rounded-lg p-8 border border-gray-700 hover:border-[#EDA133] transition-all duration-300 hover:transform hover:-translate-y-2"
                 >
                   <div className="self-start w-16 h-16 mt-[7px]">
-                    <img src={service.image_url} alt="service icon" />
+                    {/* h-[85px] */}
+                    <img className="h-[45px]" src={service.image_url} alt="service icon" />
                   </div>
                   <div className="flex flex-col gap-[10px] w-full md:w-[240px]">
                     <h3 className="text-[16px] md:text-[21.5px] font-bold text-white break-words">{truncate60(service?.name)}</h3>
-                    <p className="text-gray-300 text-[12px] md:text-[14px] break-words">
-                      {truncate120(service?.description)}
+                    <p dangerouslySetInnerHTML={{__html: service?.description}} className="text-gray-300 text-[12px] md:text-[14px] break-words">
+                      {/* {truncate120(service?.description)} */}
                     </p>
                     <Link
-                      href={`/services/${service.id}`}
+                      href={`/services/${service.id}/${service.slug}`}
                       className="flex items-center gap-2 text-[#EDA133] text-[14px] md:text-[15px]"
                     >
                       {t("serviceDetails")}

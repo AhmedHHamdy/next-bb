@@ -17,7 +17,7 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const tInputs = useTranslations("FormInputs");
+  const t = useTranslations("FormInputs");
 
   // const showModal = () => {
   //   setIsModalOpen(true);
@@ -265,18 +265,18 @@ export default function FileUpload({ title, required, setSelectedFiles }: { titl
             <div className="space-y-3">
               <p className="text-lg font-medium text-black">
                 {files.length >= 5
-                  ? "تم الوصول إلى الحد الأقصى (5 ملفات)"
-                  : "اسحب وأفلت ملفاتك أو تصفح"}
+                  ? t("limitFiles")
+                  : t("dragAndDrop")}
               </p>
               <p className="text-sm text-center text-[#393939]">
-                الصيغة المدعومة: JPG, PNG, DOCX, XLSX, RAR, ZIP, MP4
+                {t("supportedFormat")}
               </p>
             </div>
           </div>
         </div>
 
         <Modal
-          title="File Preview"
+          title={t("filePreview")}
           // closable={{ 'aria-label': 'Custom Close Button' }}
           closable={true}   // ✅ must be boolean
           open={isModalOpen}

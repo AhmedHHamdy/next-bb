@@ -6,7 +6,8 @@ import ProjectLogos from "@/app/components/global/PojectLogos";
 import Reviews from "@/app/components/global/Reviews";
 import { AboutUsData } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { getLocale } from "next-intl/server";
+import { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 // import { routing } from "@/i18n/routing";
 // import { setRequestLocale } from "next-intl/server";
 // import { use } from "react";
@@ -35,6 +36,17 @@ async function getAboutUsPageData(locale: string): Promise<AboutUsData> {
   return res.json();
 }
 
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const { data } = await getAboutUsPageData(locale);
+
+  return {
+    title: data?.title,
+    description: data?.meta_description,
+    keywords: data?.meta_keywords
+  };
+}
+
 export default async function Page() {
   // const {locale} = use(params);
 
@@ -42,6 +54,7 @@ export default async function Page() {
 
   const locale = await getLocale();
 
+  const t = await getTranslations('AboutUs');
 
   // fetch typed data
   const { data } = await getAboutUsPageData(locale);
@@ -97,23 +110,21 @@ export default async function Page() {
               {/* Buttons */}
               <div className="flex flex-row gap-4 w-full relative z-[50]">
                 <Link href="/fee-consultation" className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
-                  احجز استشارة مجانية
-                  <svg
-                    width="17"
-                    height="17"
-                    viewBox="0 0 17 17"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                  {t("bookFreeConsultation")}
+                  <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M12.6123 4.49951C12.9321 4.49951 13.1973 4.77661 13.1973 5.11084C13.2027 5.27771 13.1309 5.43305 13.0264 5.54248C12.9216 5.65197 12.7777 5.72119 12.6123 5.72119H7.49512L15.8545 14.4585C16.0802 14.6947 16.0802 15.0865 15.8545 15.3228C15.6285 15.559 15.2534 15.559 15.0273 15.3228L6.50391 6.4126V12.106C6.50391 12.4402 6.23967 12.7173 5.91992 12.7173C5.60018 12.7173 5.33594 12.4402 5.33594 12.106V5.11084C5.33594 4.77661 5.60018 4.49952 5.91992 4.49951H12.6123Z"
-                      fill="white"
+                      fill="#FCF4E9"
                     />
+                  </svg>
+
+                  <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
                   </svg>
                 </Link>
 
                 <Link href="/projects" className="border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
-                  شاهد أعمالنا
+                  {t("viewOurWork")}
                 </Link>
               </div>
             </div>
@@ -121,7 +132,7 @@ export default async function Page() {
             {/* RIGHT SIDE (Image) */}
             <div className="w-full h-[350px] md:h-[655px] relative mt-[24px] lg:mt-0 2xl:col-span-2">
               <img
-                src="/hero-img.jpeg"
+                src={data?.other?.header_image}
                 alt="hero image"
                 className="w-full h-full object-cover lg:rounded-[8px]"
               />
@@ -137,7 +148,7 @@ export default async function Page() {
           <div className="w-full xl:w-[429px] h-[298px] md:h-[429px] relative">
             <div className="absolute inset-0 bg-[#FCF4E9] rounded-[7px]"></div>
             <div className="relative w-full h-full rounded-[7px] overflow-hidden transform -rotate-10">
-              <img src="/about-team.png" alt="team" className="w-full h-full object-cover" />
+              <img src={data?.other?.expressions_section?.image} alt="team" className="w-full h-full object-cover" />
             </div>
           </div>
 
@@ -146,20 +157,16 @@ export default async function Page() {
             <div className="flex flex-col gap-10">
               {/* <!-- Heading and Subtitle --> */}
               <div className="flex flex-col gap-4">
-                <h2 className="text-[32px] md:text-[40px] font-bold text-[#E7E8E9]  leading-[1.2]">من نحن؟</h2>
+                <h2 className="text-[32px] md:text-[40px] font-bold text-[#E7E8E9]  leading-[1.2]">{data?.other?.expressions_section?.title}</h2>
                 <p className="text-[18px] text-white font-medium md:text-[#B8BABE] leading-[1.44]">
-                  نحن شركة Business Building
+                  {data?.other?.expressions_section?.subtitle}
                 </p>
               </div>
 
               {/* <!-- Description --> */}
               <section>
                 <p className="text-[16px] md:text-[18px] text-[#DADADA] leading-[1.56] max-w-[662px]">
-                  نعمل في السوقين السعودي والمصري لتقديم حلول رقمية عالية الجودة، تشمل تطوير المواقع والتطبيقات،
-                  استراتيجيات التسويق الذكية، وخدمة عملاء احترافية.
-                </p>
-                <p className="text-[16px] md:text-[18px] text-[#DADADA] leading-[1.56] max-w-[662px]">
-                  نهدف إلى تمكين الشركات والمؤسسات من تحقيق تحول رقمي فعّال يواكب طموحات النمو.
+                  {data?.other?.expressions_section?.desc}
                 </p>
               </section>
             </div>
@@ -167,7 +174,7 @@ export default async function Page() {
             {/* <!-- Features List --> */}
             <div className="flex flex-col gap-6 w-full">
               {/* <!-- Features --> */}
-              {data.other.expressions.map(expression => {
+              {data?.other?.expressions_section?.expressions?.map(expression => {
                 return (
                   <div key={expression.id} className="flex items-center gap-4">
                     <img src={expression.image_url} alt="experience" className="w-12 h-12" />
@@ -175,28 +182,6 @@ export default async function Page() {
                   </div>
                 )
               })}
-              
-
-              {/* <!-- Feature 2 --> */}
-              {/* <div className="flex items-center gap-4">
-                <img src="/team-icon.svg" alt="team" className="w-12 h-12" />
-                <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">فريق عمل متنوع من الخبراء</span>
-              </div> */}
-
-              {/* <!-- Feature 3 --> */}
-              {/* <div className="flex items-center gap-4">
-                <img src="/projects-icon.svg" alt="projects" className="w-12 h-12" />
-                <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">أكثر من 100 مشروع ناجح</span>
-              </div> */}
-
-              {/* <!-- Feature 4 --> */}
-              {/* <div className="flex items-center gap-4 w-full">
-                <img src="/clients-icon.svg" alt="clients" className="w-12 h-12" />
-
-                <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">
-                  عملاء من 6 دول في الخليج والعالم العربي
-                </span>
-              </div> */}
             </div>
           </div>
         </div>
@@ -211,7 +196,7 @@ export default async function Page() {
             <div className="w-full xl:w-[666px] flex flex-col gap-6">
               {/* <!-- Main Heading --> */}
               <h2 className="text-[32px] md:text-[40px] font-bold text-[#232323] leading-[1.4]">
-                {data?.other?.header_title?.slice(0, 80)}
+                {data?.other?.header_title}
               </h2>
 
               {/* <!-- Description --> */}
@@ -228,10 +213,10 @@ export default async function Page() {
                     <img src="/vision-icon.svg" alt="vision" className="w-[56px] md:w-20 h-[56px] md:h-20" />
 
                     {/* <!-- Content --> */}
-                    <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">رؤيتنا</h3>
+                    <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">{t("ourVision")}</h3>
 
                     <p className="text-[14px] md:text-[16px] text-[#2A313D] font-medium leading-[1.5] max-w-[277px]">
-                        {data?.other?.our_vision?.slice(0, 80)}
+                        {data?.other?.our_vision}
                     </p>
                   </div>
                 </div>
@@ -243,10 +228,10 @@ export default async function Page() {
                     <img src="/mission-icon.svg" alt="mission" className="w-[56px] md:w-20 h-[56px] md:h-20" />
 
                     {/* <!-- Content --> */}
-                    <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">مهمتنا</h3>
+                    <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">{t("ourMission")}</h3>
 
                     <p className="text-[14px] md:text-[16px] text-[#2A313D] font-medium leading-[1.5] max-w-[277px]">
-                      {data?.other?.our_mission?.slice(0, 80)}
+                      {data?.other?.our_mission}
                     </p>
                   </div>
                 </div>
@@ -255,7 +240,7 @@ export default async function Page() {
 
             {/* <!-- Left Side - Rating Card --> */}
             <div className="w-full xl:w-[580px] xl:h-[474px] relative">
-              <img src="/vision-bg.png" alt="team" className="w-full h-full object-cover" />
+              <img src={data?.other?.our_mission_image} alt="team" className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -265,7 +250,7 @@ export default async function Page() {
           <div className="w-full">
             <div className="w-full relative">
               <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 lg:px-[40px]">
-                <h3 className="text-[20px] md:text-[36px] font-bold text-[#232323] ">قيمنا الأساسية</h3>
+                <h3 className="text-[20px] md:text-[36px] font-bold text-[#232323] ">{t("ourCoreValues")}</h3>
 
                 {/* <!-- Values Grid --> */}
 
@@ -311,7 +296,7 @@ export default async function Page() {
         <div className="max-w-[1400px] mx-auto px-4">
           <div className="text-center mb-[24px] lg:mb-[54px]">
             <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-1 leading-[1.49]">
-              لماذا نحن؟ <span className="text-[#F2B660]">الفرق التنافسي</span>
+              {data?.other?.why_us?.title}
             </h2>
             <p className="text-[14px] md:text-[18px] mt-[12px] md:mt-0 text-[#4A4A4A] font-medium leading-[1.56] max-w-[600px] mx-auto">
               {/* نوفّر حلولًا رقمية شاملة تُلبي جميع متطلباتك التقنية، من تطوير البرمجيات، إلى التسويق الرقمي، وانتهاءً
@@ -323,20 +308,24 @@ export default async function Page() {
           {/* <!-- Content with Image and Cards --> */}
           <div className="relative">
             <div className="hidden relative z-10 md:flex justify-center mb-8">
-              <img src="/why-choose-us-bg.png" alt="Why Choose Us" className="object-cover" />
+              <img src={data?.other?.why_us?.image} alt="Why Choose Us" className="object-cover" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] lg:gap-x-[378px] lg:gap-y-[82px] max-w-[1400px] mx-auto lg:absolute lg:top-[-15px] lg:z-20">
-              <div className="bg-white border border-[#E7E8E9] rounded-xl p-[16px] xl:p-6 shadow-sm">
-                <div className="text-right">
-                  <h3 className="text-[18px] md:text-[24px] font-bold text-[#131A27] mb-4">خبرة متعددة التخصصات</h3>
-                  <p className="text-[14px] md:text-[18px] text-[#2A313D] font-medium leading-[1.44]">
-                    أن نصبح الشريك الرقمي الأول للشركات الخليجية من خلال خدمات تجمع بين التقنية والابتكار.
-                  </p>
-                </div>
-              </div>
+              {data?.other?.why_us?.differences?.map(difference => {
+                return (
+                  <div key={difference?.id} className="bg-white border border-[#E7E8E9] rounded-xl p-[16px] xl:p-6 shadow-sm">
+                    <div className="text-right">
+                      <h3 className="text-[18px] md:text-[24px] font-bold text-[#131A27] mb-4">{difference?.title}</h3>
+                      <p className="text-[14px] md:text-[18px] text-[#2A313D] font-medium leading-[1.44]">
+                        {difference?.description}
+                      </p>
+                    </div>
+                  </div>
+                )
+              })}
 
-              <div className="bg-white border border-[#E7E8E9] rounded-xl p-6 shadow-sm">
+              {/* <div className="bg-white border border-[#E7E8E9] rounded-xl p-6 shadow-sm">
                 <div className="text-right">
                   <h3 className="text-[18px] md:text-[24px] font-bold text-[#131A27] mb-4">
                     خدمات متكاملة تحت سقف واحد
@@ -365,7 +354,7 @@ export default async function Page() {
                     نستخدم أدوات تحليل حديثة ونبني استراتيجيات مبنية على أرقام حقيقية.
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -403,7 +392,7 @@ export default async function Page() {
           <div className="max-w-[1400px] mx-auto relative z-10 flex flex-col items-center text-center px-[15px] lg:px-[60px] 2xl:px-0">
             <div className="w-full mb-[32px] md:mb-16">
               <h2 className="text-[24px] md:text-[40px] font-bold text-[#FAEAD1] mb-[8px] md:mb-6 leading-[1.49]">
-                من نخدم؟
+                {data?.other?.who_we_serve?.title}
               </h2>
               <p className="text-[14px] md:text-[18px] font-medium text-[#FAEAD1] leading-[1.56] opacity-80">
                 {data?.other?.who_we_serve?.description}
@@ -426,61 +415,26 @@ export default async function Page() {
                         </button>
                       )
                     })}
-
-                    {/* <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      شركات ناشئة
-                    </button>
-
-                    <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      {" "}
-                      مؤسسات حكومية
-                    </button>
-
-                    <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      {" "}
-                      متاجر إلكترونية
-                    </button>
-
-                    <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      منصات تعليمية
-                    </button>
-
-                    <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      مطاعم وعلامات تجارية
-                    </button>
-
-                    <button
-                      className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                  rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
-                    >
-                      علامات تجارية تجزئة
-                    </button> */}
                   </div>
 
                   {/* <!-- Action Buttons --> */}
                   <div className="flex flex-row items-center gap-3 md:gap-4">
                     <a href="#reviews" className="md:px-6 py-4 bg-[#EDA133] rounded-lg text-white h-[48px] md:h-full text-[14px] md:text-[16px] w-full md:w-auto font-medium flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
-                      استعرض قصص النجاح
-                      <img src="/arrow-icon.svg" alt="arrow" />
+                      {t("viewSuccessStories")}
+                      <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M12.6123 4.49951C12.9321 4.49951 13.1973 4.77661 13.1973 5.11084C13.2027 5.27771 13.1309 5.43305 13.0264 5.54248C12.9216 5.65197 12.7777 5.72119 12.6123 5.72119H7.49512L15.8545 14.4585C16.0802 14.6947 16.0802 15.0865 15.8545 15.3228C15.6285 15.559 15.2534 15.559 15.0273 15.3228L6.50391 6.4126V12.106C6.50391 12.4402 6.23967 12.7173 5.91992 12.7173C5.60018 12.7173 5.33594 12.4402 5.33594 12.106V5.11084C5.33594 4.77661 5.60018 4.49952 5.91992 4.49951H12.6123Z"
+                          fill="#FCF4E9"
+                        />
+                      </svg>
+
+                      <svg className="rtl:hidden ltr:block" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.5 7.77686C11.5 8.0966 11.2229 8.36182 10.8887 8.36182C10.7218 8.36726 10.5665 8.29544 10.457 8.19092C10.3475 8.08617 10.2783 7.94224 10.2783 7.77686L10.2783 2.65967L1.54102 11.019C1.30482 11.2448 0.912974 11.2447 0.676757 11.019C0.440512 10.793 0.440555 10.4179 0.676757 10.1919L9.58691 1.66846L3.89355 1.66846C3.55932 1.66846 3.28223 1.40422 3.28223 1.08447C3.28223 0.764729 3.55933 0.500488 3.89355 0.500488L10.8887 0.500488C11.2229 0.500488 11.5 0.764729 11.5 1.08447L11.5 7.77686Z" fill="#FCF4E9"/>
+                      </svg>
                     </a>
 
                     <Link href="/projects" className="md:px-6 py-4 border border-[#EDA133] rounded-lg h-[48px] md:h-full text-[#EDA133] text-[14px] w-full md:w-auto md:text-[16px] font-medium hover:bg-[#EDA13333] hover:text-white transition-all duration-300">
-                      شاهد المشاريع السابقة
+                      {t("viewPastProjects")}
                     </Link>
                   </div>
                 </div>
@@ -488,7 +442,7 @@ export default async function Page() {
 
               {/* <!-- Background Image --> */}
               <div className="lg:w-[392px] lg:h-[381px] xl:w-[460px] 2xl:w-[592px] 2xl:h-[481px] opacity-80">
-                <img src="/services-image-569340.png" alt="services" className="w-full h-full object-cover" />
+                <img src={data?.other?.who_we_serve?.image} alt="services" className="w-full h-full object-cover" />
               </div>
             </section>
           </div>

@@ -82,7 +82,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="hidden lg:block w-full fixed z-[1000]">
+      <header className="hidden xl:block w-full fixed z-[1000]">
         <div className="w-full bg-white py-2 px-6 pb-3">
           <div className="max-w-[1400px] mx-auto">
             <div className="flex justify-between items-center">
@@ -186,7 +186,9 @@ export default function Header() {
                 </a>
 
                 <a
-                  href={data?.data?.social?.whatsapp}
+                  href={`https://wa.me/${data?.data?.social?.whatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
                   <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -366,7 +368,7 @@ export default function Header() {
           </div>
         </div>
       </header>
-      <header className="block lg:hidden w-full fixed z-[1000]">
+      <header className="block xl:hidden w-full fixed z-[1000]">
         <div className="w-full bg-white py-4 mt-0 px-4 border-b-2 border-white drop-shadow-xs">
           <div className="">
             <div className="flex justify-between items-center">

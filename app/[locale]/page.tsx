@@ -13,12 +13,24 @@ import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 import { HomePageData } from "../utils/Types";
 import { Link } from "@/i18n/navigation";
 import ReviewsHome from "../components/home/ReviewsHome";
+import { Metadata } from "next";
 
 // export function generateStaticParams() {
 //   return routing.locales.map((locale) => ({ locale }));
 // }
 
 // { params }: { params: { locale: string } }
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('HomePage');
+
+  return {
+    title: t("home"),
+    description: t("home"),
+    keywords: t("home")
+  };
+}
+
 
 export default async function HomePage() {
   const locale = await getLocale();
@@ -75,7 +87,7 @@ export default async function HomePage() {
           <section className="flex items-center justify-center gap-4 mt-6">
             <Link
               href="/start-your-project"
-              className="text-center bg-[#EDA133] text-center w-full md:w-[238px] h-[48px] xl:h-[56px] rounded-[8px] flex items-center justify-center gap-2 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors"
+              className="text-center bg-[#EDA133] w-full md:w-[238px] h-[48px] xl:h-[56px] rounded-[8px] flex items-center justify-center gap-2 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors"
             >
               {t("startProject")}
               <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -113,19 +125,19 @@ export default async function HomePage() {
         <Counters countersData={data?.statistics} />
       </main>
 
-      <Services servicesData={data?.our_services || []} />
+      {data?.our_services?.services?.length > 0 && <Services servicesData={data?.our_services || []} />}
 
-      <ProjectLogos logosData={data?.our_products} />
+      {data?.our_products?.length > 0 && <ProjectLogos logosData={data?.our_products} />}
 
       <WhoAreWe dataInfo={data?.business_building} />
 
-      <PreviousProjects dataInfo={data?.our_projects} />
+      {data?.our_projects.projects?.length > 0 && <PreviousProjects dataInfo={data?.our_projects} />}
 
-      <ReviewsHome reviewsData={data?.our_clients} />
+      {data?.our_clients?.clients?.length > 0 && <ReviewsHome reviewsData={data?.our_clients} />}
 
-      <FAQ faqs={data?.faqs} homePageStatus={true} />
+      {data?.faqs?.length > 0 && <FAQ faqs={data?.faqs} homePageStatus={true} />}
 
-      <Blogs articles={data?.our_articles} />
+      {data?.our_articles?.articles?.length > 0 && <Blogs articles={data?.our_articles} />}
     </section>
   );
 }

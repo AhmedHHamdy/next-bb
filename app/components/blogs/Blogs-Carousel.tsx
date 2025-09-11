@@ -8,8 +8,11 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { ArticleType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 export default function BlogsCarousel({ articlesData }: {articlesData: ArticleType[]}) {
+
+  const t = useTranslations("Blogs");
 
   function truncateText(text: string = "", maxLength: number): string {
     if (text.length > maxLength) {
@@ -31,29 +34,53 @@ export default function BlogsCarousel({ articlesData }: {articlesData: ArticleTy
     <div className="max-w-[1360px] mx-auto">
       <div className="mb-[32px] md:mb-[27px] flex items-center justify-between">
         <section className="flex flex-col gap-[12px]">
-          <h3 className="text-[24px] md:text-[40px] font-bold">مقالات ذات صلة</h3>
+          <h3 className="text-[24px] md:text-[40px] font-bold">{t("relatedArticles")}</h3>
           <p className="text-[14px] md:text-[18px] font-medium text-[#4A4A4A]">
-            اكتشف مقالات مشابهة قد تهمك وتكمل ما قرأته الآن.
+            {t("discoverRelatedArticles")}
           </p>
         </section>
 
-        <section className="hidden md:flex items-center gap-[13px] md:gap-[16px]">
-          <div className="other-blogs-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
-            <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
-                fill="#131A27"
-              />
-            </svg>
-          </div>
-          <div className="other-blogs-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] rounded-[8px] cursor-pointer">
-            <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
-                fill="#131A27"
-              />
-            </svg>
-          </div>
+        <section className="rtl:block ltr:hidden">
+          <section className="hidden md:flex items-center gap-[13px] md:gap-[16px]">
+            <div className="other-blogs-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+              <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
+                  fill="#131A27"
+                />
+              </svg>
+            </div>
+            <div className="other-blogs-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] rounded-[8px] cursor-pointer">
+              <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
+                  fill="#131A27"
+                />
+              </svg>
+            </div>
+          </section>
+        </section>
+
+        <section className="rtl:hidden ltr:block ">
+          <section className="hidden md:flex items-center gap-[13px] md:gap-[16px]">
+            <div className="other-blogs-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+              <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
+                  fill="#131A27"
+                />
+              </svg>
+              
+            </div>
+            <div className="other-blogs-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] rounded-[8px] cursor-pointer">
+              <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
+                  fill="#131A27"
+                />
+              </svg>
+            </div>
+          </section>
         </section>
       </div>
 
@@ -93,7 +120,7 @@ export default function BlogsCarousel({ articlesData }: {articlesData: ArticleTy
         {articlesData && articlesData?.map(article => {
           return (
             <SwiperSlide key={article?.id} className="swiper-slide">
-              <Link href={`/blogs/${article.id}`}>
+              <Link href={`/blogs/${article.id}/${article.slug}`}>
                 <div className="bg-white h-full pb-[25px] 2xl:pb-0 h-full 2xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                   <div className="relative">
                     <div
@@ -302,23 +329,46 @@ export default function BlogsCarousel({ articlesData }: {articlesData: ArticleTy
         </SwiperSlide> */}
       </Swiper>
 
-      <section className="flex justify-center items-center md:hidden mt-[32px] gap-[13px] md:gap-[16px]">
-        <div className="other-blogs-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
-          <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
-              fill="#131A27"
-            />
-          </svg>
-        </div>
-        <div className="other-blogs-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
-          <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
-              fill="#131A27"
-            />
-          </svg>
-        </div>
+      <section className="rtl:block ltr:hidden">
+        <section className="flex justify-center items-center md:hidden mt-[32px] gap-[13px] md:gap-[16px]">
+          <div className="other-blogs-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+            <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
+                fill="#131A27"
+              />
+            </svg>
+          </div>
+          <div className="other-blogs-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+            <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
+                fill="#131A27"
+              />
+            </svg>
+          </div>
+        </section>
+      </section>
+
+      <section className="rtl:hidden ltr:block">
+        <section className="flex justify-center items-center md:hidden mt-[32px] gap-[13px] md:gap-[16px]">
+          <div className="other-blogs-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+            <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
+                fill="#131A27"
+              />
+            </svg>
+          </div>
+          <div className="other-blogs-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+            <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
+                fill="#131A27"
+              />
+            </svg>
+          </div>
+        </section>
       </section>
     </div>
   );

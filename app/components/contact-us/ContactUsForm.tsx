@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Select } from "antd";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import CountryCodeInput from "../global/CountryCodeInput";
 
 interface FormData {
   name: string;
@@ -14,6 +15,7 @@ interface FormData {
   subject: string;
   service_id: string;
   message: string;
+  country_code: string;
 }
 
 interface ValidationErrors {
@@ -25,10 +27,19 @@ interface ValidationErrors {
   service_id?: string;
 }
 
-export default function ContactUsForm() {
+export default function ContactUsForm({translationData}: {
+  translationData: {
+    title: string;
+    desc: string;
+  }
+}) {
 
   const locale = useLocale();
   const t = useTranslations("ContactForm");
+
+  const contactTranslation = useTranslations("ContactUs");
+
+  const tInput = useTranslations("FormInputs")
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -38,6 +49,7 @@ export default function ContactUsForm() {
     subject: "",
     service_id: "",
     message: "",
+    country_code: ""
   });
 
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -88,12 +100,12 @@ export default function ContactUsForm() {
       errors.country_id = t("countryRequired");
     }
 
-    // // Phone validation
+    // Phone validation
     // if (!formData.phone.trim()) {
     //   errors.phone = t("phoneRequired");
     // }
 
-    // // Phone validation Length
+    // Phone validation Length
     // const phoneLength = data && formData.country_id ? Number(data?.data?.countries?.find(e => String(e.id) == formData.country_id)?.phone_length || "") : 25
     // if (formData.phone.length < phoneLength) {
     //   errors.phone = t("phoneLengthError");
@@ -133,7 +145,8 @@ export default function ContactUsForm() {
       }
 
       if (country && !formData.phone.startsWith(String(country.starts_with))) {
-        errors.phone = t("phoneFormatError");
+        const expected = String(country.starts_with ?? "").replace(/^\+/, "").trim();
+        errors.phone = t("phoneFormatError", { code: `${expected}` });
       }
     }
 
@@ -206,6 +219,7 @@ export default function ContactUsForm() {
         subject: "",
         service_id: "",
         message: "",
+        country_code: ""
       })
 
       setSuccessText("تم إرسال النموذج بنجاح!");
@@ -231,9 +245,9 @@ export default function ContactUsForm() {
       <div className="max-w-[1300px] mx-auto">
         {/* <!-- Contact Form Header --> */}
         <div className="flex flex-col items-center gap-3 mb-[32px]">
-          <h1 className="text-[24px] md:text-[40px] font-bold text-black text-center">أرسل لنا رسالتك</h1>
+          <h1 className="text-[24px] md:text-[40px] font-bold text-black text-center">{translationData?.title}</h1>
           <p className="text-[14px] md:text-[18px] font-medium text-[#4A4A4A] leading-[1.5] text-center max-w-[611px]">
-            رجاء تعبئة النموذج التالي للتواصل مع فريقنا المتخصص. نحن هنا للرد على استفساراتك وتقديم الدعم الذي تحتاجه.
+            {translationData?.desc}
           </p>
         </div>
 
@@ -242,13 +256,12 @@ export default function ContactUsForm() {
           <div className="w-full lg:w-[500px]">
             <div className="bg-white border border-[#E7E8E9] rounded-lg p-6 shadow-lg">
               <h2 className="text-[20px] md:text-[40px] font-medium md:font-bold text-black mb-9">
-                يرجى ملء النموذج التالي
+                {contactTranslation("pleaseFillTheForm")}
               </h2>
 
               <div className="space-y-6">
                 <p className="text-[14px] md:text-[18px] font-medium text-[#4A4A4A] leading-[1.5] ">
-                  قم بتعبئة البيانات أدناه ليتمكن فريقنا من مساعدتك بشكل أسرع. نحن هنا دائمًا للإجابة على جميع أسئلتك
-                  وتقديم الاستشارات التي تحتاجها لنجاح مشروعك.
+                  {contactTranslation("fillDataBelow")}
                 </p>
 
                 <section className="flex items-center">
@@ -256,13 +269,13 @@ export default function ContactUsForm() {
                   <div className="flex items-center gap-4">
                     <div className="flex -space-x-2">
                       <div className="w-12 h-12 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">أ</span>
+                        <img src="/image-people-1.png" alt="image avatar" />
                       </div>
                       <div className="w-12 h-12 rounded-full border-2 border-white bg-gray-400 flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">ب</span>
+                        <img src="/image-people-2.png" alt="image avatar" />
                       </div>
                       <div className="w-12 h-12 rounded-full border-2 border-white bg-gray-500 flex items-center justify-center">
-                        <span className="text-white text-sm font-medium">ج</span>
+                        <img src="/image-people-3.png" alt="image avatar" />
                       </div>
                     </div>
 
@@ -272,7 +285,7 @@ export default function ContactUsForm() {
                         <img src="/star-svg.svg" alt="star svg" />
                         <span className="text-[16px] font-normal text-[#050505]">4.5</span>
                       </div>
-                      <span className="text-[14px] font-normal text-[#050505]">من أكثر من 500 تقييم</span>
+                      <span className="text-[14px] font-normal text-[#050505]">{contactTranslation("fromOver500Reviews")}</span>
                     </div>
                   </div>
                 </section>
@@ -293,7 +306,7 @@ export default function ContactUsForm() {
                   {/* <!-- Name Field --> */}
 
                     <div className="space-y-3">
-                      <label className="block text-[16px] font-medium text-black">الاسم <span className="text-[#FF6B6B]">*</span></label>
+                      <label className="block text-[16px] font-medium text-black">{tInput("nameLabel")} <span className="text-[#FF6B6B]">*</span></label>
                       <input
                         type="text"
                         name="name"
@@ -301,7 +314,7 @@ export default function ContactUsForm() {
                         maxLength={60}
                         value={formData.name}
                         required
-                        placeholder="الاسم"
+                        placeholder={tInput("namePlaceholder")}
                         className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
                           validationErrors.name ? 'border-red-500' : 'border-[#DADADA]'
                         }`}
@@ -313,7 +326,7 @@ export default function ContactUsForm() {
 
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
-                        الدولة <span className="text-[#FF6B6B]">*</span>
+                       {tInput("countryLabel")} <span className="text-[#FF6B6B]">*</span>
                       </label>
                       <div className="relative">
                         <Select
@@ -323,7 +336,7 @@ export default function ContactUsForm() {
                           allowClear
                           value={formData.country_id == "" ? undefined : formData.country_id}
                           style={{ width: "100%", height: "3rem" }}
-                          placeholder="الرجاء إختيار الدولة"
+                          placeholder={tInput("countryPlaceholder")}
                           onChange={(value) => {
                             setFormData({ ...formData, country_id: value });
                             if (validationErrors.country_id) {
@@ -350,7 +363,7 @@ export default function ContactUsForm() {
                     
                     {/* <!-- Email and Phone Row --> */}
                     <div className="space-y-3">
-                      <label className="block text-[16px] font-medium text-black">البريد الإلكتروني <span className="text-[#FF6B6B]">*</span></label>
+                      <label className="block text-[16px] font-medium text-black">{tInput("emailLabel")} <span className="text-[#FF6B6B]">*</span></label>
                       <input
                         type="email"
                         name="email"
@@ -358,7 +371,7 @@ export default function ContactUsForm() {
                         value={formData.email}
                         maxLength={160}
                         onChange={handleChange}
-                        placeholder="الرجاء إدخال البريد الإلكتروني."
+                        placeholder={tInput("emailPlaceholder")}
                         className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
                           validationErrors.email ? 'border-red-500' : 'border-[#DADADA]'
                         }`}
@@ -369,7 +382,7 @@ export default function ContactUsForm() {
                     </div>
 
                     <div className="space-y-3">
-                      <label className="block text-[16px] font-medium text-black">الجوال <span className="text-[#FF6B6B]">*</span></label>
+                      {/* <label className="block text-[16px] font-medium text-black">{tInput("phoneLabel")} <span className="text-[#FF6B6B]">*</span></label>
                       <input
                         dir="rtl"
                         type="text"
@@ -397,29 +410,40 @@ export default function ContactUsForm() {
                             }));
                           }
                         }}
-                        placeholder="الرجاء إدخال رقم الجوال."
-                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133] ${
+                        placeholder={tInput("phonePlaceholder")}
+                        className={`w-full h-12 px-3 py-2 border rounded-md text-sm text-black placeholder-[#B1B1B1] placeholderAlign focus:outline-none focus:border-[#EDA133] ${
                           validationErrors.phone ? "border-red-500" : "border-[#DADADA]"
                         }`}
-                      />
-                      {validationErrors.phone && (
+                      /> */}
+                      <section className="flex flex-col gap-[0.8rem]">
+                        <CountryCodeInput setSelectedPhone={(value: string) => {
+                          setFormData(previous => ({...previous, country_code: value?.split("-")?.[0], phone: value?.split("-")?.[1]}));
+                          if (validationErrors.phone) {
+                            setValidationErrors((prev) => ({ ...prev, phone: undefined }));
+                          }
+                        }} formDataValue={formData.phone} />
+                        {validationErrors.phone && (
+                          <p className="text-red-500 text-sm">{validationErrors.phone}</p>
+                        )}
+                      </section>
+                      {/* {validationErrors.phone && (
                         <p className="text-red-500 text-sm">{validationErrors.phone}</p>
-                      )}
+                      )} */}
                     </div>
 
                     <div className="space-y-3">
                       <label className="text-base font-medium text-black block">
-                      ما  سبب تواصلك <span className="text-[#FF6B6B]">*</span>
+                      {tInput("reasonForContact")} <span className="text-[#FF6B6B]">*</span>
                       </label>
                       <div className="relative">
                         <Select
-                          className={`w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${
+                          className={`placeholderColor w-full h-12 px-3 py-2 border-0 rounded-md text-sm text-black appearance-none focus:outline-none focus:border-[#EDA133] ${
                             validationErrors.service_id ? 'border-[0.5px] border-red-400' : 'border-[#DADADA]'
                           }`}
                           allowClear
                           value={formData.service_id == "" ? undefined : formData.service_id } 
                           style={{ width: '100%', height: "3rem" }}
-                          placeholder="اختر سبب التواصل"
+                          placeholder={tInput("chooseReason")}
                           onChange={(value) => {
                             setFormData({...formData, service_id: value});
                             if (validationErrors.service_id) {
@@ -446,22 +470,22 @@ export default function ContactUsForm() {
 
                     {/* <!-- Subject Field --> */}
                     <div className="space-y-3">
-                      <label className="block text-[16px] font-medium text-black">الموضوع</label>
+                      <label className="block text-[16px] font-medium text-black">{tInput("subject")}</label>
                       <input
                         type="text"
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        placeholder="الموضوع"
+                        placeholder={tInput("subject")}
                         className="w-full h-12 px-3 py-2 border border-[#DADADA] rounded-md text-sm text-black placeholder-[#B1B1B1] focus:outline-none focus:border-[#EDA133]"
                       />
                     </div>
 
                     {/* <!-- Message Field --> */}
                     <div className="space-y-3 col-span-1 md:col-span-2">
-                      <label className="block text-[16px] font-medium text-black">الرسالة <span className="text-[#FF6B6B]">*</span></label>
+                      <label className="block text-[16px] font-medium text-black">{tInput("message")} <span className="text-[#FF6B6B]">*</span></label>
                       <textarea
-                        placeholder="الرجاء إدخال نص الرسالة."
+                        placeholder={tInput("enterMessageText")}
                         rows={5}
                         maxLength={3000}
                         name="message"
@@ -481,7 +505,7 @@ export default function ContactUsForm() {
                       disabled={mutation.isPending}
                       className="flex-1 px-4 py-2 bg-[#EDA133] w-full md:w-full h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
                     >
-                      {mutation.isPending ? "جاري الإرسال..." : "إرسال"}
+                      {mutation.isPending ? tInput("send") + "..." : tInput("send")}
                     </button>
 
                     <div className="space-y-3">

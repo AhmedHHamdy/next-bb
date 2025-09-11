@@ -99,14 +99,15 @@ export default function Page() {
             </svg>
 
             <Link href="/accessibility" className="text-black text-[15px] font-medium leading-[1.65]">
-              {t("accessibility")}
+              {data?.data?.title}
             </Link>
           </div>
         </div>
       </div>
 
       <div className="w-full bg-white px-6 pt-[20px] pb-[64px] md:pb-[100px] md:pt-[36px]">
-        <div className="max-w-[1300px] mx-auto">
+        {/* max-w-[1300px]  */}
+        <div className="max-w-[1000px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-11">
             {/* <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
               <h3 className="text-[16px] text-[#4A4A4A] font-medium">محتوى إمكانية الوصول</h3>
@@ -155,7 +156,7 @@ export default function Page() {
 
             <div className="flex-1">
               <div className="space-y-[24px]">
-                <img
+                {/* <img
                   className="hidden md:inline h-[200px] w-[343px] md:h-[234px] rounded-2xl md:w-full brightness-80"
                   src="/accessibility-img.png"
                   alt="accessibility image"
@@ -164,12 +165,13 @@ export default function Page() {
                   className="md:hidden h-[200px] w-full rounded-2xl object-cover object-center"
                   src="/accessibility-mobile.png"
                   alt="accessibility image"
-                />
+                /> */}
 
                 <div className="space-y-[32px] md:space-y-[24px]">
                   <div id="reach" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2>
-                    <p dangerouslySetInnerHTML={{__html: String(data?.data?.content || "")}} className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
+                    {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
+                    {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
+                    <p dangerouslySetInnerHTML={{__html: String(data?.data?.content || "")}}>
                       {/* {data?.data?.content} */}
                     </p>
                   </div>
