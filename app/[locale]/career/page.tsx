@@ -45,7 +45,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Page() {
   const locale = await getLocale();
 
-  const t = await getTranslations('career');
+  const t = await getTranslations('Career');
 
   async function getCareerPageData(locale: string): Promise<CareerPageDataType> {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCareerPageInfo`, {
@@ -80,7 +80,7 @@ export default async function Page() {
           {/* <!-- Main Content --> */}
           <div className="max-w-[1670px] mx-auto relative z-[50] grid xl:grid-cols-2 2xl:grid-cols-4">
             {/* <!-- Background Vector --> */}
-            <div className="absolute right-[20px] top-[20px] ltr:hidden rtl:hidden rtl:lg:block ltr:lg:block ltr:xl:left-[-4%] rtl:xl:right-[-4%] xl:top-[10%] ltr:2xl:left-[6%] rtl:2xl:right-[6%] 2xl:top-[10%] opacity-70 z-[10]">
+            <div className="absolute right-[20px] top-[20px] ltr:hidden rtl:hidden rtl:lg:hidden ltr:lg:hidden xl:block ltr:xl:left-[-4%] rtl:xl:right-[-4%] xl:top-[10%] ltr:2xl:left-[6%] rtl:2xl:right-[6%] 2xl:top-[10%] opacity-70 z-[10]">
               <img src="/hero-vector.svg" alt="background decoration" className="w-[225px] h-[543px]" />
             </div>
 
@@ -90,14 +90,14 @@ export default async function Page() {
       flex flex-col items-start justify-center gap-[32px]
       px-[15px] xl:px-[5rem] 2xl:px-[10rem] pt-[20px] lg:py-[32px]"
             >
-              <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.7] relative z-[50]">
+              <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.5] relative z-[50]">
                 {data?.hero_title}
               </h1>
 
               {/* Decorative Vectors */}
-              <div className="absolute w-[217px] z-[50] md:top-[27%] lg:top-[37%] xl:top-[36%] 2xl:top-[36%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
+              {/* <div className="absolute w-[217px] z-[50] md:top-[27%] lg:top-[37%] xl:top-[36%] 2xl:top-[38%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
                 <img src="/vector-svg.svg" alt="decorative element" className="w-[247px] h-[28px]" />
-              </div>
+              </div> */}
 
               <div className="absolute w-[138px] top-[23%] right-[25px] md:hidden z-[50]">
                 <img src="/Vector-mobile-career.svg" alt="decorative element" className="" />
@@ -123,9 +123,9 @@ export default async function Page() {
                   </svg>
                 </Link>
 
-                <Link href="#resumeForm" className="border border-[#EDA133] text-center w-full md:w-auto lg:w-[200px] text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
+                {/* <Link href="#resumeForm" className="border border-[#EDA133] text-center w-full md:w-auto lg:w-[200px] text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
                   {t("sendYourCV")}
-                </Link>
+                </Link> */}
               </div>
             </div>
 
@@ -185,47 +185,13 @@ export default async function Page() {
         <div className="max-w-[1400px] mx-auto">
           {/* <!-- flex flex-col --> */}
           <div className="hidden md:flex lg:flex-row items-center max-w-[1319px] mx-auto gap-[16px] ">
-            <div className="md:hidden xl:block bg-[#EDA133] rounded-lg p-[15px] px-[21px] flex flex-col justify-between items-center w-full lg:min-h-[590px] lg:w-[270px]">
-              <div className="flex flex-col gap-[32px] items-center w-full h-full">
-                <h2 className="text-[36px] font-bold text-white leading-[1.2] w-full">{data?.our_benefits?.title}</h2>
 
-                {/* <!-- Decorative Pattern --> */}
-                <div className="flex flex-col gap-[6px] opacity-20">
-                  {/* <!-- Pattern rows - simplified version --> */}
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
 
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                  <img src="/business-building-svg-career.svg" alt="business building logo" />
-                </div>
-
-                {/* <!-- Bottom Content --> */}
-                <div className="flex flex-col gap-[25px] w-full">
-                  <p className="text-[16px] font-medium text-white leading-[1.5]  w-full">
-                    {data?.our_benefits?.desc}
-                  </p>
-                  {/* <button className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] border border-[#FCF4E9] rounded-lg hover:bg-[#FCF4E9] text-white hover:text-[#EDA133] transition-colors">
-                    <span className="text-[16px] font-medium">عرض جميع المزايا</span>
-                  </button> */}
-
-                  <section className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] ">
-                    
-                  </section>
-                </div>
-              </div>
-            </div>
-
+                      {/* only md */}
             {/* <!-- Left side - 3 benefit cards --> */}
-            <div className="flex flex-col md:grid md:grid-cols-2 xl:flex xl:flex-wrap lg:flex-row gap-4 w-full lg:w-auto">
+            {/*             <div className="flex flex-col md:grid md:grid-cols-2 xl:flex xl:flex-wrap lg:flex-row gap-4 w-full lg:w-auto">
+ */}
+            <div className="flex flex-col md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full lg:w-auto">
               <div className="md:block xl:hidden bg-[#EDA133] rounded-lg p-[15px] px-[21px] flex flex-col justify-between items-center w-full xl:w-[270px]">
                 <div className="flex flex-col gap-[32px] items-center w-full h-full">
                   <h2 className="text-[40px] font-bold text-white leading-[1.2]  w-full">المزايا</h2>
@@ -254,12 +220,45 @@ export default async function Page() {
                     <p className="text-[16px] font-medium text-white leading-[1.5]  w-full">
                       استفد من العديد من <br /> المزايا التي نقدمها للموظفين - من إجازات مدفوعة إلى مرافق المكتب.
                     </p>
-                    <button className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] border border-[#FCF4E9] rounded-lg hover:bg-[#FCF4E9] text-white hover:text-[#EDA133] transition-colors">
+                  </div>
+                </div>
+              </div>
+
+{/* lg:w-[270px] */}
+              <div className="md:hidden xl:block bg-[#EDA133] rounded-lg p-[15px] px-[21px] flex flex-col justify-between items-center w-full lg:min-h-[590px] ">
+                <div className="flex flex-col gap-[32px] items-center w-full h-full">
+                  <h2 className="text-[36px] font-bold text-white leading-[1.2] w-full">{data?.our_benefits?.title}</h2>
+
+                  {/* <!-- Decorative Pattern --> */}
+                  <div className="flex flex-col gap-[6px] opacity-20">
+                    {/* <!-- Pattern rows - simplified version --> */}
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                    <img src="/business-building-svg-career.svg" alt="business building logo" />
+                  </div>
+
+                  {/* <!-- Bottom Content --> */}
+                  <div className="flex flex-col gap-[25px] w-full">
+                    <p className="text-[16px] font-medium text-white leading-[1.5]  w-full">
+                      {data?.our_benefits?.desc}
+                    </p>
+                    {/* <button className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] border border-[#FCF4E9] rounded-lg hover:bg-[#FCF4E9] text-white hover:text-[#EDA133] transition-colors">
                       <span className="text-[16px] font-medium">عرض جميع المزايا</span>
-                    </button>
+                    </button> */}
 
-                    <section>
-
+                    <section className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] ">
+                      
                     </section>
                   </div>
                 </div>
@@ -268,7 +267,8 @@ export default async function Page() {
 {/* min-h-[531px] */}
               {data?.our_benefits?.benefits.map(benefit => {
                 return (
-                  <div key={benefit?.id} className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] 2xl:min-h-[590px] py-[53.5px]">
+                  // xl:w-[333px
+                  <div key={benefit?.id} className="flex flex-col justify-between items-end gap-12 w-full ] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] 2xl:min-h-[590px] py-[53.5px]">
                     <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
                       <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
                         {benefit?.title}
@@ -289,47 +289,6 @@ export default async function Page() {
                 )
               })}
 
-              {/* <div className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] py-[53.5px]">
-                <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
-                  <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
-                    تأمين طبي مجاني للحفاظ على الصحة والقوة
-                  </h3>
-                  <div
-                    className="w-full h-[250px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden brightness-80"
-                    style={{
-                      backgroundImage: "url('/medical-insurance-bg.png')",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  ></div>
-                  <p className="text-[14px] font-medium text-black leading-[1.43]  w-full h-[110px]">
-                    لقد تعاوننا مع العديد من شركات التأمين الصحي لتوفير <br /> جميع المساعدات الطبية التي يحتاجها
-                    الموظفون. ما عليك سوى الاتصال بالرقم الموجود على البطاقة، وطلب زيارة طبيب معين، <br /> وسيتولى شركة
-                    التأمين الباقي.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col justify-between items-end gap-12 w-full xl:w-[333px] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] py-[53.5px]">
-                <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
-                  <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
-                    20 يوم إجازة سنوية لمساعدتك على الاسترخاء وإعادة شحن طاقتك
-                  </h3>
-                  <div
-                    className="w-full h-[250px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden brightness-80"
-                    style={{
-                      backgroundImage: "url('/annual-leave-bg.png')",
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  ></div>
-                  <p className="text-[14px] font-medium text-black leading-[1.43]  w-full h-[110px]">
-                    تقدم بناء الاعمال للموظفين إجمالي <br /> 20 يوم عمل من الإجازة السنوية <br /> - لا تشمل عطلات نهاية
-                    الأسبوع! خذ بعض الاستراحات على مدار السنة للاسترخاء وإعادة شحن طاقتك، وعُد وأنت تشعر بالانتعاش
-                    والاستعداد للعمل.
-                  </p>
-                </div>
-              </div> */}
             </div>
           </div>
 
@@ -339,9 +298,11 @@ export default async function Page() {
         </div>
       </section>
 
-      {/* <!-- Job Listings Section --> */}
+      {/* <!-- Job Listings Section --> */} 
+       {/* right-[15%] */}
+
       {/* <section id="jobs" className="relative bg-[#131A27] px-[15px] pt-[20px] pb-[64px] md:py-[72px]">
-        <div className="absolute inset-0 right-[15%] top-[10%] hidden md:block">
+        <div className="absolute inset-0  top-[10%] hidden md:block">
           <img src="/career-bg-svg.svg" alt="background art" />
         </div>
 
@@ -354,177 +315,147 @@ export default async function Page() {
           </div>
 
           <div className="max-w-[1319px] mx-auto bg-[#313B4D] rounded-lg p-4 md:p-9 relative z-[50]">
-            <div className="space-y-5">
-              <div className="hidden md:flex justify-between items-center opacity-60">
-                <div className="w-[145px] ">
-                  <span className="text-white text-[20px] font-medium leading-[1.87] opacity-80">المسمى الوظيفي</span>
-                </div>
-                <div className="">
-                  <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">القسم</span>
-                </div>
-                <div className="">
-                  <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">نوع العمل</span>
-                </div>
-                <div className="">
-                  <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">المدينة</span>
-                </div>
-                <div className="">
-                  <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">زر التقديم</span>
-                </div>
-              </div>
-
-              <div className="h-px bg-[#CFCFCF] opacity-20"></div>
-
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0 p-4 md:p-0">
-                <div className="flex justify-between items-center md:w-[164px] md:">
-                  <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
-                  <div className="flex items-center gap-2 md:hidden">
-                    <span className="text-[#EDA133] text-[14px] font-medium">تقدم الان</span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
-                </div>
-                <Link href={`/career/apply-job-form/1`}>
-                  <div className="hidden md:flex items-center gap-2">
-                    <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">
-                      تقدم الان
-                    </span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </Link>
-              </div>
-
-              <div className="h-px bg-[#CFCFCF] opacity-20"></div>
-
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0 p-4 md:p-0">
-                <div className="flex justify-between items-center md:w-[164px] md:">
-                  <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">
-                    مدير مشاريع تقنية
-                  </span>
-                  <div className="flex items-center gap-2 md:hidden">
-                    <span className="text-[#EDA133] text-[14px] font-medium">تقدم الان</span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
-                </div>
-               <Link href={`/career/apply-job-form/1`}>
-                  <div className="hidden md:flex items-center gap-2">
-                    <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">
-                      تقدم الان
-                    </span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </Link>
-              </div>
-
-              <div className="h-px bg-[#CFCFCF] opacity-20"></div>
-
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0 p-4 md:p-0">
-                <div className="flex justify-between items-center md:w-[164px] md:">
-                  <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
-                  <div className="flex items-center gap-2 md:hidden">
-                    <span className="text-[#EDA133] text-[14px] font-medium">تقدم الان</span>
-                    <div className="w-[20px] h-[20px] bg-[#EDA133] rounded flex items-center justify-center">
-                      <img src="/arrow-up-right.svg" alt="apply" className="w-[12px] h-[12px]" />
-                    </div>
-                  </div>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
-                </div>
-               <Link href={`/career/apply-job-form/1`}>
-                  <div className="hidden md:flex items-center gap-2 ">
-                    <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">
-                      تقدم الان
-                    </span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </Link>
-              </div>
-
-              <div className="h-px bg-[#CFCFCF] opacity-20"></div>
-
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0 p-4 md:p-0">
-                <div className="flex justify-between items-center md:w-[164px] md:">
-                  <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
-                  <div className="flex items-center gap-2 md:hidden">
-                    <span className="text-[#EDA133] text-[14px] font-medium">تقدم الان</span>
-                    <div className="w-[20px] h-[20px] bg-[#EDA133] rounded flex items-center justify-center">
-                      <img src="/arrow-up-right.svg" alt="apply" className="w-[12px] h-[12px]" />
-                    </div>
-                  </div>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
-                </div>
-               <Link href={`/career/apply-job-form/1`}>
-                  <div className="hidden md:flex items-center gap-2">
-                    <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">
-                      تقدم الان
-                    </span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </Link>
-              </div>
-
-              <div className="h-px bg-[#CFCFCF] opacity-20"></div>
-
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0 p-4 md:p-0">
-                <div className="flex justify-between items-center md:w-[164px] md:">
-                  <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
-                  <div className="flex items-center gap-2 md:hidden">
-                    <span className="text-[#EDA133] text-[14px] font-medium">تقدم الان</span>
-                    <div className="w-[20px] h-[20px] bg-[#EDA133] rounded flex items-center justify-center">
-                      <img src="/arrow-up-right.svg" alt="apply" className="w-[12px] h-[12px]" />
-                    </div>
-                  </div>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
-                </div>
-                <div className="hidden md:block ">
-                  <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
-                </div>
-               <Link href={`/career/apply-job-form/1`}>
-                  <div className="hidden md:flex items-center gap-2">
-                    <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">
-                      تقدم الان
-                    </span>
-                    <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
-                  </div>
-                </Link>
-              </div>
+            <div className="hidden md:block">
+              <table className="w-full table-fixed">
+                <colgroup>
+                  <col className="xl:w-[280px]" />
+                  <col className="xl:w-[240px]" />
+                  <col className="xl:w-[200px]" />
+                  <col className="xl:w-[220px]" />
+                  <col className="xl:w-[180px]" />
+                </colgroup>
+                <thead>
+                  <tr className="opacity-60">
+                    <th className="text-start pr-4 py-3">
+                      <span className="text-white text-[20px] font-medium leading-[1.87] opacity-80">المسمى الوظيفي</span>
+                    </th>
+                    <th className="text-start pr-4 py-3">
+                      <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">القسم</span>
+                    </th>
+                    <th className="text-start pr-4 py-3">
+                      <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">نوع العمل</span>
+                    </th>
+                    <th className="text-start pr-4 py-3">
+                      <span className="text-white text_[20px] font-medium leading-[1.56] opacity-80">المدينة</span>
+                    </th>
+                    <th className="text-start pr-4 py-3">
+                      <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">زر التقديم</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t border-white/20 align-middle">
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">انجليزي التصميم</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                    <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80"> القاهرة</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <Link href={`/career/apply-job-form/1`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">تقدم الان</span>
+                          <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
+                        </div>
+                      </Link>
+                    </td>
+                  </tr>
+                  <tr className="border-t border-white/20 align-middle">
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مدير مشاريع تقنية</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <Link href={`/career/apply-job-form/1`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">تقدم الان</span>
+                          <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
+                        </div>
+                      </Link>
+                    </td>
+                  </tr>
+                  <tr className="border-t border-white/20 align-middle">
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <Link href={`/career/apply-job-form/1`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">تقدم الان</span>
+                          <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
+                        </div>
+                      </Link>
+                    </td>
+                  </tr>
+                  <tr className="border-t border-white/20 align-middle">
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <Link href={`/career/apply-job-form/1`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">تقدم الان</span>
+                          <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
+                        </div>
+                      </Link>
+                    </td>
+                  </tr>
+                  <tr className="border-t border-white/20 align-middle">
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[16px] md:text-[18px] font-bold leading-[1.44]">مصمم UI/UX</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">التصميم</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">دوام كامل</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <span className="text-white text-[18px] font-medium leading-[1.44] opacity-80">القاهرة</span>
+                    </td>
+                    <td className="pr-4 py-4">
+                      <Link href={`/career/apply-job-form/1`}>
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="text-[#EDA133] text-[18px] font-medium leading-[1.44] hover:underline">تقدم الان</span>
+                          <img src="/ArrowUpRight-svg.svg" alt="arrow up right icon" />
+                        </div>
+                      </Link>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

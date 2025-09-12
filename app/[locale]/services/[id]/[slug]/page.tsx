@@ -151,9 +151,9 @@ export default async function Page({ params }: { params: Promise<{ id:string; sl
       {/* <!-- Service Hero Section --> */}
       <section className="max-w-[1400px] mx-auto relative px-[15px] xl:px-0 pt-[48px] lg:pt-0">
         {/* <!-- Background Decorative Elements --> */}
-        <div className="md:hidden lg:block absolute left-[2px] top-[390px] lg:top-[15%] lg:left-[4.5%] xl:top-[15%] ltr:hidden  rtl:xl:left-[5.8%] z-[0]">
+        {/* <div className="md:hidden lg:block absolute left-[2px] top-[390px] lg:top-[15%] lg:left-[4.5%] xl:top-[15%] ltr:hidden  rtl:xl:left-[5.8%] z-[0]">
           <img className="h-[260px] lg:h-full" src="/services-page-bg-art.svg" alt="background art" />
-        </div>
+        </div> */}
 
         <div className="rounded-[8px] overflow-hidden">
           {/* <!-- Content --> */}

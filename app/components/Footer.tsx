@@ -793,30 +793,32 @@ export default function Footer() {
                   <div className="grid grid-cols-2 justify-items-start md:flex md:items-center gap-6 ps-3 md:ps-0">
                    
                     <Link
-                      href={`/privacy-policy/${data?.data?.footer?.pages?.[0]?.slug}`}
+                      href={`/terms-conditions/${data?.data?.footer?.pages?.terms?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {data?.data?.footer?.pages?.[0]?.title}
+                      {data?.data?.footer?.pages?.terms?.title}
                     </Link>
                       
              
                     <Link
-                      href={`/terms-conditions/${data?.data?.footer?.pages?.[1]?.slug}`}
+                      href={`/privacy-policy/${data?.data?.footer?.pages?.privacy?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {data?.data?.footer?.pages?.[1]?.title}
+                      {data?.data?.footer?.pages?.privacy?.title}
                     </Link>
+
                     <Link
-                      href={`/user-agreement/${data?.data?.footer?.pages?.[2]?.slug}`}
+                      href={`/user-agreement/${data?.data?.footer?.pages?.policy?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {data?.data?.footer?.pages?.[2]?.title}
+                      {data?.data?.footer?.pages?.policy?.title}
                     </Link>
+
                     <Link
-                      href={`/accessibility/${data?.data?.footer?.pages?.[3]?.slug}`}
+                      href={`/accessibility/${data?.data?.footer?.pages?.accessibility?.slug}`}
                       className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
                     >
-                      {data?.data?.footer?.pages?.[3]?.title}
+                      {data?.data?.footer?.pages?.accessibility?.title}
                     </Link>
                   </div>
 

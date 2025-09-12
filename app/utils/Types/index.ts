@@ -27,11 +27,31 @@ export interface Footer {
     meta_tags: string;
   }[]
   pages: {
-    title: string;
-    slug: string;
-    mete_tags: string;
-    meta_description: string;
-  }[],
+    privacy: {
+      title: string;
+      slug: string;
+      mete_tags: string;
+      meta_description: string;
+    },
+    terms: {
+      title: string;
+      slug: string;
+      mete_tags: string;
+      meta_description: string;
+    },
+    policy: {
+      title: string;
+      slug: string;
+      mete_tags: string;
+      meta_description: string;
+    },
+    accessibility: {
+      title: string;
+      slug: string;
+      mete_tags: string;
+      meta_description: string;
+    }
+  },
   branches: Branch[];
   copyright: string;
 }

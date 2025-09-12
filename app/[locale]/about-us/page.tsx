@@ -82,12 +82,12 @@ export default async function Page() {
               flex flex-col items-start justify-center gap-[32px]
               px-[15px] xl:px-[5rem] 2xl:px-[14rem] pt-[20px] lg:py-[32px]"
             >
-              <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.75] relative z-[50]">
+              <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.5] relative z-[50]">
                 {data?.other?.header_title?.slice(0, 80)}
               </h1>
 
               {/* Decorative Vectors */}
-              <div className="absolute z-[50] md:top-[35%] lg:top-[33%] xl:top-[36%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
+              {/* <div className="absolute z-[50] md:top-[35%] lg:top-[33%] xl:top-[36%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
                 <img
                   src="/hero-vector-1393.svg"
                   alt="decorative element"
@@ -101,7 +101,7 @@ export default async function Page() {
                   alt="decorative element"
                   className=""
                 />
-              </div>
+              </div> */}
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
                 {data?.other?.header_description?.slice(0, 255)}

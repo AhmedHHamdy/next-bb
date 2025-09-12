@@ -70,17 +70,17 @@ export default async function Page() {
               px-[15px] xl:px-[5rem] 2xl:px-[14rem] 2xl:ps-[14rem] pt-[20px] lg:py-[32px]
               ">
 
-              <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.75] relative z-[50]">
+              <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.5] relative z-[50]">
                 {data?.other?.header_title?.slice(0, 60)}
               </h1>
-
+{/* 
               <div className="absolute z-[50] md:top-[31%] lg:top-[36%] xl:top-[38%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
                 <img src="/hero-vector-1393.svg" alt="decorative element" className="w-[247px] h-[28px]" />
               </div>
 
               <div className="absolute top-[23%] right-[25px] md:hidden  z-[50]">
                 <img src="/hero-vector-mobile.svg" alt="decorative element" className="" />
-              </div>
+              </div> */}
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
                 {data?.other?.header_description}
