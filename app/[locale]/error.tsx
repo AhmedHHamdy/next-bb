@@ -11,7 +11,7 @@ const ErrorBoundary = ({
     reset: () => void
   }) => {
 
-  console.log(error.message, "error")
+  // console.log(error.message, "error")
 
   const t = useTranslations("Errors404");
 

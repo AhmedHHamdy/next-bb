@@ -9,22 +9,34 @@ export default async function WhoAreWe({ dataInfo }: {
       one: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
       two: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
       three: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
       four: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
     }
   }
@@ -35,7 +47,7 @@ export default async function WhoAreWe({ dataInfo }: {
   return (
     <section className="relative bg-[#FCF4E9] py-[48px] md:py-[92px] overflow-hidden">
       <div className="absolute inset-0">
-        <img src="/background-section-3.svg" alt="" />
+        <img src="/background-section-3.svg" />
       </div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
@@ -72,9 +84,9 @@ export default async function WhoAreWe({ dataInfo }: {
           <div className="block xl:hidden w-full h-px bg-[#F9DFBA] my-[16px]"></div>
 
           <section className="flex flex-col gap-[17px]">
-            <img className="opacity-20" src="/businessbuildingbg.svg" alt="business building background" />
-            <img className="opacity-40" src="/businessbuildingbg.svg" alt="business building background" />
-            <img className="opacity-80" src="/businessbuildingbg.svg" alt="business building background" />
+            <img className="opacity-20" src="/businessbuildingbg.svg" />
+            <img className="opacity-40" src="/businessbuildingbg.svg" />
+            <img className="opacity-80" src="/businessbuildingbg.svg" />
           </section>
         </div>
 
@@ -84,7 +96,7 @@ export default async function WhoAreWe({ dataInfo }: {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[24px]">
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.one?.image} alt="results gif" />
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.one?.image?.url} alt={dataInfo?.features?.one?.image?.alt} />
                 <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.one?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
@@ -96,7 +108,7 @@ export default async function WhoAreWe({ dataInfo }: {
 
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.two?.image} alt="growth gif" />
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.two?.image?.url} alt={dataInfo?.features?.two?.image?.alt} />
                 <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.two?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
@@ -108,7 +120,7 @@ export default async function WhoAreWe({ dataInfo }: {
 
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.three?.image} alt="presentation gif" />
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.three?.image?.url} alt={dataInfo?.features?.three?.image?.alt} />
                 <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.three?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">
@@ -120,7 +132,7 @@ export default async function WhoAreWe({ dataInfo }: {
 
             <div className="rounded-lg overflow-hidden h-[173px] md:h-[199px] shadow-sm">
               <div className="bg-[#FAEAD1] flex items-center justify-start gap-[8px] ps-[25px] h-[73px]">
-                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.four?.image} alt="coding gif" />
+                <img className="h-[48px] w-[48px]" src={dataInfo?.features?.four?.image?.url} alt={dataInfo?.features?.four?.image?.alt} />
                 <h4 className="text-black font-medium text-[18px] md:text-[20px]">{dataInfo?.features?.four?.title}</h4>
               </div>
               <div className="p-[16px] flex flex-col items-center">

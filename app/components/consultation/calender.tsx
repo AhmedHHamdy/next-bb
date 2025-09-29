@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CountryCodeInput from "../global/CountryCodeInput";
 import { useLocale, useTranslations } from "next-intl";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -70,11 +70,13 @@ export default function CalendarComponent() {
 
   // console.log(selectedDate, "selected date")
 
+  const firstErrorElement = useRef<HTMLInputElement | null>(null);
+
 
   const [nextSlide, setNextSlide] = useState(false)
   
 
-  console.log(formData, "formData");
+  // console.log(formData, "formData");
 
   useEffect(() => {
     setFormData((previousData) => ({
@@ -95,11 +97,13 @@ export default function CalendarComponent() {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/getConsultationPageInfo`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           lang: locale,
         },
+        body: JSON.stringify({date: formData.date})
+    
       }
     );  
     
@@ -110,7 +114,7 @@ export default function CalendarComponent() {
   };
 
   const { data: durationsData } = useQuery({
-    queryKey: ["Durations"],
+    queryKey: ["Durations", formData.date],
     queryFn: fetchDurations,
   });
 
@@ -245,6 +249,10 @@ export default function CalendarComponent() {
       errors.duration_id = t("durationRequired");
     }
   
+    if (firstErrorElement.current) {
+      firstErrorElement.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      firstErrorElement.current.focus();
+    }
     setValidationErrors(errors); // reset with fresh errors
   
     return Object.keys(errors).length === 0;
@@ -374,7 +382,7 @@ export default function CalendarComponent() {
       return res.json();
     },
     onSuccess: (data) => {
-      console.log("✅ Form submitted successfully:", data);
+      // console.log("✅ Form submitted successfully:", data);
       setFormData({
         name: "",
         country_id: "",
@@ -395,7 +403,7 @@ export default function CalendarComponent() {
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      console.log(error, "error")
+      // console.log(error, "error")
 
       setErrorText(error.message || t("genericError"));
 
@@ -535,7 +543,7 @@ export default function CalendarComponent() {
                       <h4 className="text-[16px] font-medium text-black">
                         {tCal("timeLabel")}
                       </h4>
-                      <div className="space-y-3 border border-[#DADADA] rounded-lg p-[32px] flex flex-col gap-[24px] h-full max-h-[504px] overflow-y-auto">
+                      <div className="space-y-3 border border-[#DADADA] rounded-lg p-[32px] flex flex-col gap-[10px] h-full max-h-[504px] overflow-y-auto">
                         {/* {availableTimeSlots.map((slot) => (
                           <button
                             key={slot}
@@ -551,13 +559,13 @@ export default function CalendarComponent() {
                             {slot}
                           </button>
                         ))} */}
-                        {durationsData?.data?.durations && durationsData?.data?.durations.map((slot) => (
+                        {(durationsData?.data?.durations && durationsData?.data?.durations?.length > 0) ? durationsData?.data?.durations?.map((slot) => (
                           <button
                             key={slot.id}
                             type="button"
                             onClick={() => setFormData(previous => ({...previous, duration_id: String(slot.id)}))}
                             className={[
-                              "w-full h-[59px] border border-[#DADADA] rounded-lg text-[16px] font-medium text-black hover:bg-[#FCF4E9] transition-colors",
+                              "w-full h-[80px] border border-[#DADADA] rounded-lg text-[16px] font-medium text-black hover:bg-[#FCF4E9] transition-colors",
                               formData.duration_id == String(slot.id)
                                 ? "bg-[#FCF4E9] ring ring-[#EDA133]"
                                 : "",
@@ -565,7 +573,13 @@ export default function CalendarComponent() {
                           >
                             {slot.formatted_name}
                           </button>
-                        ))}
+                        )) : 
+                          <button
+                            type="button"
+                            className={"w-full h-[80px] border border-[#DADADA] rounded-lg text-[16px] font-medium text-black hover:bg-[#FCF4E9] transition-colors"}>
+                            {tCal("noAvailableTimesFound")}
+                          </button>
+                          }
                         {validationErrors.duration_id && (
                           <p className="text-red-500 text-sm">{validationErrors.duration_id}</p>
                         )}
@@ -577,7 +591,7 @@ export default function CalendarComponent() {
                   <section className="flex justify-start">
                     <section className="w-full flex flex-col md:flex-row gap-[16px] md:items-center pb-[16px]">
                       <button
-                        className="px-4 py-2 bg-[#EDA133] flex justify-center items-center w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 mt-10 bg-[#EDA133] flex justify-center items-center w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                         disabled={false}
                         onClick={() => {
                           if (validateStepOne()) {
@@ -685,6 +699,7 @@ export default function CalendarComponent() {
                         type="email"
                         maxLength={160}
                         required
+                        ref={firstErrorElement}
                         name="email"
                         onChange={handleChange}
                         value={formData.email}
@@ -749,7 +764,7 @@ export default function CalendarComponent() {
                       <button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors">
+                        className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40">
                         {mutation.isPending ? tCal("submitting") : tCal("submit")}
                       </button>
 
@@ -758,7 +773,7 @@ export default function CalendarComponent() {
                         onClick={() => {
                           setNextSlide(false)
                         }}
-                        className="px-4 py-2 w-full md:w-[268px] flex justify-center items-center h-[56px] text-[#EDA133] gap-[16px] rounded-lg text-base font-medium border border-[#EDA133] hover:bg-orange-50 transition-colors"
+                        className="px-4 py-2 w-full md:w-[268px] flex justify-center items-center h-[56px] text-[#EDA133] gap-[16px] rounded-lg text-base font-medium border border-[#EDA133] hover:bg-orange-50 transition-colors cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                       >
                         {tCal("backButton")}
                       </button>

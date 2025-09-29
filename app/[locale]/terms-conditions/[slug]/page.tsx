@@ -5,12 +5,26 @@ import { Link } from "@/i18n/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 import { useLocale, useTranslations } from "next-intl";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Page() {
 
   const locale = useLocale();
 
+  const router = useRouter();
+
   const t = useTranslations("NavLinks");
+  const e = useTranslations("Errors404")
+  const s = useTranslations("SidePages")
+
+
+  const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
+
+  const [processedHtml, setProcessedHtml] = useState("")
+
+  const params = useParams();
+  const currentSlug = Array.isArray(params.slug) ? decodeURIComponent(params.slug[0]) : decodeURIComponent(params?.slug || "") || "";
 
   const fetchTerms = async (): Promise<PolicyPages> => {
     const res = await fetch(
@@ -38,6 +52,66 @@ export default function Page() {
   });
 
 
+
+  // useEffect(() => {
+  //   if (!isLoading && data?.data?.slug && router) {
+  //     router.push(`/${locale}/terms-conditions/${data.data.slug}`);
+  //   }
+  // }, [locale, data, router]); // include deps
+
+
+  // useEffect(() => {
+  //   if (data) {
+  //     localStorage.setItem("slug-terms-conditions", `${data?.data?.slug?.en + "+" +  data?.data?.slug?.ar}`)
+  //   }
+  // }, [data])
+
+  // useEffect(() => {
+  //   const canonical = localStorage.getItem("slug-terms-conditions")?.split("+");
+  //   router.replace(`/${locale}/terms-conditions/${locale == "en" ? data?.data?.slug?.en : data?.data?.slug?.ar}`);
+
+  //   if (locale == "en") {
+  //     router.replace(`/${locale}/terms-conditions/${canonical?.[0]}`);
+  //   } else if (locale == "ar") {
+  //     router.replace(`/${locale}/terms-conditions/${canonical?.[1]}`);
+  //   } 
+  // }, [currentSlug, locale, router]);
+
+  useEffect(() => {
+    if (!data?.data?.content) return;
+  
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(
+      data?.data?.content,
+      "text/html"
+    );
+  
+    const newHeadings: { id: string; text: string; level: number }[] = [];
+  
+    doc.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((node, index) => {
+      const text = node.textContent?.trim() || "heading";
+      const id = `h${index}`;
+      node.setAttribute("id", id);
+  
+      newHeadings.push({
+        id,
+        text,
+        level: parseInt(node.tagName.replace("H", ""), 10),
+      });
+    });
+  
+    setHeadings(newHeadings);
+    setProcessedHtml(doc.body.innerHTML); // store new HTML string
+  }, [data?.data?.content]);
+
+  useEffect(() => {
+    if (locale == "en" && data) {
+      router.replace(`/${locale}/terms-conditions/${data?.data?.slug?.en}`);
+    } else if (locale == "ar" && data) {
+      router.replace(`/${locale}/terms-conditions/${data?.data?.slug?.ar}`);
+    } 
+  }, [currentSlug, locale, router, data]);
+
   if (isLoading) {
     return (
       <section className="min-h-screen text-center flex items-center justify-center">
@@ -52,22 +126,23 @@ export default function Page() {
 
   if (isError) {
     return (
-      <section className="px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem] text-center">
+      <section className="px-6 py-[6rem] lg:py-[8rem] xl:py-[9rem] text-center">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex flex-col items-center gap-[32px] max-w-[553px] mx-auto">
             <img className="w-[202px] h-[169px] md:w-[352px] md:h-[321px]" src="/error404.svg" alt="error 404 image" />
-
             <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
               <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
-                حدث خطأ أثناء تحميل المحتوى
+                {e("errorLoadingContent")}
               </h1>
               <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
-                عذرًا، واجهنا مشكلة مؤقتة. يرجى تحديث الصفحة أو المحاولة لاحقًا.
+                {e("sorryTemporaryProblem")}
               </p>
             </div>
-
-            <button onClick={() => refetch()} className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors">
-              تحديث الصفحة
+            <button
+              onClick={() => refetch()}
+              className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
+            >
+              {e("refreshPage")}
             </button>
           </div>
         </div>
@@ -94,158 +169,44 @@ export default function Page() {
             <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
           </svg>
 
-          <Link href="/terms-conditions" className="text-black text-[15px] font-medium leading-[1.65]">
+          <Link href={`/terms-conditions/${currentSlug}`} className="text-black text-[15px] font-medium leading-[1.65]">
             {data?.data?.title}
           </Link>
         </div>
       </div>
 
       <div className="w-full bg-white px-6 pt-[20px] pb-[64px] md:pb-[100px] md:pt-[36px]">
-        <div className="max-w-[1000px] mx-auto">
+        <div className="max-w-[1300px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-11">
-            {/* <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
-              <h3 className="text-[16px] text-[#4A4A4A] font-medium">محتوى الشروط والأحكام</h3>
+            <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
+              <h3 className="text-[16px] text-[#4A4A4A] font-medium">{s("termsAndConditionsContent")}</h3>
 
               <hr className="my-[16px] text-[#DADADA]" />
 
               <div className="space-y-[0px] md:space-y-[14px] border-s-6 border-[#E7E8E9] ps-0">
-                <a
-                  href="#agreement"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  الموافقة على الشروط{" "}
-                </a>
-                <a
-                  href="#services"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  الخدمات المقدمة
-                </a>
-                <a
-                  href="#intellectual-property"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-4 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  حقوق الملكية الفكرية
-                </a>
-                <a
-                  href="#payment"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  الدفع والتعاقد
-                </a>
-                <a
-                  href="#cancellation"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  سياسة الإلغاء والاسترجاع
-                </a>
-                <a
-                  href="#modification"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  تعديل الشروط والأحكام
-                </a>
-                <a
-                  href="#privacy"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  الخصوصية وسرية المعلومات
-                </a>
-                <a
-                  href="#liability"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  حدود المسؤولية
-                </a>
+                <ul className="space-y-2">
+                  {headings.map((h) => (
+                    <li key={h.id} className={`pl-${(h.level - 1) * 4} list-none`}>
+                      <a
+                        href={`#${h.id}`}
+                        
+                        className="text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] transition delay-150 border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div> */}
+            </div>
 
             <div className="flex-1">
               <div className="space-y-[24px]">
-                {/* <img
-                  className="hidden md:inline h-[200px] w-[343px] md:h-[234px] rounded-2xl md:w-full brightness-80"
-                  src="/Terms and Conditions.png"
-                  alt="terms and conditions image"
-                />
-                <img
-                  className="md:hidden h-[200px] w-full rounded-2xl object-cover"
-                  src="/terms-mobile.png"
-                  alt="terms and conditions image"
-                /> */}
-
                 <div className="space-y-[32px] md:space-y-[24px]">
-                  <div id="agreement" className="space-y-3">
-                    {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
-                    {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
-                    <p dangerouslySetInnerHTML={{__html: String(data?.data?.content || "")}}>
-                      {/* {data?.data?.content} */}
-                    </p>
+                  {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
+                  {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
+                  <div dangerouslySetInnerHTML={{__html: String(processedHtml  || "")}} className="custom-content mx-auto">
                   </div>
-
-
-  
-
-                  {/* <div id="services" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">الخدمات المقدمة:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نحن نقدم خدمات متخصصة في مجال بناء وتطوير الأعمال، والتي تشمل – على سبيل المثال لا الحصر – تصميم
-                      وتطوير المواقع الإلكترونية، تصميم الهويات البصرية والعلامات التجارية، خدمات التسويق الرقمي،
-                      استشارات النمو وتحسين تجربة المستخدم. تحتفظ الإدارة بحق تحديث أو تعديل أي من هذه الخدمات دون إشعار
-                      مسبق، وذلك لضمان الجودة ومواكبة متطلبات السوق.
-                    </p>
-                  </div>
-
-                  <div id="intellectual-property" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">حقوق الملكية الفكرية:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      جميع المواد والمحتويات المعروضة على الموقع – بما في ذلك النصوص، الصور، التصاميم، الأكواد،
-                      الشعارات، والمحتوى التفاعلي – هي ملك حصري للموقع أو للجهات المالكة لها قانونًا. لا يجوز استخدام أو
-                      نسخ أو إعادة نشر أي من هذه المواد دون إذن كتابي مسبق.
-                    </p>
-                  </div>
-
-                  <div id="payment" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">الدفع والتعاقد:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      يتم الاتفاق على تفاصيل التعاقد والدفع مع كل عميل بشكل منفصل حسب نوع المشروع. يتم إصدار فواتير
-                      رسمية، وقد يُطلب دفعة مقدمة قبل البدء في التنفيذ. يحتفظ الموقع بحق تعليق أو إيقاف أي خدمة في حال
-                      عدم السداد.
-                    </p>
-                  </div>
-
-                  <div id="cancellation" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">سياسة الإلغاء والاسترجاع:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      يمكن للعميل إلغاء الطلب قبل بدء التنفيذ دون أي رسوم. أما في حال بدأ العمل على المشروع، فلا يمكن
-                      استرداد الدفعة المقدمة. في بعض الحالات الخاصة، يمكن إعادة جزء من المبلغ بعد خصم تكلفة العمل
-                      المنجز، ويتم ذلك بموافقة كتابية من الطرفين.
-                    </p>
-                  </div>
-
-                  <div id="modification" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">تعديل الشروط والأحكام:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نحتفظ بحق تحديث أو تعديل هذه الشروط في أي وقت. سيتم نشر النسخة المحدثة على هذه الصفحة، ويعتبر
-                      استمرارك في استخدام الموقع بمثابة موافقة على النسخة المعدلة.
-                    </p>
-                  </div>
-
-                  <div id="privacy" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">الخصوصية وسرية المعلومات:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نلتزم بحماية بيانات العملاء والمستخدمين وعدم مشاركتها مع أي طرف ثالث دون موافقة صريحة، باستثناء ما
-                      يقتضيه القانون. يتم التعامل مع كل المعلومات بسرية تامة.
-                    </p>
-                  </div>
-
-                  <div id="liability" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">حدود المسؤولية:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نحن لا نتحمل أي مسؤولية عن أي خسائر مباشرة أو غير مباشرة أو أضرار ناتجة عن استخدام الموقع أو
-                      الخدمات، بما في ذلك تأخر التسليم أو انقطاع الخدمة لأسباب خارجة عن إرادتنا مثل الظروف التقنية أو
-                      الطارئة.
-                    </p>
-                  </div> */}
                 </div>
               </div>
             </div>

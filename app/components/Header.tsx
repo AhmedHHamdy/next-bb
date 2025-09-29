@@ -13,12 +13,13 @@ export default function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const pathname = usePathname()
+  // console.log(pathname.split("/")[1], "pathname")
 
   const nextLocale = localeValue == "en" ? "ar" : "en";
 
   const t = useTranslations("NavLinks");
 
-  console.log(nextLocale, pathname, "localValue")
+  // console.log(nextLocale, pathname, "localValue")
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -49,6 +50,7 @@ export default function Header() {
           "Content-Type": "application/json",
           lang: localeValue,
         },
+        cache: "no-store", // disable browser cache
       }
     );  
     
@@ -107,7 +109,7 @@ export default function Header() {
                   </svg>
                   <span className="text-neutral-400 text-sm font-medium">{data?.data?.email || "-"}</span>
                 </a>
-                <a href={`tel:${data?.data?.phone}`} className="flex items-center gap-2">
+                <a href={`tel:${data?.data?.phone}`}  className="flex items-center gap-2">
                   <svg width="25" height="29" viewBox="0 0 25 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect
                       x="1.28969"
@@ -140,12 +142,12 @@ export default function Header() {
                       strokeWidth="0.277067"
                     />
                   </svg>
-                  <span className="text-neutral-400 text-sm font-medium">{data?.data?.phone}</span>
+                  <span className="text-neutral-400 text-sm font-medium" dir="ltr">{data?.data?.phone}</span>
                 </a>
               </div>
 
               <div className="flex items-center gap-2">
-                <a
+                {data?.data?.social?.tiktok && <a
                   href={data?.data?.social?.tiktok}
                   className="social-icon w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -155,9 +157,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.telegram && <a
                   href={data?.data?.social?.telegram}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -171,9 +173,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.messenger && <a
                   href={data?.data?.social?.messenger}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -183,9 +185,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.whatsapp && <a
                   href={`https://wa.me/${data?.data?.social?.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -201,9 +203,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.snapchat && <a
                   href={data?.data?.social?.snapchat}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -213,9 +215,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.youtube && <a
                   href={data?.data?.social?.youtube}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -225,9 +227,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.instagram && <a
                   href={data?.data?.social?.instagram}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -237,9 +239,9 @@ export default function Header() {
                       fill="white"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.twitter && <a
                   href={data?.data?.social?.twitter}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -251,9 +253,9 @@ export default function Header() {
                       />
                     </g>
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.linkedin && <a
                   href={data?.data?.social?.linkedin}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -265,9 +267,9 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
 
-                <a
+                {data?.data?.social?.facebook && <a
                   href={data?.data?.social?.facebook}
                   className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                 >
@@ -277,7 +279,7 @@ export default function Header() {
                       fill="#393939"
                     />
                   </svg>
-                </a>
+                </a>}
               </div>
             </div>
           </div>
@@ -289,7 +291,7 @@ export default function Header() {
               <div className="flex items-center lg:gap-[30px] xl:gap-[86px]">
                 <div className="w-24 h-8 bg-white flex items-center justify-center">
                   <Link href="/">
-                    <img src={data?.data?.site_logo} alt="BB4IT" className="max-w-full h-auto" />
+                    <img src={data?.data?.site_logo?.url} alt={data?.data?.site_logo?.alt} className="max-w-full h-auto" />
                   </Link>
                 </div>
 
@@ -314,8 +316,8 @@ export default function Header() {
                       {t("projects")}
                     </Link>
                     <Link
-                      href="/about-us"
-                      className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/about-us" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
+                      href={`/about-us/${localeValue == "en" ? data?.data?.footer?.pages?.["about-us"]?.slug?.en : data?.data?.footer?.pages?.["about-us"]?.slug?.ar}`}
+                      className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname.split("/")[1] == "about-us" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
                       {t("about")}
                     </Link>
@@ -326,8 +328,8 @@ export default function Header() {
                       {t("blogs")}
                     </Link>
                     <Link
-                      href="/contact-us"
-                      className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname == "/contact-us" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
+                      href={`/contact-us/${localeValue == "en" ? data?.data?.footer?.pages?.["contact-us"]?.slug?.en : data?.data?.footer?.pages?.["contact-us"]?.slug?.ar}`}
+                      className={`text-sm font-medium px-2 pb-4 transition-colors border-b-2 ${pathname.split("/")[1] == "contact-us" ? "text-[#EDA133] border-[#EDA133]" : "border-white hover:border-[#EDA133] text-neutral-900"}`}
                     >
                       {t("contact")}
                     </Link>
@@ -377,13 +379,13 @@ export default function Header() {
                 id="menu-toggle"
                 onClick={toggleSidebar}
               >
-                <img src="/menu.svg" alt="burger menu" />
+                <img src="/menu.svg" />
               </div>
 
               <div className="flex items-center gap-[86px]">
                 <div className="w-24 h-8 bg-white flex items-center justify-center">
                   <Link href="/">
-                    <img src={data?.data?.site_logo} alt="BB4IT" className="max-w-full h-auto" />
+                    <img src={data?.data?.site_logo?.url} alt={data?.data?.site_logo?.alt} className="max-w-full h-auto" />
                   </Link>
                 </div>
               </div>
@@ -400,18 +402,18 @@ export default function Header() {
         <div className="flex flex-col h-full px-[16px] md:px-[28px]">
           <div className="flex justify-between items-center py-6 border-b border-gray-200">
             <button id="close-sidebar" onClick={closeSidebar}>
-              <img src="/close-square.svg" alt="close button" />
+              <img src="/close-square.svg" />
             </button>
             <div className="w-24 h-8 bg-white flex items-center justify-center">
               <Link href="/">
-                <img src={data?.data?.site_logo} alt="BB4IT" className="max-w-full h-auto" />
+                <img src={data?.data?.site_logo?.url} alt={data?.data?.site_logo?.alt} className="max-w-full h-auto" />
               </Link>
             </div>
           </div>
 
           <section className="flex flex-col h-full">
             <nav className="py-[20px] ">
-              <ul className="space-y-4">
+              <ul className="space-y-4 custom-ul">
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
                     href="/"
@@ -420,10 +422,10 @@ export default function Header() {
                   >
                     {t("home")}
                     <div className="rtl:block ltr:hidden">
-                      <img src="/arrow-left.svg" alt="arrow-left" />
+                      <img src="/arrow-left.svg" />
                     </div>
                     <div className="rtl:hidden ltr:block">
-                      <img src="/arrow-right.svg" alt="arrow-right" />
+                      <img src="/arrow-right.svg" />
                     </div>
                   </Link>
                 </li>
@@ -435,10 +437,10 @@ export default function Header() {
                   >
                     {t("services")}
                     <div className="rtl:block ltr:hidden">
-                      <img src="/arrow-left.svg" alt="arrow-left" />
+                      <img src="/arrow-left.svg" />
                     </div>
                     <div className="rtl:hidden ltr:block">
-                      <img src="/arrow-right.svg" alt="arrow-right" />
+                      <img src="/arrow-right.svg" />
                     </div>
                   </Link>
                 </li>
@@ -450,25 +452,25 @@ export default function Header() {
                   >
                     {t("projects")}
                     <div className="rtl:block ltr:hidden">
-                      <img src="/arrow-left.svg" alt="arrow-left" />
+                      <img src="/arrow-left.svg" />
                     </div>
                     <div className="rtl:hidden ltr:block">
-                      <img src="/arrow-right.svg" alt="arrow-right" />
+                      <img src="/arrow-right.svg" />
                     </div>
                   </Link>
                 </li>
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
                   <Link
-                    href="/about-us"
+                    href={`/about-us/${localeValue == "en" ? data?.data?.footer?.pages?.["about-us"]?.slug?.en : data?.data?.footer?.pages?.["about-us"]?.slug?.ar}`}
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] font-medium text-[#4A4A4A] hover:text-[#EDA133] transition-colors"
                   >
                     {t("about")}
                     <div className="rtl:block ltr:hidden">
-                      <img src="/arrow-left.svg" alt="arrow-left" />
+                      <img src="/arrow-left.svg" />
                     </div>
                     <div className="rtl:hidden ltr:block">
-                      <img src="/arrow-right.svg" alt="arrow-right" />
+                      <img src="/arrow-right.svg" />
                     </div>
                   </Link>
                 </li>
@@ -480,25 +482,25 @@ export default function Header() {
                   >
                     {t("blogs")}
                     <div className="rtl:block ltr:hidden">
-                      <img src="/arrow-left.svg" alt="arrow-left" />
+                      <img src="/arrow-left.svg" />
                     </div>
                     <div className="rtl:hidden ltr:block">
-                      <img src="/arrow-right.svg" alt="arrow-right" />
+                      <img src="/arrow-right.svg" />
                     </div>
                   </Link>
                 </li>
                 <li className="border-b-1 pb-4 border-[#DADADA88]">
-                  <Link
-                    href="/contact-us"
+                  <Link 
+                    href={`/contact-us/${localeValue == "en" ? data?.data?.footer?.pages?.["contact-us"]?.slug?.en : data?.data?.footer?.pages?.["contact-us"]?.slug?.ar}`}
                     onClick={() => setIsSidebarOpen(false)}
                     className="flex justify-between items-center text-[16px] text-[#4A4A4A] font-medium hover:text-[#EDA133] transition-colors"
                   >
                     {t("contact")}
                     <div className="rtl:block ltr:hidden">
-                      <img src="/arrow-left.svg" alt="arrow-left" />
+                      <img src="/arrow-left.svg" />
                     </div>
                     <div className="rtl:hidden ltr:block">
-                      <img src="/arrow-right.svg" alt="arrow-right" />
+                      <img src="/arrow-right.svg" />
                     </div>
                   </Link>
                 </li>
@@ -507,7 +509,7 @@ export default function Header() {
 
             <div className="mt-auto">
               <section className="flex items-center justify-center gap-3">
-                <Link href="/start-your-project" className="text-center bg-[#EDA133] w-full h-[48px] rounded-[8px] flex items-center justify-center gap-1 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-colors">
+                <Link href="/start-your-project" onClick={() => setIsSidebarOpen(false)} className="text-center bg-[#EDA133] w-full h-[48px] rounded-[8px] flex items-center justify-center gap-1 text-white px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-brand-600 cursor-pointer transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40">
                   {t("startProject")}
                   <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -522,15 +524,17 @@ export default function Header() {
 
                 </Link>
 
-                <Link href="/free-consultation" className="border text-center w-full h-[48px] rounded-[8px] border-[#EDA133] text-[#EDA133] px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors flex items-center justify-center">
+                <Link href="/free-consultation" onClick={() => setIsSidebarOpen(false)} className="border text-center w-full h-[48px] rounded-[8px] border-[#EDA133] text-[#EDA133] px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50  flex items-center justify-center transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40">
                   {t("freeConsultation")}
                 </Link>
               </section>
 
               <section className="mt-[27px] flex justify-between items-center">
                 <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
-                  <a
+                {data?.data?.social?.tiktok && <a
                     href={data?.data?.social?.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon w-8 h-8 rounded-full bg-neutral-200 flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                   >
                     <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -539,10 +543,12 @@ export default function Header() {
                         fill="#393939"
                       />
                     </svg>
-                  </a>
+                  </a>}
 
-                  <a
+                  {data?.data?.social?.telegram && <a
                     href={data?.data?.social?.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                   >
                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -555,10 +561,12 @@ export default function Header() {
                         fill="#393939"
                       />
                     </svg>
-                  </a>
+                  </a>}
 
-                  <a
+                  {data?.data?.social?.messenger && <a
                     href={data?.data?.social?.messenger}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                   >
                     <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -567,10 +575,12 @@ export default function Header() {
                         fill="#393939"
                       />
                     </svg>
-                  </a>
+                  </a>}
 
-                  <a
-                    href={data?.data?.social?.whatsapp}
+                  {data?.data?.social?.whatsapp && <a
+                    href={`https://wa.me/${data?.data?.social?.whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                   >
                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -583,10 +593,12 @@ export default function Header() {
                         fill="#393939"
                       />
                     </svg>
-                  </a>
+                  </a>}
 
-                  <a
-                    href={data?.data?.social?.snapchat}
+                  {data?.data?.social?.tiktok &&<a
+                    href={data?.data?.social?.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="social-icon w-8 h-8 bg-neutral-200 rounded-full flex items-center justify-center hover:bg-[#F0AC49] transition-colors"
                   >
                     <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -595,7 +607,7 @@ export default function Header() {
                         fill="#393939"
                       />
                     </svg>
-                  </a>
+                  </a>}
                 </div>
 
                 <div>

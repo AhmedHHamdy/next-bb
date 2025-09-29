@@ -72,8 +72,8 @@ export default function MapComponent({ branchesData }: { branchesData?: Branch[]
       const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
 
       map = new Map(mapRef.current as HTMLElement, {
-        zoom: 6,
-        center: { lat: 24.7136, lng: 46.6753 },
+        zoom: 8,
+        center: { lat: Number(branchesData?.[0].lat), lng: Number(branchesData?.[0].lng) },
         mapId: "4504f8b37365c3d0",
         styles: [
           {
@@ -129,7 +129,7 @@ export default function MapComponent({ branchesData }: { branchesData?: Branch[]
                 <span class="text-[15px] font-medium">${branch.phone}</span>
               </div>
               <div class="flex items-center gap-1">
-                <img src="/call-icon-svg.svg" class="w-[25px] h-[25px]"/>
+                <img src="/email-icon-svg.svg" class="w-[25px] h-[25px]"/>
                 <span class="text-[15px] font-medium">${branch.email}</span>
               </div>
             </div>

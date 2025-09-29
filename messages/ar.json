@@ -9,7 +9,7 @@
     "serviceDetails": "تفاصيل الخدمة",
     "allServices": "كل الخدمات",
     "popularFaq": "الأسئلة الشائعة",
-    "faqDescription": "إذا كانت لديك أي أسئلة أخرى أو تحتاج إلى مزيد من التوضيح حول خدمات السيو، لا تتردد في الاطلاع على الإجابات هنا أو التواصل معنا مباشرة.",
+    "faqDescription": "لديك استفسار او تحتاج الي مزيد من التفاصيل حول خدماتنا؟ اطلع علي الاجابات هنا او تواصل معنا مباشرة لنساعدك.",
     "exploreAllArticles": "استكشف جميع المقالات",
     "businessBuilding": "بناء الأعمال",
     "projects": "مشاريعنا",
@@ -17,9 +17,16 @@
   },
   "ProjectDetails": {
     "popularProjects": "المشاريع المشابهة",
-    "seeMore": "رؤية المزيد"
+    "seeMore": "رؤية المزيد",
+    "solution": "الحل",
+    "overview": "نظرة عامة",
+    "problem": "المشكلة",
+    "languagesUsed": "اللغات المستخدمة",
+    "outputs": "المخرجات",
+    "results": "النتائج"
   },
   "Services": {
+    "home": "الرئيسية",
     "freeConsultation": "استشارة مجانية",
     "startProject": "ابدأ مشروعك",
     "askService": "اطلب خدمة الآن",
@@ -38,7 +45,14 @@
     "tags": "الوسوم",
     "shareVia": "مشاركة عبر:",
     "relatedArticles": "مقالات ذات صلة",
-    "discoverRelatedArticles": "اكتشف مقالات مشابهة قد تهمك وتكمل ما قرأته الآن."
+    "discoverRelatedArticles": "اكتشف مقالات مشابهة قد تهمك وتكمل ما قرأته الآن.",
+    "articleContent": "محتوى المقالة"
+  },
+  "SidePages": {
+    "privacyPolicyContent": "محتوى سياسة الخصوصية",
+    "accessibilityContent": "محتوى إمكانية الوصول",
+    "userAgreementContent": "محتوى اتفاقية المستخدم",
+    "termsAndConditionsContent": "محتوى الشروط والأحكام"
   },
   "AboutUs": {
     "whoAreWe": "من نحن؟",
@@ -52,7 +66,7 @@
     "viewPastProjects": "شاهد المشاريع السابقة",
     "viewSuccessStories": "استعرض قصص النجاح",
     "whatOurClientsSay": "ماذا يقول عملاؤنا",
-    "bookFreeConsultation": "حجز استشارة مجانية",
+    "bookFreeConsultation": "استشارة مجانية",
     "viewOurWork": "شاهد أعمالنا"
   },
   "ContactUs": {
@@ -208,7 +222,8 @@
     "backButton": "رجوع",
     "submitting": "جاري الإرسال...",
     "submit": "إرسال",
-    "consultationInfoTitle": "معلومات عن الإستشارة"
+    "consultationInfoTitle": "معلومات عن الإستشارة",
+    "noAvailableTimesFound": "لم يتم العثور على أوقات متاحة"
   },
   "FooterForm": {
     "emailRequired": "البريد الإلكتروني مطلوب",

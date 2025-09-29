@@ -1,3 +1,4 @@
+import ClearStorage from "@/app/components/global/ClearStorage";
 import ProjectLogos from "@/app/components/global/PojectLogos";
 import { ApiResponse, ServicesPageDataType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
@@ -11,12 +12,34 @@ import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 
 // { params }: { params: { locale: string } }
 
+async function getServicesPageData(locale: string): Promise<ServicesPageDataType> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAllServices`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      lang: locale,
+    },
+  });
+
+  if (!res.ok) {
+    if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+      throw new Error("Failed to fetch Server issue");
+    } else {
+      throw new Error("Failed to fetch Services Page data");
+    }
+  }
+
+  return res.json();
+}
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('Services');
+  const locale = await getLocale();
+  const { data } = await getServicesPageData(locale);
 
   return {
-    title: t("services"),
-    description: t("services"),
+    title: data?.title,
+    description: data?.desc,
     keywords: t("services")
   };
 }
@@ -50,25 +73,7 @@ export default async function Page() {
   const linksData = await fetchFooter();
 
 
-  async function getServicesPageData(locale: string): Promise<ServicesPageDataType> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAllServices`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        lang: locale,
-      },
-    });
-
-    if (!res.ok) {
-      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
-        throw new Error("Failed to fetch Server issue");
-      } else {
-        throw new Error("Failed to fetch Services Page data");
-      }
-    }
-
-    return res.json();
-  }
+ 
 
   const { data } = await getServicesPageData(locale);
 
@@ -91,21 +96,48 @@ export default async function Page() {
 
   return (
     <>
+      <ClearStorage />
+      <div className="w-full bg-white px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[8rem]">
+        <div className="max-w-[1400px] mx-auto xl:px-[24px]">
+          <div className="flex items-center flex-wrap gap-2">
+            <Link href="/" className="text-[#8B8B8B] text-[15px] font-medium leading-[1.65]">
+              {t("home")}
+            </Link>
+
+            <svg className="rtl:block ltr:hidden" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M10.0603 14.281C10.1869 14.281 10.3136 14.2343 10.4136 14.1343C10.6069 13.941 10.6069 13.621 10.4136 13.4277L6.06693 9.08099C5.74693 8.76099 5.74693 8.24099 6.06693 7.92099L10.4136 3.57432C10.6069 3.38099 10.6069 3.06099 10.4136 2.86766C10.2203 2.67432 9.90026 2.67432 9.70693 2.86766L5.36026 7.21432C5.02026 7.55432 4.82693 8.01432 4.82693 8.50099C4.82693 8.98766 5.01359 9.44766 5.36026 9.78766L9.70693 14.1343C9.80693 14.2277 9.93359 14.281 10.0603 14.281Z"
+                fill="#8B8B8B"
+              />
+            </svg>
+
+            <svg className="rtl:hidden ltr:block" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
+            </svg>
+
+            <Link href="/services" className="text-black text-[15px] font-medium leading-[1.65]">
+              {t("services")}
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* <!-- Services Hero Section --> */}
-      <section className="max-w-[1400px] mx-auto pt-[6.5rem] md:pt-[8.5rem] lg:pt-[10.5rem] relative px-[15px] xl:px-0">
+      {/* pt-[6.5rem] md:pt-[8.5rem] lg:pt-[10.5rem] */}
+      <section className="max-w-[1400px] mx-auto relative pt-4 xl:pt-0 px-[15px] xl:px-0">
         {/* <!-- Background Decorative Elements --> */}
-        <div className="md:hidden lg:block absolute ltr:rotate-90 ltr:left-[-210px] rtl:right-[-20px] top-[110px] z-[50]">
-          <img src="/services-page-bg.svg" alt="background art" />
+        <div className="md:hidden lg:block absolute ltr:rotate-90 ltr:left-[-210px] rtl:right-[-20px] top-[50px] z-[50]">
+          <img src="/services-page-bg.svg"  />
         </div>
 
         {/* <!-- Background Decorative Elements --> */}
-        <div className="md:hidden lg:block absolute left-[2px] top-[450px] lg:left-[80px] ltr:hidden lg:top-[240px] z-[0]">
-          <img className="h-[260px] lg:h-full" src="/services-page-bg-art.svg" alt="background art" />
-        </div>
+        {/* <div className="md:hidden lg:block absolute left-[2px] top-[350px] lg:left-[80px] ltr:hidden lg:top-[40px] z-[0]">
+          <img className="h-[260px] lg:h-full" src="/services-page-bg-art.svg"  />
+        </div> */}
 
         <div className="rounded-[8px] overflow-hidden relative z-[80]">
           {/* <!-- Content --> */}
-          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-32 lg:p-12">
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-32 lg:p-12 lg:pt-2">
             {/* <!-- Left Side - Content --> */}
             <div className="w-full lg:w-[536px] flex flex-col gap-[24px]">
               {/* <!-- Badge --> */}
@@ -117,7 +149,7 @@ export default async function Page() {
               </h1>
 
               {/* <!-- Description --> */}
-              <p className="text-[14px] md:text-[18px] text-[#393939] leading-[1.56] font-medium">
+              <p className="text-[14px] md:text-[18px] text-[#393939] leading-[1.5] font-medium">
                 {data?.header?.desc}
               </p>
 
@@ -145,7 +177,7 @@ export default async function Page() {
             {/* <!-- Right Side - Image --> */}
             <div className="w-full h-[293px] lg:w-[542px] md:h-[420px] relative">
               <div className="w-full h-full bg-[#FFFFFF] rounded-[8px] overflow-hidden">
-                <img src={data?.header?.image} alt="services" className="w-full h-full object-cover" />
+                <img src={data?.header?.image?.url} alt={data?.header?.image?.alt} className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
@@ -156,15 +188,15 @@ export default async function Page() {
       <section className="relative bg-[#131A27] mt-[70px]  md:mt-[64px] py-[48px] md:py-[99px] px-[15px] 2xl:px-0 overflow-hidden">
         {/* <!-- Decorative Background Elements --> */}
         <div className="hidden md:block absolute inset-0 top-[10px]">
-          <img src="/services-page-bg-svg.svg" alt="background art" />
+          <img src="/services-page-bg-svg.svg"  />
         </div>
 
         <div className="md:hidden absolute inset-0 top-[150px] left-[100px]">
-          <img src="/services-page-bg-svg.svg" alt="background art" />
+          <img src="/services-page-bg-svg.svg"  />
         </div>
 
         <div className="md:hidden absolute inset-0 top-[1500px] left-[100px]">
-          <img src="/services-page-bg-svg.svg" alt="background art" />
+          <img src="/services-page-bg-svg.svg"  />
         </div>
 
         <div className="max-w-[1400px] mx-auto relative z-10">
@@ -184,17 +216,18 @@ export default async function Page() {
               return (
                 <div key={service?.id} className="bg-[#313B4D] w-full h-full flex items-start justify-start gap-[16px] md:gap-[35px] rounded-lg p-8 border border-gray-700 hover:border-[#EDA133] transition-all duration-300 hover:transform hover:-translate-y-2">
                   <div className="self-start w-16 h-16 mt-[7px]">
-                    <img className="h-[45px]" src={service?.image_url} alt="service icon" />
+                    <img className="h-[54px] w-[54px]" src={service?.icon?.url} alt={service?.icon?.alt} />
                   </div>
                   <div className="flex flex-col gap-[10px] w-full md:w-[240px]">
                     <h3 className="text-[16px] break-words md:text-[21.5px] font-bold text-white">
-                      {truncate60(service?.name)}
+                      {service.home_main_title}
                     </h3>
-                    <p dangerouslySetInnerHTML={{__html: service?.description}} className="text-gray-300 text-[12px] md:text-[14px] break-words">
-                      {/* {truncate120(service?.description)} */}
+                    {/* dangerouslySetInnerHTML={{__html: service?.description}}  */}
+                    <p className="text-gray-300 text-[12px] md:text-[14px] break-words">
+                      {service?.home_main_desc}
                     </p>
                     <Link
-                      href={`/services/${service.id}/${service.slug}`}
+                      href={`/services/${locale == "en" ? service?.slug?.en : service?.slug?.ar}`}
                       className="flex items-center gap-2 text-[#EDA133] text-[14px] md:text-[15px]"
                     >
                       {t("serviceDetails")}
@@ -238,7 +271,7 @@ export default async function Page() {
                   <Link href="/free-consultation" className="w-full md:w-[222px] h-[56px] bg-[#EDA133] rounded-lg flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
                     <div className="flex items-center gap-3">
                       <span className="text-white text-[16px] font-medium">{t("joinUs")}</span>
-                      <img src="/call-icon.svg" alt="call" className="w-5 h-5" />
+                      <img src="/call-icon.svg" className="w-5 h-5" />
                     </div>
                   </Link>
                 </section>
@@ -250,7 +283,7 @@ export default async function Page() {
                   return ( */}
                     <div className="relative w-full lg:w-full lg:h-[170px] flex flex-col gap-4">
                       <div className="absolute right-[0px] top-[-45px] z-[0] opacity-60">
-                        <img src="/01.svg" alt="background art" />
+                        <img src="/01.svg"  />
                       </div>
                       <h3 className="text-[24px] font-bold text-black leading-[1] relative z-[10]">{data?.steps?.[0]?.title}</h3>
                       <p className="text-[15px] text-[#393939] leading-[1.6] font-medium">
@@ -262,7 +295,7 @@ export default async function Page() {
 
                 <div className="relative w-full lg:w-full lg:h-[170px] flex flex-col gap-4">
                   <div className="absolute right-[0px] top-[-45px] z-[0] opacity-60">
-                    <img src="/02.svg" alt="background art" />
+                    <img src="/02.svg"  />
                   </div>
                   <h3 className="text-[24px] font-bold text-black leading-[1] relative z-[10]">{data?.steps?.[1]?.title}</h3>
                   <p className="text-[15px] text-[#393939] leading-[1.6] font-medium">
@@ -272,7 +305,7 @@ export default async function Page() {
 
                 <div className="relative w-full lg:w-full lg:h-[170px] flex flex-col gap-4">
                   <div className="absolute right-[0px] top-[-45px] z-[0] opacity-60">
-                    <img src="/03.svg" alt="background art" />
+                    <img src="/03.svg"  />
                   </div>
                   <h3 className="text-[24px] font-bold text-black leading-[1] relative z-[10]">{data?.steps?.[2]?.title}</h3>
                   <p className="text-[15px] text-[#393939] font-medium leading-[1.6]">
@@ -287,7 +320,7 @@ export default async function Page() {
               <Link href="/free-consultation" className="text-center w-full mt-[32px] lg:w-[222px] h-[56px] bg-[#EDA133] rounded-lg flex items-center justify-center gap-2 hover:bg-[#D8902A] transition-all duration-300">
                 <div className="flex items-center gap-3">
                   <span className="text-white text-[16px] font-medium">{t("joinUs")}</span>
-                  <img src="/call-icon.svg" alt="call" className="w-5 h-5" />
+                  <img src="/call-icon.svg"  className="w-5 h-5" />
                 </div>
               </Link>
             </section>

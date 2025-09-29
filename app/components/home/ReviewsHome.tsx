@@ -24,10 +24,19 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
   //   }
   // }, [swiperClientRef.current, swiperRef.current]);
 
+  // const linkSwipers = () => {
+  //   if (swiperClientRef.current && swiperRef.current) {
+  //     swiperClientRef.current.controller.control = swiperRef.current;
+  //     // swiperRef.current.controller.control = swiperClientRef.current;
+  //   }
+  // };
+
   const linkSwipers = () => {
-    if (swiperClientRef.current && swiperRef.current) {
-      swiperClientRef.current.controller.control = swiperRef.current;
-      // swiperRef.current.controller.control = swiperClientRef.current;
+    if (swiperRef.current && swiperClientRef.current) {
+      if (swiperRef.current.controller && swiperClientRef.current.controller) {
+        swiperRef.current.controller.control = swiperClientRef.current;
+        // swiperClientRef.current.controller.control = swiperRef.current;
+      }
     }
   };
 
@@ -157,28 +166,43 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
   }
   return (
     <>
-      <section className="bg-[#FAEAD1] pb-[50px] relative overflow-hidden">
+    {/* pb-[50px] */}
+      {reviewsData?.clients && reviewsData?.clients?.length > 0 && (<section className="bg-[#FAEAD1] relative overflow-hidden">
         <div className="relative customers-reviews-container">
           <div className="relative text-center mb-[49px] pt-[50px] md:pt-[50px] h-[250px] md:h-[350px] xl:h-[360px] 2xl:h-[400px] bg-white  2xl:px-0">
             <h2 className="text-[24px] md:text-[40px] font-bold mb-[12px]">{reviewsData?.title}</h2>
-            <p className="text-[#4A4A4A] text-[14px] md:text-[18px] max-w-[520px] font-medium mb-[20px] mx-auto">
-              {truncate80(reviewsData?.desc)}
+            <p className="text-[#4A4A4A] text-[14px] md:text-[18px] max-w-[820px] font-medium mb-[20px] mx-auto">
+              {reviewsData?.desc}
             </p>
 
             <section className="relative z-[100] client-carousel max-w-[1400px] mx-auto">
             <Swiper
-              className="h-[140px] md:h-[280px] xl:h-[290px]"
+              className="h-[7rem] md:h-[10rem] lg:h-[20rem] xl:h-[18rem]"
               spaceBetween={50}
               slidesPerView={5}
-              loop
+              // loop
+              initialSlide={
+                reviewsData?.clients && reviewsData?.clients.length >= 4
+                  ? Math.floor(
+                      reviewsData.clients.concat(
+                        reviewsData.clients,
+                        reviewsData.clients,
+                        reviewsData.clients,
+                        reviewsData?.clients,
+                        reviewsData?.clients,
+                        reviewsData?.clients
+                      ).length / 2
+                    )
+                  : Math.floor((reviewsData?.clients?.length ?? 0) / 2)
+              }
               centeredSlides={true}
-              autoplay={{
-                delay: 5000,
-                disableOnInteraction: false,
-              }}
+              // autoplay={{
+              //   delay: 5000,
+              //   disableOnInteraction: false,
+              // }}
               direction="horizontal"
               allowTouchMove={false}
-              modules={[Navigation, Autoplay, Controller]}
+              modules={[Navigation, Controller]}
               navigation={{
                 nextEl: ".swiper-2-button-next-1",
                 prevEl: ".swiper-2-button-prev-1",
@@ -218,13 +242,23 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
                 </SwiperSlide>
               ))} */}
 
-              {reviewsData && reviewsData?.clients?.map((src, index) => (
+              {reviewsData?.clients && reviewsData?.clients?.length >= 4 ? reviewsData?.clients?.concat(reviewsData?.clients, reviewsData?.clients, reviewsData?.clients, reviewsData?.clients, reviewsData?.clients, reviewsData?.clients).map((src, index) => (
                 //  duration-500
-                <SwiperSlide key={index} className="transition-transform ease-in-out">
+                <SwiperSlide key={`${src.id}-${index}`} className="transition-transform ease-in-out">
                   <img
                     className="client-img w-[80px] md:w-[100px] md:h-[100px] rounded-full object-cover cursor-pointer"
-                    src={src.image_url}
-                    alt={`client ${index}`}
+                    src={src?.image?.url}
+                    alt={src?.image?.alt}
+                    onClick={() => handleImageClick(index)} // ✅ click-to-slide
+                  />
+                </SwiperSlide>
+              )) : reviewsData && reviewsData?.clients?.map((src, index) => (
+                //  duration-500
+                <SwiperSlide key={`${src.id}-${index}`} className="transition-transform ease-in-out">
+                  <img
+                    className="client-img w-[80px] md:w-[100px] md:h-[100px] rounded-full object-cover cursor-pointer"
+                    src={src?.image?.url}
+                    alt={src?.image?.alt}
                     onClick={() => handleImageClick(index)} // ✅ click-to-slide
                   />
                 </SwiperSlide>
@@ -233,32 +267,48 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
             </section>
 
             <div className="hidden sm:block absolute  sm:left-[-110px] sm:top-[200px] md:top-[250px] xl:top-[200px] 2xl:top-[45%] big-screen min-[2560px]:top-[145px] z-[50]">
-              <img className="w-[1600px] md:w-[1850px] xl:w-[2700px]" src="/curvedbg.svg" alt="background art" />
+              <img className="w-[1600px] md:w-[1850px] xl:w-[2700px]" src="/curvedbg.svg"  />
             </div>
 
-            <div className="block sm:hidden absolute left-[0] top-[200px] z-[50]">
-              <img className="w-[800px]" src="/background-review-art-curved-mobile.svg" alt="background art" />
+            <div className="block sm:hidden absolute left-[0] top-[210px] z-[50]">
+              <img className="w-[800px]" src="/background-review-art-curved-mobile.svg"  />
             </div>
 
             <div className="absolute inset-0 z-[10] top-[160px] xl:top-[210px] right-[30px]">
-              <img src="/reviews-background-art.svg" alt="background art" />
+              <img src="/reviews-background-art.svg"  />
             </div>
           </div>
         </div>
 
-        <div className="mt-[80px] relative z-[70] customers-reviews-container">
+        <div className="mt-[7.5rem] relative z-[70] customers-reviews-container pb-[64px] md:pb-0">
           <Swiper
             spaceBetween={48}
             slidesPerView={1}
-            loop
+            // loop
             autoplay={{
               delay: 5000,
               disableOnInteraction: false,
+              pauseOnMouseEnter: true,
             }}
+            initialSlide={
+              reviewsData?.clients && reviewsData?.clients.length >= 4
+                ? Math.floor(
+                    reviewsData.clients.concat(
+                      reviewsData.clients,
+                      reviewsData.clients,
+                      reviewsData.clients,
+                      reviewsData?.clients,
+                      reviewsData?.clients,
+                      reviewsData?.clients
+                    ).length / 2
+                  )
+                : Math.floor((reviewsData?.clients?.length ?? 0) / 2)
+            }
             centeredSlides={true}
             direction="horizontal"
-            allowTouchMove={false}
-            modules={[Navigation, Controller]}
+            // allowTouchMove={false}
+            // , 
+            modules={[Navigation, Autoplay, Controller]}
             onSwiper={(swiper) => {(swiperRef.current = swiper) 
               linkSwipers()}}
             navigation={{
@@ -282,12 +332,12 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
             {/* <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
               <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
                 <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
+                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg"  />
                   <p className="text-[14px] md:text-[24px] font-medium">
                     هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
                     الطلبات الجديد وتطبيقنا."
                   </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
+                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg"  />
 
                   <section className="flex items-center gap-[16px]">
                     <img
@@ -315,22 +365,22 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
               </section>
             </SwiperSlide> */}
 
-            {reviewsData && reviewsData?.clients?.map(review => {
+            {reviewsData?.clients && reviewsData?.clients?.length >= 4 ? reviewsData?.clients?.concat(reviewsData?.clients, reviewsData?.clients, reviewsData?.clients, reviewsData?.clients, reviewsData?.clients, reviewsData?.clients).map((review, index) => {
               return (
-                <SwiperSlide key={review.id} className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
+                <SwiperSlide key={`${review.id}-${index}`} className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
                   <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
                     <section className="xl:w-[536px] flex flex-col">
-                      <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
+                      <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg"  />
                       <p className="text-[14px] md:text-[24px] font-medium">
                         {review.quote}
                       </p>
-                      <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
+                      <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg"  />
 
                       <section className="flex items-center gap-[16px]">
                         <img
                           className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                          src={review.image_url}
-                          alt="client img"
+                          src={review?.image?.url}
+                          alt={review?.image?.alt}
                         />
                         <section>
                           <h4 className="text-[14px] md:text-[24px] font-bold">{review.username}</h4>
@@ -343,353 +393,80 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
 
                     {review.file_type == "video" && <figure className="w-full h-full lg:h-[350px] xl:w-[499px] xl:h-[350px]">
                       <video
-                        src="/demo-video.mp4"
                         controls
                         playsInline
-                        className="w-full h-full object-cover rounded-[16px]"
-                      ></video>
+                        poster={review?.thumbnail?.url}
+                        className="w-full h-full min-h-[250px] object-cover rounded-[16px]"
+                      >
+                        <source src={review?.file_url} type="video/mp4" />
+                      </video>
                     </figure>}
 
                     {review.file_type == "image" && <figure className="w-full h-full lg:h-[350px] xl:w-[499px] xl:h-[350px]">
                       <img
-                        src={review.file_url}
-                        className="w-full h-full object-cover rounded-[16px]"
+                        src={review?.file_url}
+                        alt={review?.thumbnail?.alt}
+                        className="w-full h-full min-h-[250px] object-cover rounded-[16px]"
+                      />
+                    </figure>}
+                  </section>
+                </SwiperSlide>
+              )
+            }) : reviewsData && reviewsData?.clients?.map((review, index) => {
+              return (
+                <SwiperSlide key={`${review?.id}-${index}`} className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
+                  <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
+                    <section className="xl:w-[536px] flex flex-col">
+                      <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg"  />
+                      <p className="text-[14px] md:text-[24px] font-medium min-h-[80px]">
+                        {review?.quote}
+                      </p>
+                      <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg"  />
+
+                      <section className="flex items-center gap-[16px]">
+                        <img
+                          className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
+                          src={review?.image?.url}
+                          alt={review?.image?.alt}
+                        />
+                        <section>
+                          <h4 className="text-[14px] md:text-[24px] font-bold">{review?.username}</h4>
+                          <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
+                            {review?.position}
+                          </h5>
+                        </section>
+                      </section>
+                    </section>
+
+                    {review?.file_type == "video" && <figure className="w-full h-full lg:h-[350px] xl:w-[499px] xl:h-[350px]">
+                      <video
+                        controls
+                        playsInline
+                        poster={review?.thumbnail?.url}
+                        className="w-full h-full min-h-[250px] object-cover rounded-[16px]"
+                      >
+                        <source src={review?.file_url} type="video/mp4" />
+                      </video>
+                    </figure>}
+
+                    {review?.file_type == "image" && <figure className="w-full h-full lg:h-[350px] xl:w-[499px] xl:h-[350px]">
+                      <img
+                        src={review?.file_url}
+                        alt={review?.thumbnail?.alt}
+                        className="w-full h-full min-h-[250px] object-cover rounded-[16px]"
                       />
                     </figure>}
                   </section>
                 </SwiperSlide>
               )
             })}
-
-            {/* <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] xl:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide>
-
-            <SwiperSlide className="swiper-slide bg-[white] rounded-lg p-4 md:p-8 border border-gray-200">
-              <section className="w-full h-full flex flex-col xl:flex-row xl:justify-between xl:items-center gap-[24px] lg:gap-[29px]">
-                <section className="xl:w-[536px] flex flex-col">
-                  <img className="w-10 md:w-16 mb-[8px]" src="/text-quote.svg" alt="text quote" />
-                  <p className="text-[14px] md:text-[24px] font-medium">
-                    هو سر نجاحنا على الإنترنت. إنه يجعل التسويق عبر الإنترنت سهلاً للغاية، وضيوفنا يحبون استخدام نظام
-                    الطلبات الجديد وتطبيقنا."
-                  </p>
-                  <img className="w-10 md:w-16 self-end mt-[8px]" src="/text-quote.svg" alt="text quote" />
-
-                  <section className="flex items-center gap-[16px]">
-                    <img
-                      className="w-[48px] h-[48px] md:w-[71px] md:h-[71px] rounded-full object-cover"
-                      src="/client-img.png"
-                      alt="client img"
-                    />
-                    <section>
-                      <h4 className="text-[14px] md:text-[24px] font-bold">وحيد منيع</h4>
-                      <h5 className="text-[12px] md:text-[16px] text-[#4A4A4A] font-medium">
-                        مجلس إدارة شركة بناء الأعمال
-                      </h5>
-                    </section>
-                  </section>
-                </section>
-
-                <figure className="w-full h-full xl:w-[499px] xl:h-[350px]">
-                  <video
-                    src="/demo-video.mp4"
-                    controls
-                    playsInline
-                    className="w-full h-full object-cover rounded-[16px]"
-                  ></video>
-                </figure>
-              </section>
-            </SwiperSlide> */}
           </Swiper>
         </div>
 
-        <section className="hidden md:flex justify-center items-center max-w-[1395px] mx-auto mt-[48px] relative z-[120]">
+
+        <section className="hidden md:flex justify-center items-center max-w-[1395px] mx-auto mt-[48px] relative z-[120] pb-[64px]">
           <section className="flex items-center gap-[16px]">
-            <div className="swiper-2-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer">
+            <div className="swiper-2-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer rtl:block ltr:hidden">
               <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
@@ -697,7 +474,27 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
                 />
               </svg>
             </div>
-            <div className="swiper-2-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] rounded-[8px] cursor-pointer">
+
+            <div className="swiper-2-button-prev-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer rtl:hidden ltr:block">
+              <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
+                  fill="#131A27"
+                />
+              </svg>
+            </div>
+
+
+            <div className="swiper-2-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer  rtl:hidden ltr:block">
+              <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M0.163943 14.6553C0.163943 16.3093 2.23594 17.0543 3.33194 15.8153C5.63173 13.2218 8.52365 11.2218 11.7619 9.98528C13.2719 9.41328 13.2889 7.26328 11.7739 6.70828C8.5161 5.50636 5.60485 3.51973 3.29794 0.924279C2.21394 -0.295721 0.163943 0.436278 0.163943 2.06928V14.6553Z"
+                  fill="#131A27"
+                />
+              </svg>
+            </div>
+
+            <div className="swiper-2-button-next-1 border border-[#131A27] p-[19px] rounded-[8px] cursor-pointer rtl:block ltr:hidden">
               <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M12.8361 2.14159C12.8361 0.487594 10.7641 -0.257405 9.66806 0.981595C7.36826 3.57512 4.47635 5.57511 1.23806 6.8116C-0.271943 7.3836 -0.288943 9.5336 1.22606 10.0886C4.4839 11.2905 7.39515 13.2771 9.70206 15.8726C10.7861 17.0926 12.8361 16.3606 12.8361 14.7276L12.8361 2.14159Z"
@@ -707,7 +504,7 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
             </div>
           </section>
         </section>
-      </section>
+      </section>)}
     </>
   );
 }

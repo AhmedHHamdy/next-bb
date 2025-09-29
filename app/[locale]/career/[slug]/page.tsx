@@ -1,3 +1,5 @@
+"use client";
+
 import BenefitsCarousel from "@/app/components/career/BenefitsCarousel";
 import CulturesCarousel from "@/app/components/career/CulturesCarousel";
 import CountryCodeInput from "@/app/components/global/CountryCodeInput";
@@ -5,10 +7,13 @@ import FAQ from "@/app/components/global/FAQ";
 import FileUpload from "@/app/components/global/FileUpload";
 import { CareerPageDataType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
+import { useLocale, useTranslations } from "next-intl";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-async function getCareerPageData(locale: string): Promise<CareerPageDataType> {
+async function fetchCareerPageData(locale: string): Promise<CareerPageDataType> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCareerPageInfo`, {
     method: "GET",
     headers: {
@@ -18,8 +23,8 @@ async function getCareerPageData(locale: string): Promise<CareerPageDataType> {
   });
 
   if (!res.ok) {
-    console.log(res, "res")
-    console.log("Server responded with error code:", res.status);
+    // console.log(res, "res")
+    // console.log("Server responded with error code:", res.status);
     if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
       throw new Error("Failed to fetch Server issue");
     } else {
@@ -30,47 +35,72 @@ async function getCareerPageData(locale: string): Promise<CareerPageDataType> {
   return res.json();
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
-  const { data } = await getCareerPageData(locale);
+export default function Page() {
+  const locale = useLocale();
+  const t = useTranslations('Career');
+  const e = useTranslations("Errors404")
+  const router = useRouter();
 
-  return {
-    title: data?.title,
-    description: data?.meta_description,
-    keywords: data?.meta_keywords
-  };
-}
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["career", locale],
+    queryFn: () => fetchCareerPageData(locale),
+  });
 
+  const dataPayload = data?.data;
 
-export default async function Page() {
-  const locale = await getLocale();
+  // useEffect(() => {
+  //   const fetchedSlug = dataPayload?.slug;
+  //   if (!isLoading && fetchedSlug && router) {
+  //     router.push(`/${locale}/career/${fetchedSlug.}`);
+  //   }
+  // }, [data, router, isLoading]);
 
-  const t = await getTranslations('Career');
+  useEffect(() => {
 
-  async function getCareerPageData(locale: string): Promise<CareerPageDataType> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getCareerPageInfo`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        lang: locale,
-      }
-    });
-  
-    if (!res.ok) {
-      console.log(res, "res")
-      console.log("Server responded with error code:", res.status);
-      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
-        throw new Error("Failed to fetch Server issue");
-      } else {
-        throw new Error("Failed to fetch homepage data");
-      }
-    }
-  
-    return res.json();
+    if (locale == "en" && data) {
+      router.replace(`/${locale}/career/${data?.data?.slug?.en}`);
+    } else if (locale == "ar" && data) {
+      router.replace(`/${locale}/career/${data?.data?.slug?.ar}`);
+    } 
+  }, [locale, router, data]);
+
+  if (isLoading) {
+    return (
+      <section className="min-h-screen text-center flex items-center justify-center">
+        <section className="px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem] text-center">
+          <div className="max-w-[1400px] mx-auto flex items-center justify-center">
+            <Spin size="large"/>
+          </div>
+        </section>
+      </section>
+    );
   }
 
-  // fetch typed data
-  const { data } = await getCareerPageData(locale);
+  if (isError || !data) {
+    return (
+      <section className="px-6 py-[6rem] lg:py-[8rem] xl:py-[9rem] text-center">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex flex-col items-center gap-[32px] max-w-[553px] mx-auto">
+            <img className="w-[202px] h-[169px] md:w-[352px] md:h-[321px]" src="/error404.svg" alt="error 404 image" />
+            <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
+              <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
+                {e("errorLoadingContent")}
+              </h1>
+              <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
+                {e("sorryTemporaryProblem")}
+              </p>
+            </div>
+            <button
+              onClick={() => refetch()}
+              className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
+            >
+              {e("refreshPage")}
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -81,7 +111,7 @@ export default async function Page() {
           <div className="max-w-[1670px] mx-auto relative z-[50] grid xl:grid-cols-2 2xl:grid-cols-4">
             {/* <!-- Background Vector --> */}
             <div className="absolute right-[20px] top-[20px] ltr:hidden rtl:hidden rtl:lg:hidden ltr:lg:hidden xl:block ltr:xl:left-[-4%] rtl:xl:right-[-4%] xl:top-[10%] ltr:2xl:left-[6%] rtl:2xl:right-[6%] 2xl:top-[10%] opacity-70 z-[10]">
-              <img src="/hero-vector.svg" alt="background decoration" className="w-[225px] h-[543px]" />
+              <img src="/hero-vector.svg"  className="w-[225px] h-[543px]" />
             </div>
 
             {/* LEFT SIDE (Text Content) */}
@@ -91,7 +121,7 @@ export default async function Page() {
       px-[15px] xl:px-[5rem] 2xl:px-[10rem] pt-[20px] lg:py-[32px]"
             >
               <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.5] relative z-[50]">
-                {data?.hero_title}
+                {dataPayload?.hero_title}
               </h1>
 
               {/* Decorative Vectors */}
@@ -104,7 +134,7 @@ export default async function Page() {
               </div>
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
-               {data?.hero_desc}
+               {dataPayload?.hero_desc}
               </p>
 
               {/* Buttons */}
@@ -131,7 +161,7 @@ export default async function Page() {
 
             {/* RIGHT SIDE (Image) */}
             <div className="w-full h-[350px] md:h-[655px] relative mt-[24px] lg:mt-0 2xl:col-span-2">
-              <img src="/career-img.png" alt="hero image" className="w-full h-full object-cover lg:rounded-[8px]" />
+              <img src={data?.data?.hero_image?.url} alt={data?.data?.hero_image?.alt} className="w-full h-full object-cover lg:rounded-[8px]" />
             </div>
           </div>
         </div>
@@ -143,20 +173,20 @@ export default async function Page() {
           {/* <!-- Company Culture & Values --> */}
           <div className="rounded-[32px] bg-[#131A27] h-[260px] grid grid-cols-1 lg:grid-cols-2 items-center gap-[24px] lg:gap-[64px] px-[50px]  xl:w-[1200px] 2xl:w-[1325px] relative">
             <h2 className="text-[#FFFFFF] text-[28px] md:text-[40px] font-bold leading-[1.3]  order-1 lg:order-none">
-              {data?.sections?.one?.title}
+              {dataPayload?.sections?.one?.title}
             </h2>
             <p className="text-[#FFFFFF] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[420px]">
-              {data?.sections?.one?.desc}
+              {dataPayload?.sections?.one?.desc}
             </p>
 
             {/* <!-- Diversity at Business Building --> */}
             <section className="absolute top-[85%]">
               <div className="rounded-[32px] bg-[#F7BF45] h-[260px] grid grid-cols-1 lg:grid-cols-2 items-center gap-[24px] lg:gap-[64px] px-[50px]  xl:w-[1150px] 2xl:w-[1275px]">
                 <h2 className="text-[#000000] text-[28px] md:text-[40px] font-bold leading-[1.3]  order-1 lg:order-none">
-                  {data?.sections?.two?.title}
+                  {dataPayload?.sections?.two?.title}
                 </h2>
                 <p className="text-[#000000] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[550px]">
-                  {data?.sections?.two?.desc}
+                  {dataPayload?.sections?.two?.desc}
                 </p>
               </div>
             </section>
@@ -165,10 +195,10 @@ export default async function Page() {
             <section className="absolute top-[170%]">
               <div className="rounded-[32px] bg-[#EB971B] h-[260px] grid grid-cols-1 lg:grid-cols-2 items-center gap-[24px] lg:gap-[64px] px-[50px]  xl:w-[1100px] 2xl:w-[1200px]">
                 <h2 className="text-[#EAEAEA] text-[28px] md:text-[42px] font-bold leading-[1.28]  order-1 lg:order-none">
-                  {data?.sections?.three?.title}
+                  {dataPayload?.sections?.three?.title}
                 </h2>
                 <p className="text-[#EAEAEA] text-[14px] leading-[1.6] order-2 lg:order-none max-w-[450px]">
-                  {data?.sections?.three?.desc}
+                  {dataPayload?.sections?.three?.desc}
                 </p>
               </div>
             </section>
@@ -176,7 +206,7 @@ export default async function Page() {
         </div>
 
         <section className="lg:hidden">
-          <CulturesCarousel culturesData={data?.sections} />
+              <CulturesCarousel culturesData={dataPayload?.sections} />
         </section>
       </section>
 
@@ -191,7 +221,7 @@ export default async function Page() {
             {/* <!-- Left side - 3 benefit cards --> */}
             {/*             <div className="flex flex-col md:grid md:grid-cols-2 xl:flex xl:flex-wrap lg:flex-row gap-4 w-full lg:w-auto">
  */}
-            <div className="flex flex-col md:grid md:grid-cols-2 xl:grid-cols-4 gap-4 w-full lg:w-auto">
+            <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 xl:grid-col-start-4 gap-4 w-full lg:w-auto">
               <div className="md:block xl:hidden bg-[#EDA133] rounded-lg p-[15px] px-[21px] flex flex-col justify-between items-center w-full xl:w-[270px]">
                 <div className="flex flex-col gap-[32px] items-center w-full h-full">
                   <h2 className="text-[40px] font-bold text-white leading-[1.2]  w-full">المزايا</h2>
@@ -227,7 +257,7 @@ export default async function Page() {
 {/* lg:w-[270px] */}
               <div className="md:hidden xl:block bg-[#EDA133] rounded-lg p-[15px] px-[21px] flex flex-col justify-between items-center w-full lg:min-h-[590px] ">
                 <div className="flex flex-col gap-[32px] items-center w-full h-full">
-                  <h2 className="text-[36px] font-bold text-white leading-[1.2] w-full">{data?.our_benefits?.title}</h2>
+              <h2 className="text-[36px] font-bold text-white leading-[1.2] w-full">{dataPayload?.our_benefits?.title}</h2>
 
                   {/* <!-- Decorative Pattern --> */}
                   <div className="flex flex-col gap-[6px] opacity-20">
@@ -251,7 +281,7 @@ export default async function Page() {
                   {/* <!-- Bottom Content --> */}
                   <div className="flex flex-col gap-[25px] w-full">
                     <p className="text-[16px] font-medium text-white leading-[1.5]  w-full">
-                      {data?.our_benefits?.desc}
+                      {dataPayload?.our_benefits?.desc}
                     </p>
                     {/* <button className="flex justify-center items-center gap-[10px] px-6 py-[14px] w-[200px] h-[56px] border border-[#FCF4E9] rounded-lg hover:bg-[#FCF4E9] text-white hover:text-[#EDA133] transition-colors">
                       <span className="text-[16px] font-medium">عرض جميع المزايا</span>
@@ -265,18 +295,18 @@ export default async function Page() {
               </div>
 
 {/* min-h-[531px] */}
-              {data?.our_benefits?.benefits.map(benefit => {
+              {dataPayload?.our_benefits?.benefits.map(benefit => {
                 return (
                   // xl:w-[333px
                   <div key={benefit?.id} className="flex flex-col justify-between items-end gap-12 w-full ] bg-[#EAEAEA] rounded-lg p-[18px] min-h-[531px] 2xl:min-h-[590px] py-[53.5px]">
                     <div className="flex flex-col justify-between items-end gap-[29.6px] w-full h-full">
-                      <h3 className="text-[20px] font-extrabold text-black leading-[1.6]  w-full">
+                      <h3 className="text-[20px] font-extrabold text-black leading-[1.6] h-[15%] w-full">
                         {benefit?.title}
                       </h3>
                       <div
                         className="w-full h-[250px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden"
                         style={{
-                          backgroundImage: `url(${benefit?.image_url})`,
+                          backgroundImage: `url(${benefit?.image?.url})`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
@@ -293,7 +323,7 @@ export default async function Page() {
           </div>
 
           <section className="md:hidden">
-            <BenefitsCarousel benefits={data?.our_benefits} />
+            <BenefitsCarousel benefits={dataPayload?.our_benefits} />
           </section>
         </div>
       </section>
@@ -303,7 +333,7 @@ export default async function Page() {
 
       {/* <section id="jobs" className="relative bg-[#131A27] px-[15px] pt-[20px] pb-[64px] md:py-[72px]">
         <div className="absolute inset-0  top-[10%] hidden md:block">
-          <img src="/career-bg-svg.svg" alt="background art" />
+          <img src="/career-bg-svg.svg"  />
         </div>
 
         <div className="hidden md:block max-w-[1400px] mx-auto lg:px-[47px]">
@@ -336,7 +366,7 @@ export default async function Page() {
                       <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">نوع العمل</span>
                     </th>
                     <th className="text-start pr-4 py-3">
-                      <span className="text-white text_[20px] font-medium leading-[1.56] opacity-80">المدينة</span>
+                      <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">المدينة</span>
                     </th>
                     <th className="text-start pr-4 py-3">
                       <span className="text-white text-[20px] font-medium leading-[1.56] opacity-80">زر التقديم</span>
@@ -462,7 +492,7 @@ export default async function Page() {
 
         <div className="md:hidden max-w-[1400px] mx-auto lg:px-[47px]">
           <div className="md:hidden absolute inset-0 right-[15%] top-[1%]">
-            <img className="w-[455px]" src="/career-bg-svg.svg" alt="background art" />
+            <img className="w-[455px]" src="/career-bg-svg.svg"  />
           </div>
 
           <div className="text-center mt-[32px] md:mt-0 mb-[29px] md:mb-[48px] px-[15px] 2xl:px-0 max-w-[636px] mx-auto">
@@ -619,7 +649,7 @@ export default async function Page() {
       </section> */}
 
       {/* <!-- FAQ Section --> */}
-      <FAQ faqs={data?.faqs ? data?.faqs : []} />
+      {(dataPayload?.faqs && dataPayload?.faqs?.length > 0) && <FAQ faqs={dataPayload?.faqs ? dataPayload?.faqs : []} />}
     </>
   );
 }

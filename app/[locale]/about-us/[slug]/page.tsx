@@ -1,4 +1,4 @@
-
+"use client";
 
 import ServicesMarquee from "@/app/components/about-us/ServicesMarquee";
 import Counters from "@/app/components/global/Counters";
@@ -6,17 +6,13 @@ import ProjectLogos from "@/app/components/global/PojectLogos";
 import Reviews from "@/app/components/global/Reviews";
 import { AboutUsData } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
-// import { routing } from "@/i18n/routing";
-// import { setRequestLocale } from "next-intl/server";
-// import { use } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
+import { useLocale, useTranslations } from "next-intl";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 
-// export function generateStaticParams() {
-//   return routing.locales.map((locale) => ({locale}));
-// }
-
-async function getAboutUsPageData(locale: string): Promise<AboutUsData> {
+async function fetchAboutUsPageData(locale: string): Promise<AboutUsData> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAboutUsPage`, {
     method: "GET",
     headers: {
@@ -36,28 +32,67 @@ async function getAboutUsPageData(locale: string): Promise<AboutUsData> {
   return res.json();
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
-  const { data } = await getAboutUsPageData(locale);
+export default function Page() {
+  const locale = useLocale();
+  const t = useTranslations('AboutUs');
+  const e = useTranslations("Errors404")
+  const router = useRouter();
 
-  return {
-    title: data?.title,
-    description: data?.meta_description,
-    keywords: data?.meta_keywords
-  };
-}
+  const params = useParams() as { slug?: string | string[] };
+  const currentSlug = Array.isArray(params.slug) ? decodeURIComponent(params.slug[0]) : decodeURIComponent(params?.slug || "") || "";
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["about-us", locale],
+    queryFn: () => fetchAboutUsPageData(locale),
+  });
 
-export default async function Page() {
-  // const {locale} = use(params);
+  useEffect(() => {
+    if (locale == "en" && data) {
+      router.replace(`/${locale}/about-us/${data?.data?.slug?.en}`);
+    } else if (locale == "ar" && data) {
+      router.replace(`/${locale}/about-us/${data?.data?.slug?.ar}`);
+    } 
+  }, [currentSlug, locale, router, data]);
 
-  // setRequestLocale(locale);
 
-  const locale = await getLocale();
+  if (isLoading) {
+    return (
+      <section className="min-h-screen text-center flex items-center justify-center">
+        <section className="px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem] text-center">
+          <div className="max-w-[1400px] mx-auto flex items-center justify-center">
+            <Spin size="large"/>
+          </div>
+        </section>
+      </section>
+    );
+  }
 
-  const t = await getTranslations('AboutUs');
+  if (isError || !data) {
+    return (
+      <section className="px-6 py-[6rem] lg:py-[8rem] xl:py-[9rem] text-center">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex flex-col items-center gap-[32px] max-w-[553px] mx-auto">
+            <img className="w-[202px] h-[169px] md:w-[352px] md:h-[321px]" src="/error404.svg" alt="error 404 image" />
+            <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
+              <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
+                {e("errorLoadingContent")}
+              </h1>
+              <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
+                {e("sorryTemporaryProblem")}
+              </p>
+            </div>
+            <button
+              onClick={() => refetch()}
+              className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
+            >
+              {e("refreshPage")}
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
-  // fetch typed data
-  const { data } = await getAboutUsPageData(locale);
+  const pageData = data.data;
 
   return (
     <>
@@ -71,7 +106,7 @@ export default async function Page() {
             <div className="absolute hidden lg:block ltr:left-[20px] right-[20px] top-[20px] ltr:xl:left-[-4%] xl:right-[-4%] xl:top-[10%] ltr:2xl:left-[6%]  rtl:2xl:right-[6%] 2xl:top-[10%] opacity-70 z-[10]">
               <img
                 src="/hero-vector.svg"
-                alt="background decoration"
+                
                 className="w-[225px] h-[543px]"
               />
             </div>
@@ -83,33 +118,19 @@ export default async function Page() {
               px-[15px] xl:px-[5rem] 2xl:px-[14rem] pt-[20px] lg:py-[32px]"
             >
               <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.5] relative z-[50]">
-                {data?.other?.header_title?.slice(0, 80)}
+                {pageData?.other?.header_title?.slice(0, 80)}
               </h1>
 
               {/* Decorative Vectors */}
-              {/* <div className="absolute z-[50] md:top-[35%] lg:top-[33%] xl:top-[36%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
-                <img
-                  src="/hero-vector-1393.svg"
-                  alt="decorative element"
-                  className="w-[247px] h-[28px]"
-                />
-              </div>
-
-              <div className="absolute top-[23%] right-[25px] md:hidden z-[50]">
-                <img
-                  src="/hero-vector-mobile.svg"
-                  alt="decorative element"
-                  className=""
-                />
-              </div> */}
+              {/* ... */}
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
-                {data?.other?.header_description?.slice(0, 255)}
+                {pageData?.other?.header_description?.slice(0, 255)}
               </p>
 
               {/* Buttons */}
               <div className="flex flex-row gap-4 w-full relative z-[50]">
-                <Link href="/fee-consultation" className="bg-[#EDA133] hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
+                <Link href="/fee-consultation" className="bg-[#EDA133] text-center hover:bg-[#D1912A] w-full md:w-auto text-white h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] flex items-center justify-center gap-2 transition-colors">
                   {t("bookFreeConsultation")}
                   <svg className="rtl:block ltr:hidden" width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -123,7 +144,7 @@ export default async function Page() {
                   </svg>
                 </Link>
 
-                <Link href="/projects" className="border border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
+                <Link href="/projects" className="border text-center border-[#EDA133] w-full md:w-auto text-[#EDA133] h-[48px] md:h-auto md:px-6 py-3 rounded-[8px] font-medium text-[14px] md:text-[16px] hover:bg-orange-50 transition-colors">
                   {t("viewOurWork")}
                 </Link>
               </div>
@@ -132,8 +153,8 @@ export default async function Page() {
             {/* RIGHT SIDE (Image) */}
             <div className="w-full h-[350px] md:h-[655px] relative mt-[24px] lg:mt-0 2xl:col-span-2">
               <img
-                src={data?.other?.header_image}
-                alt="hero image"
+                src={pageData?.other?.header_image?.url}
+                alt={pageData?.other?.header_image?.alt}
                 className="w-full h-full object-cover lg:rounded-[8px]"
               />
             </div>
@@ -142,13 +163,13 @@ export default async function Page() {
       </section>
 
       {/* <!-- About Us Section --> */}
-      <section className="relative bg-[#131A27] lg:h-[759px] flex flex-col justify-center overflow-hidden py-[48px]">
+      <section className="relative bg-[#131A27] lg:h-auto flex flex-col justify-center overflow-hidden py-[48px]">
         {/* <!-- Content --> */}
-        <div className="relative z-10 flex flex-col-reverse md:flex-row items-center justify-between max-w-[1400px] mx-auto gap-[72px] lg:gap-[161px] px-[25px] 2xl:px-0">
-          <div className="w-full xl:w-[429px] h-[298px] md:h-[429px] relative">
+        <div className="relative z-10 flex flex-col-reverse xl:flex-row items-center justify-between max-w-[1400px] mx-auto gap-[72px] lg:gap-[161px] px-[25px] 2xl:px-0">
+          <div className="w-full xl:w-[429px] h-full md:h-full xl:h-[429px] 2xl:h-[429px] relative">
             <div className="absolute inset-0 bg-[#FCF4E9] rounded-[7px]"></div>
-            <div className="relative w-full h-full rounded-[7px] overflow-hidden transform -rotate-10">
-              <img src={data?.other?.expressions_section?.image} alt="team" className="w-full h-full object-cover" />
+            <div className="relative w-full h-full 2xl:w-[495.244px] 2xl:h-[495.244px] rounded-[7px] overflow-hidden transform -rotate-6 md:-rotate-6 2xl:-rotate-2 2xl:translate-x-6 2xl:-translate-y-7">
+              <img src={pageData?.other?.expressions_section?.image?.url} alt={pageData?.other?.expressions_section?.image?.alt} className="w-full h-full object-cover " />
             </div>
           </div>
 
@@ -157,16 +178,16 @@ export default async function Page() {
             <div className="flex flex-col gap-10">
               {/* <!-- Heading and Subtitle --> */}
               <div className="flex flex-col gap-4">
-                <h2 className="text-[32px] md:text-[40px] font-bold text-[#E7E8E9]  leading-[1.2]">{data?.other?.expressions_section?.title}</h2>
+                <h2 className="text-[32px] md:text-[40px] font-bold text-[#E7E8E9]  leading-[1.2]">{pageData?.other?.expressions_section?.title}</h2>
                 <p className="text-[18px] text-white font-medium md:text-[#B8BABE] leading-[1.44]">
-                  {data?.other?.expressions_section?.subtitle}
+                  {pageData?.other?.expressions_section?.subtitle}
                 </p>
               </div>
 
               {/* <!-- Description --> */}
               <section>
                 <p className="text-[16px] md:text-[18px] text-[#DADADA] leading-[1.56] max-w-[662px]">
-                  {data?.other?.expressions_section?.desc}
+                  {pageData?.other?.expressions_section?.desc}
                 </p>
               </section>
             </div>
@@ -174,10 +195,10 @@ export default async function Page() {
             {/* <!-- Features List --> */}
             <div className="flex flex-col gap-6 w-full">
               {/* <!-- Features --> */}
-              {data?.other?.expressions_section?.expressions?.map(expression => {
+              {pageData?.other?.expressions_section?.expressions?.map(expression => {
                 return (
                   <div key={expression.id} className="flex items-center gap-4">
-                    <img src={expression.image_url} alt="experience" className="w-12 h-12" />
+                    <img src={expression.image?.url} alt={expression.image?.alt} className="w-12 h-12" />
                     <span className="text-[16px] md:text-[24px] font-bold text-[#DADADA] ">{expression.title}</span>
                   </div>
                 )
@@ -196,12 +217,12 @@ export default async function Page() {
             <div className="w-full xl:w-[666px] flex flex-col gap-6">
               {/* <!-- Main Heading --> */}
               <h2 className="text-[32px] md:text-[40px] font-bold text-[#232323] leading-[1.4]">
-                {data?.other?.header_title}
+                {pageData?.other?.header_title}
               </h2>
 
               {/* <!-- Description --> */}
               <p className="text-[14px] md:text-[20px] font-medium md:font-regular text-[#393939] leading-[1.6]">
-                {data?.other?.header_description}
+                {pageData?.other?.header_description}
               </p>
 
               {/* <!-- Vision & Mission Cards --> */}
@@ -210,13 +231,13 @@ export default async function Page() {
                 <div className="w-full border-t border-[#E7E8E9] pt-[36px]">
                   <div className="flex flex-row flex-wrap lg:flex-nowrap items-center md:items-center md:justify-between gap-6 md:gap-16">
                     {/* <!-- Icon --> */}
-                    <img src="/vision-icon.svg" alt="vision" className="w-[56px] md:w-20 h-[56px] md:h-20" />
+                    <img src="/vision-icon.svg" className="w-[56px] md:w-20 h-[56px] md:h-20" />
 
                     {/* <!-- Content --> */}
                     <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">{t("ourVision")}</h3>
 
                     <p className="text-[14px] md:text-[16px] text-[#2A313D] font-medium leading-[1.5] max-w-[277px]">
-                        {data?.other?.our_vision}
+                        {pageData?.other?.our_vision}
                     </p>
                   </div>
                 </div>
@@ -225,13 +246,13 @@ export default async function Page() {
                 <div className="w-full border-t border-[#E7E8E9] pt-[36px]">
                   <div className="flex flex-row flex-wrap lg:flex-nowrap  items-center md:items-center md:justify-between gap-6 md:gap-16">
                     {/* <!-- Icon --> */}
-                    <img src="/mission-icon.svg" alt="mission" className="w-[56px] md:w-20 h-[56px] md:h-20" />
+                    <img src="/mission-icon.svg" className="w-[56px] md:w-20 h-[56px] md:h-20" />
 
                     {/* <!-- Content --> */}
                     <h3 className="text-[20px] md:text-[32px] font-bold text-[#131A27] ">{t("ourMission")}</h3>
 
                     <p className="text-[14px] md:text-[16px] text-[#2A313D] font-medium leading-[1.5] max-w-[277px]">
-                      {data?.other?.our_mission}
+                      {pageData?.other?.our_mission}
                     </p>
                   </div>
                 </div>
@@ -240,7 +261,7 @@ export default async function Page() {
 
             {/* <!-- Left Side - Rating Card --> */}
             <div className="w-full xl:w-[580px] xl:h-[474px] relative">
-              <img src={data?.other?.our_mission_image} alt="team" className="w-full h-full object-cover" />
+              <img src={pageData?.other?.our_mission_image?.url} alt={pageData?.other?.our_mission_image?.alt} className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
@@ -256,18 +277,18 @@ export default async function Page() {
 
                 <div className="flex flex-row items-center gap-6 lg:gap-24">
                   <div className="flex flex-col items-center gap-2">
-                    <img src="/quality-icon.gif" alt="quality" className="w-24 h-24 object-cover" />
-                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{data?.other?.our_values?.first?.slice(0, 80)}</span>
+                    <img src="/quality-icon.gif" className="w-24 h-24 object-cover" />
+                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{pageData?.other?.our_values?.first?.slice(0, 80)}</span>
                   </div>
 
                   <div className="flex flex-col items-center gap-2">
-                    <img src="/flexibility-icon.gif" alt="flexibility" className="w-24 h-24 object-cover" />
-                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{data?.other?.our_values?.second?.slice(0, 80)}</span>
+                    <img src="/flexibility-icon.gif" className="w-24 h-24 object-cover" />
+                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{pageData?.other?.our_values?.second?.slice(0, 80)}</span>
                   </div>
 
                   <div className="flex flex-col items-center gap-2">
-                    <img src="/innovation-icon.gif" alt="innovation" className="w-24 h-24 object-cover" />
-                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{data?.other?.our_values?.third?.slice(0, 80)}</span>
+                    <img src="/innovation-icon.gif" className="w-24 h-24 object-cover" />
+                    <span className="text-[18px] md:text-[20px] font-medium text-[#232323] text-center">{pageData?.other?.our_values?.third?.slice(0, 80)}</span>
                   </div>
                 </div>
                 
@@ -278,12 +299,10 @@ export default async function Page() {
                 <img
                   className="w-[300px] xl:w-[600px]"
                   src="/vision-background-values.svg"
-                  alt="background vision values"
                 />
                 <img
                   className="w-[300px] xl:w-[600px]"
                   src="/vision-background-values.svg"
-                  alt="background vision values"
                 />
               </div>
             </div>
@@ -295,24 +314,25 @@ export default async function Page() {
       <section className="xl:py-[48px] bg-white">
         <div className="max-w-[1400px] mx-auto px-4">
           <div className="text-center mb-[24px] lg:mb-[54px]">
+            {/* <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-1 leading-[1.49]">
+              {pageData?.other?.why_us?.title}
+            </h2> */}
             <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-1 leading-[1.49]">
-              {data?.other?.why_us?.title}
+              {pageData?.other?.why_us?.title?.part_one} <span className="text-[#F2B660]">{pageData?.other?.why_us?.title?.part_two}</span>
             </h2>
-            <p className="text-[14px] md:text-[18px] mt-[12px] md:mt-0 text-[#4A4A4A] font-medium leading-[1.56] max-w-[600px] mx-auto">
-              {/* نوفّر حلولًا رقمية شاملة تُلبي جميع متطلباتك التقنية، من تطوير البرمجيات، إلى التسويق الرقمي، وانتهاءً
-              بخدمات الدعم والمساندة. */}
-              {data?.other?.why_us?.description}
+            <p className="text-[14px] md:text-[18px] mt-[12px] md:mt-0 text-[#4A4A4A] font-medium leading-[1.56] max-w-[900px] mx-auto">
+              {pageData?.other?.why_us?.description}
             </p>
           </div>
 
           {/* <!-- Content with Image and Cards --> */}
           <div className="relative">
             <div className="hidden relative z-10 md:flex justify-center mb-8">
-              <img src={data?.other?.why_us?.image} alt="Why Choose Us" className="object-cover" />
+              <img src={pageData?.other?.why_us?.image?.url} alt={pageData?.other?.why_us?.image?.alt} className="object-cover" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-[16px] lg:gap-x-[378px] lg:gap-y-[82px] max-w-[1400px] mx-auto lg:absolute lg:top-[-15px] lg:z-20">
-              {data?.other?.why_us?.differences?.map(difference => {
+              {pageData?.other?.why_us?.differences?.map(difference => {
                 return (
                   <div key={difference?.id} className="bg-white border border-[#E7E8E9] rounded-xl p-[16px] xl:p-6 shadow-sm">
                     <div className="text-right">
@@ -324,37 +344,6 @@ export default async function Page() {
                   </div>
                 )
               })}
-
-              {/* <div className="bg-white border border-[#E7E8E9] rounded-xl p-6 shadow-sm">
-                <div className="text-right">
-                  <h3 className="text-[18px] md:text-[24px] font-bold text-[#131A27] mb-4">
-                    خدمات متكاملة تحت سقف واحد
-                  </h3>
-                  <p className="text-[14px] md:text-[18px] text-[#2A313D] font-medium leading-[1.44]">
-                    كل ما تحتاجه لبناء حضور رقمي قوي، في مكان واحد: برمجة، تسويق، دعم.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white border border-[#E7E8E9] rounded-xl p-6 shadow-sm">
-                <div className="text-right">
-                  <h3 className="text-[18px] md:text-[24px] font-bold text-[#131A27] mb-4">
-                    رؤية استراتيجية طويلة المدى
-                  </h3>
-                  <p className="text-[14px] md:text-[18px] text-[#2A313D] font-medium leading-[1.44]">
-                    أن نصبح الشريك الرقمي الأول للشركات الخليجية من خلال خدمات تجمع بين التقنية والابتكار.
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-white border border-[#E7E8E9] rounded-xl p-6 shadow-sm">
-                <div className="text-right">
-                  <h3 className="text-[18px] md:text-[24px] font-bold text-[#131A27] mb-4">نتائج قابلة للقياس</h3>
-                  <p className="text-[14px] md:text-[18px] text-[#2A313D] font-medium leading-[1.44]">
-                    نستخدم أدوات تحليل حديثة ونبني استراتيجيات مبنية على أرقام حقيقية.
-                  </p>
-                </div>
-              </div> */}
             </div>
           </div>
 
@@ -366,7 +355,7 @@ export default async function Page() {
           <section className="relative bg-white mt-[30px] lg:pt-[42px]">
             <div>
               {/* <!-- Statistics Grid --> */}
-              <Counters countersData={data?.other?.statistics || []} />
+              <Counters countersData={pageData?.other?.statistics || []} />
             </div>
           </section>
         </div>
@@ -392,10 +381,10 @@ export default async function Page() {
           <div className="max-w-[1400px] mx-auto relative z-10 flex flex-col items-center text-center px-[15px] lg:px-[60px] 2xl:px-0">
             <div className="w-full mb-[32px] md:mb-16">
               <h2 className="text-[24px] md:text-[40px] font-bold text-[#FAEAD1] mb-[8px] md:mb-6 leading-[1.49]">
-                {data?.other?.who_we_serve?.title}
+                {pageData?.other?.who_we_serve?.title}
               </h2>
               <p className="text-[14px] md:text-[18px] font-medium text-[#FAEAD1] leading-[1.56] opacity-80">
-                {data?.other?.who_we_serve?.description}
+                {pageData?.other?.who_we_serve?.description}
               </p>
             </div>
 
@@ -404,12 +393,11 @@ export default async function Page() {
               <div className="flex flex-row items-center justify-center gap-12">
                 <div className="w-full lg:w-[759px] flex flex-col gap-12">
                   <div className="w-full flex flex-wrap gap-6">
-                    {data?.other?.who_we_serve?.clients?.map(service => {
+                    {pageData?.other?.who_we_serve?.clients?.map(service => {
                       return (
                         <button
                           key={service.id}
-                          className="px-4 md:px-6 py-4 bg-gradient-to-b from-transparent to-white/10 border-b-2 border-[#FFFFFF4D] hover:from-[#F3887833] hover:to-[#F3C178] hover:border-b-2 hover:border-[#BC6F00] hover:bg-[linear-gradient(180deg,rgba(243,136,120,0.04)_0%,rgba(243,193,120,0.20)_100%)] 
-                           rounded-2xl text-gray-500 hover:text-gray-100 text-[16px] md:text-[24px] font-medium leading-[1.85] transition-all duration-300"
+                          className="service-card"
                           >
                           {service.name}
                         </button>
@@ -433,7 +421,7 @@ export default async function Page() {
                       </svg>
                     </a>
 
-                    <Link href="/projects" className="md:px-6 py-4 border border-[#EDA133] rounded-lg h-[48px] md:h-full text-[#EDA133] text-[14px] w-full md:w-auto md:text-[16px] font-medium hover:bg-[#EDA13333] hover:text-white transition-all duration-300">
+                    <Link href="/projects" className="md:px-6 py-4 border border-[#EDA133] rounded-lg h-[48px] md:h-full text-[#EDA133] text-[14px] w-full md:w-auto md:text-[16px] flex items-center justify-center font-medium hover:bg-[#EDA13333] hover:text-white transition-all duration-300">
                       {t("viewPastProjects")}
                     </Link>
                   </div>
@@ -442,7 +430,7 @@ export default async function Page() {
 
               {/* <!-- Background Image --> */}
               <div className="lg:w-[392px] lg:h-[381px] xl:w-[460px] 2xl:w-[592px] 2xl:h-[481px] opacity-80">
-                <img src={data?.other?.who_we_serve?.image} alt="services" className="w-full h-full object-cover" />
+                <img src={pageData?.other?.who_we_serve?.image?.url} alt={pageData?.other?.who_we_serve?.image?.alt} className="w-full h-full object-cover" />
               </div>
             </section>
           </div>
@@ -450,12 +438,14 @@ export default async function Page() {
       </section>
 
       {/* <!-- Business Building Projects bar section --> */}
-      <ProjectLogos logosData={data?.other?.projects || []} />
+      <ProjectLogos logosData={pageData?.other?.projects || []} />
 
       {/* <!-- What Our Customers Say About Us Section --> */}
       <section id="reviews">
-        <Reviews reviewsData={data?.other?.our_clients || []} />
+        <Reviews reviewsData={pageData?.other?.our_clients || []} />
       </section>
     </>
   );
 }
+
+

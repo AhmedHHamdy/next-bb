@@ -91,7 +91,7 @@ export default function BenefitsCarousel( { benefits }: { benefits?: {
                     <div
                       className="w-full h-[202px] bg-black bg-opacity-30 rounded-[6px] relative overflow-hidden"
                       style={{
-                        backgroundImage: `url(${benefit.image_url})`,
+                        backgroundImage: `url(${benefit?.image?.url})`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }}

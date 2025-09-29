@@ -66,7 +66,7 @@ export default function Footer() {
     return Object.keys(errors).length === 0;
   };
 
-  const fetchFooter = async (): Promise<ApiResponse> => {
+  const fetchFooter = async (localeValue: string): Promise<ApiResponse> => {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/getAppSettings`,
       {
@@ -75,6 +75,7 @@ export default function Footer() {
           "Content-Type": "application/json",
           lang: localeValue,
         },
+        cache: "no-store", // disable browser cache
       }
     );    
 
@@ -85,11 +86,12 @@ export default function Footer() {
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["footer"],
-    queryFn: fetchFooter,
+    queryKey: ["footer", localeValue],
+    queryFn: () => fetchFooter(localeValue),
+    staleTime: 0
   });
 
-  console.log(data)
+  // console.log(data)
 
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -113,7 +115,7 @@ export default function Footer() {
       return res.json();
     },
     onSuccess: (data) => {
-      console.log("✅ Form submitted successfully:", data);
+      // console.log("✅ Form submitted successfully:", data);
       setFormData({
         email: ""
       })
@@ -126,7 +128,7 @@ export default function Footer() {
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      console.log(error, "error")
+      // console.log(error, "error")
 
       setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
 
@@ -164,7 +166,7 @@ export default function Footer() {
         rel="noopener noreferrer"
       >
         <section className="fixed bottom-2 right-4 z-[2000]">
-          <img src="/whatsapp.svg" alt="whatsapp icon" />
+          <img src="/whatsapp.svg" />
         </section>
       </a>}
 
@@ -172,7 +174,7 @@ export default function Footer() {
         <div
           className="relative py-12 bg-[#131A27] overflow-hidden bg-no-repeat bg-cover bg-center md:bg-top w-full md:h-98"
           style={{
-            backgroundImage: `url(${data?.data?.footer.footer_cover_image})`
+            backgroundImage: `url(${data?.data?.footer?.footer_cover_image?.url})`
           }}>
           <div className="absolute inset-0 bg-gradient-to-br from-dark-bg/20 via-dark-bg/50 to-dark-bg/80 bg-blend-overlay">
             <div className="absolute inset-0 bg-black/60"></div>
@@ -215,13 +217,13 @@ export default function Footer() {
                 <section className="flex flex-col-reverse items-center gap-[23px] md:gap-4 md:flex-row xl:gap-0 lg:flex-row md:items-center justify-between">
                   <img
                     className="px-6 w-full md:px-0 md:max-w-[360px] lg:max-w-[480px] xl:max-w-[580px] 2xl:max-w-[680px]"
-                    src={data?.data?.footer?.footer_logo_right_image}
-                    alt="building logo"
+                    src={data?.data?.footer?.footer_logo_right_image?.url}
+                    alt={data?.data?.footer?.footer_logo_right_image?.alt}
                   />
                   <img
                     className="px-2 w-full md:px-0 md:max-w-[360px] lg:max-w-[480px] xl:max-w-[580px] 2xl:max-w-[680px]"
-                    src={data?.data?.footer?.footer_logo_left_image}
-                    alt="business logo"
+                    src={data?.data?.footer?.footer_logo_left_image?.url}
+                    alt={data?.data?.footer?.footer_logo_left_image?.alt}
                   />
                 </section>
               </div>
@@ -245,10 +247,10 @@ export default function Footer() {
                         </svg>
 
                         <Link
-                          href="/about-us"
+                          href={`/about-us/${localeValue == "en" ? data?.data?.footer?.pages?.["about-us"]?.slug?.en : data?.data?.footer?.pages?.["about-us"]?.slug?.ar}`}
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          {t("aboutUs")}
+                          {data?.data?.footer?.pages?.["about-us"]?.title}
                         </Link>
                       </li>
                       <li className="flex items-center gap-4">
@@ -285,10 +287,10 @@ export default function Footer() {
                         </svg>
 
                         <Link
-                          href="/career"
+                          href={`/career/${localeValue == "en" ? data?.data?.footer?.pages?.career?.slug?.en : data?.data?.footer?.pages?.career?.slug?.ar}`}
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          {t("careers")}
+                          {data?.data?.footer?.pages?.career?.title}
                         </Link>
                       </li>
                       <li className="flex items-center gap-4">
@@ -325,10 +327,10 @@ export default function Footer() {
                         </svg>
 
                         <Link
-                          href="/contact-us"
+                          href={`/contact-us/${localeValue == "en" ? data?.data?.footer?.pages?.["contact-us"]?.slug?.en : data?.data?.footer?.pages?.["contact-us"]?.slug?.ar}`}
                           className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          {t("contactUs")}
+                          {data?.data?.footer?.pages?.["contact-us"]?.title}
                         </Link>
                       </li>
                     </ul>
@@ -354,10 +356,10 @@ export default function Footer() {
                                   <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
-                                  href={`/services/${service.id}/${service.slug}`}
+                                  href={`/services/${localeValue == "en" ? service?.slug?.en : service?.slug?.ar}`}
                                   className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                                 >
-                                  {service.name.slice(0, 20)}
+                                  {service.name}
                                 </Link>
                               </li>
                             )
@@ -382,10 +384,10 @@ export default function Footer() {
                                   <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
-                                  href={`/services/${service.id}/${service.slug}`}
+                                  href={`/services/${localeValue == "en" ? service?.slug?.en : service?.slug?.ar}`}
                                   className="text-gray-300 hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                                 >
-                                  {service.name.slice(0, 20)}
+                                  {service.name}
                                 </Link>
                               </li>
                             )
@@ -417,10 +419,10 @@ export default function Footer() {
                                   <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                                 </svg>
                                 <Link
-                                  href={`/services/${service.id}/${service.slug}`}
+                                  href={`/services/${localeValue == "en" ? service?.slug?.en : service?.slug?.ar}`}
                                   className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                                   >
-                                  {service.name.slice(0, 20)}
+                                  {service.name}
                                 </Link>
                               </li>
                             )
@@ -446,10 +448,10 @@ export default function Footer() {
                           <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
-                          href="/about-us"
+                          href={`/about-us/${localeValue == "en" ? data?.data?.footer?.pages?.["about-us"]?.slug?.en : data?.data?.footer?.pages?.["about-us"]?.slug?.ar}`}
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          {t("aboutUs")}
+                          {data?.data?.footer?.pages?.["about-us"]?.title}
                         </Link>
                       </li>
                       <li className="flex items-center gap-2">
@@ -465,10 +467,10 @@ export default function Footer() {
                           <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
-                          href="/career"
+                           href={`/career/${localeValue == "en" ? data?.data?.footer?.pages?.career?.slug?.en : data?.data?.footer?.pages?.career?.slug?.ar}`}
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          {t("careers")}
+                          {data?.data?.footer?.pages?.career?.title}
                         </Link>
                       </li>
                       <li className="flex items-center gap-2">
@@ -522,10 +524,10 @@ export default function Footer() {
                           <path opacity="0.8" d="M4 3.49999C4 3.37453 3.95198 3.2491 3.85615 3.15345L0.838878 0.143599C0.646942 -0.0478665 0.335752 -0.0478664 0.143894 0.143599C-0.0479645 0.334987 -0.0479645 0.645354 0.143894 0.836835L2.81374 3.49999L0.143987 6.16316C-0.047871 6.35462 -0.047871 6.66496 0.143987 6.85633C0.335845 7.04789 0.647036 7.04789 0.838971 6.85633L3.85624 3.84653C3.95209 3.75083 4 3.6254 4 3.49999Z" fill="#B1B1B1"/>
                         </svg>
                         <Link
-                          href="/contact-us"
+                          href={`/contact-us/${localeValue == "en" ? data?.data?.footer?.pages?.["contact-us"]?.slug?.en : data?.data?.footer?.pages?.["contact-us"]?.slug?.ar}`}
                           className="text-[#B1B1B1] hover:text-white  font-medium text-sm no-underline transition-colors duration-300"
                         >
-                          {t("contactUs")}
+                          {data?.data?.footer?.pages?.["contact-us"]?.title}
                         </Link>
                       </li>
                     </ul>
@@ -605,7 +607,7 @@ export default function Footer() {
                   <div className="flex items-center gap-4 w-full">
                     <div className="flex-1">
                       <Link href="/start-your-project" className="bg-[#EDA133] w-full h-[107px] rounded-[8px] text-white text-sm font-medium hover:bg-brand-600 cursor-pointer transition-colors flex items-center justify-evenly md:justify-between">
-                        <img className="w-[65px] h-[65px] md:w-32 md:h-[120px]" src="/projects.gif" alt="projects gif" />
+                        <img className="w-[65px] h-[65px] md:w-32 md:h-[120px]" src="/projects.gif" />
 
                         <section className="flex items-center xl:pe-[17px]">
                           <h1 className="text-[16px] md:text-[20px] ml-3 md:ml-0">{t("startYourProjectNow")}</h1>
@@ -705,7 +707,7 @@ export default function Footer() {
                                     />
                                   </svg>
                                 </div>
-                                <span className=" font-medium text-sm text-[#B1B1B1] md:text-white leading-tight">
+                                <span className=" font-medium text-sm text-[#B1B1B1] md:text-white leading-tight min-h-[50px] flex items-center">
                                   {branch.location}
                                 </span>
                               </div>
@@ -748,7 +750,7 @@ export default function Footer() {
                                     strokeWidth="0.277067"
                                   />
                                 </svg>
-                                <span className=" font-medium text-sm text-[#B1B1B1] md:text-white">{branch.phone}</span>
+                                <a href={`tel:${branch?.phone.replace(/\D/g, '')}`} className="font-medium text-sm text-[#B1B1B1] md:text-white cursor-pointer" dir="ltr">{branch.phone}</a>
                               </div>
                               <div className="flex items-center gap-3">
                                 <svg
@@ -774,9 +776,9 @@ export default function Footer() {
                                     strokeWidth="0.277067"
                                   />
                                 </svg>
-                                <span className=" font-medium text-sm text-[#B1B1B1] md:text-white">
+                                <a href={`mailto:${branch?.email.replace(/\D/g, '')}`} className="font-medium text-sm text-[#B1B1B1] md:text-white cursor-pointer">
                                   {branch.email}
-                                </span>
+                                </a>
                               </div>
                             </div>
                           </div>
@@ -793,30 +795,30 @@ export default function Footer() {
                   <div className="grid grid-cols-2 justify-items-start md:flex md:items-center gap-6 ps-3 md:ps-0">
                    
                     <Link
-                      href={`/terms-conditions/${data?.data?.footer?.pages?.terms?.slug}`}
-                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
+                      href={`/terms-conditions/${localeValue == "en" ? data?.data?.footer?.pages?.terms?.slug?.en : data?.data?.footer?.pages?.terms?.slug?.ar}`}
+                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                     >
                       {data?.data?.footer?.pages?.terms?.title}
                     </Link>
                       
              
                     <Link
-                      href={`/privacy-policy/${data?.data?.footer?.pages?.privacy?.slug}`}
-                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
+                      href={`/privacy-policy/${localeValue == "en" ? data?.data?.footer?.pages?.privacy?.slug?.en : data?.data?.footer?.pages?.privacy?.slug?.ar}`}
+                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                     >
                       {data?.data?.footer?.pages?.privacy?.title}
                     </Link>
 
                     <Link
-                      href={`/user-agreement/${data?.data?.footer?.pages?.policy?.slug}`}
-                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
+                      href={`/user-agreement/${localeValue == "en" ? data?.data?.footer?.pages?.policy?.slug?.en : data?.data?.footer?.pages?.policy?.slug?.ar}`}
+                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                     >
                       {data?.data?.footer?.pages?.policy?.title}
                     </Link>
 
                     <Link
-                      href={`/accessibility/${data?.data?.footer?.pages?.accessibility?.slug}`}
-                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline transition-colors duration-300"
+                      href={`/accessibility/${localeValue == "en" ? data?.data?.footer?.pages?.accessibility?.slug?.en : data?.data?.footer?.pages?.accessibility?.slug?.ar}`}
+                      className="text-[#B1B1B1] hover:text-white font-medium text-[14px] md:text-[15px] no-underline cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                     >
                       {data?.data?.footer?.pages?.accessibility?.title}
                     </Link>

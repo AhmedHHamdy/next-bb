@@ -171,6 +171,11 @@ html {
   }
 }
 
+.section-badge {
+  background: radial-gradient(34% 66% at 50% 50%, #F0ECE7 0%, #FFF 100%);
+  filter: drop-shadow(0 0 3px #F3F3F1);
+}
+
 .see-more-button {
   display: none;
 }
@@ -592,4 +597,54 @@ input[type="number"] {
 
 [dir="ltr"] .placeholderAlign {
   direction: ltr;
+}
+
+ul {
+  list-style: disc;
+  list-style-position: inside;
+}
+
+.custom-ul {
+  list-style: none;
+}
+
+/* "*" > */
+.custom-content div {
+  max-width: 1400px!important;
+  width: 100% !important;
+}
+
+span.SpellingErrorV2Themed {
+  background: none !important;
+  background-image: none !important;
+  border-bottom: none !important;
+}
+
+.service-card {
+  @apply px-4 md:px-6 py-4 
+         bg-gradient-to-b from-transparent to-white/10 
+         border-b-2 border-[#FFFFFF4D] 
+         rounded-2xl text-gray-500 text-[16px] md:text-[24px] 
+         font-medium leading-[1.85] transition-all duration-300;
+}
+
+.service-card:hover {
+  @apply from-[#F3887833] to-[#F3C178] border-[#BC6F00] text-gray-100;
+  background: linear-gradient(
+    180deg,
+    rgba(243, 136, 120, 0.04) 0%,
+    rgba(243, 193, 120, 0.20) 100%
+  );
+}
+
+
+.logo-filter {
+  filter: brightness(0) saturate(100%) invert(54%) sepia(2%) saturate(462%) hue-rotate(182deg) brightness(95%) contrast(85%);
+  transition: filter 200ms ease, opacity 160ms ease;
+}
+
+/* on hover OR when clicked (data-active="true") remove the filter */
+.logo-filter:hover,
+.logo-filter[data-active="true"] {
+  filter: none;
 }

@@ -11,43 +11,90 @@ export interface Branch {
 }
 
 export interface Footer {
-  footer_cover_image: string;
-  footer_logo_left_image: string;
-  footer_logo_right_image: string;
+  footer_cover_image: {
+    url: string;
+    alt: string;
+  },
+  footer_logo_left_image: {
+    url: string;
+    alt: string;
+  },
+  footer_logo_right_image: {
+    url: string;
+    alt: string;
+  },
   start_your_project_title: string;
   start_your_project_description: string;
   home_whatsapp_icon_status: boolean;
   services: {
-    description: string;
     id: number;
-    image_url: string;
     name: string
-    slug: string;
-    meta_description: string;
-    meta_tags: string;
+    slug: {
+      ar: string;
+      en: string;
+    },
   }[]
   pages: {
     privacy: {
       title: string;
-      slug: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
       mete_tags: string;
       meta_description: string;
     },
     terms: {
       title: string;
-      slug: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
       mete_tags: string;
       meta_description: string;
     },
     policy: {
       title: string;
-      slug: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
       mete_tags: string;
       meta_description: string;
     },
     accessibility: {
       title: string;
-      slug: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
+      mete_tags: string;
+      meta_description: string;
+    },
+    "about-us": {
+      title: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
+      mete_tags: string;
+      meta_description: string;
+    },
+    "contact-us": {
+      title: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
+      mete_tags: string;
+      meta_description: string;
+    },
+    career: {
+      title: string;
+      slug: {
+        ar: string;
+        en: string;
+      },
       mete_tags: string;
       meta_description: string;
     }
@@ -70,7 +117,11 @@ export interface Social {
 }
 
 export interface AppSettings {
-  site_logo: string;
+  site_logo: {
+    url: string;
+    alt: string;
+  },
+  google_maps_api_key: string;
   email: string;
   phone: string;
   social: Social;
@@ -88,7 +139,10 @@ export interface PolicyPages {
   data: {
     title: string;
     content: string;
-    slug: string;
+    slug: {
+      ar: string;
+      en: string;
+    },
     meta_description: string;
     meta_keywords: string;
   }
@@ -104,14 +158,20 @@ export interface FAQItemType {
 
 export interface ArticleType {
   id: number;
-  image_url: string;
+  image: {
+    url: string;
+    alt: string;
+  },
   title: string;
   description: string;
   short_description: string;
   section_name: string;
   published_at: string;
   views: number;
-  slug: string;
+  slug: {
+    ar: string;
+    en: string;
+  },
   meta_tags: string;
 }
 
@@ -119,10 +179,71 @@ export interface ServiceType {
   id: number;
   name: string;
   description: string;
-  image_url: string;      
-  slug: string,
-  meta_description: string
-  meta_tags: string
+  slug: {
+    ar: string;
+    en: string;
+  };
+  main_title: string;
+  main_desc: string;
+  home_main_title: string;
+  home_main_desc: string;
+  faqs: FAQItemType[];
+  features_section: {
+    hero_title: string;
+    hero_desc: string;
+    features: {
+      id: number;
+      name: string;
+      desc: string;
+      icon: {
+        url: string;
+        alt: string;
+      }
+    }[]
+  }
+  processes_section: {
+    hero_title: string;
+    hero_desc: string;
+    hero_image: {
+      url: string;
+      alt: string;
+    }
+    processes: {
+      id: number;
+      name: string;
+      desc: string;
+    }[]
+  };
+  propositions_section: {
+    hero_title: string;
+    hero_desc: string;
+    propositions: {
+      id: number,
+      image: {
+          url: string;
+          alt: string;
+      },
+      title: string;
+      content: string;
+    }[]
+  }         
+  meta_description: string;
+  meta_tags: string;
+  image: {
+    url: string;
+    alt: string;
+  };
+  icon: {
+    url: string;
+    alt: string;
+  };
+  video: {
+    hero_title: string;
+    hero_desc: string;
+    url: string;
+    thumbnail_url: string;
+    alt: string;
+  };
 }
 export interface HomePage {
   app_hero_title: string;
@@ -149,7 +270,10 @@ export interface HomePage {
   }
   our_products: {
     id: number;
-    image_url: string;
+    image: {
+      url: string;
+      alt: string;
+    }
   }[]
   business_building: {
     title: string;
@@ -158,22 +282,34 @@ export interface HomePage {
       one: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
       two: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
       three: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
       four: {
         title: string;
         desc: string;
-        image: string;
+        image: {
+          url: string;
+          alt: string;
+        }
       };
     }
   }
@@ -185,10 +321,24 @@ export interface HomePage {
       title: string;
       short_description: string;
       owner_name: string;
-      slug: string,
+      slug: {
+        ar: string;
+        en: string;
+      },
       meta_tags: string,
       country_name: string;
-      image_url: string;
+      image: {
+        url: string;
+        alt: string;
+      },
+      client_type: {
+        key: string;
+        value: string;
+      };
+      services: {
+        id: number;
+        name: string;
+      }[];
     }[]
   }
   our_articles: {
@@ -217,9 +367,16 @@ export interface HomePage {
       username: string;
       position: string;
       quote: string;
-      image_url: string;
+      image: {
+        url: string;
+        alt: string;
+      };
       file_type: string;
       file_url: string;
+      thumbnail: {
+        url: string;
+        alt: string;
+      }
     }[]
   }
 }
@@ -234,12 +391,17 @@ export interface HomePageData {
 export interface SectionCategory {
   id: number;
   name: string;
+  icon: {
+    url: string;
+    alt: string;
+  }
 }
 
 export interface BlogsPageData {
   heading_title: string;
   heading_desc: string;
   sections: SectionCategory[];
+  faqs: FAQItemType[]
 }
 
 export interface BlogsPageDataApi {
@@ -270,7 +432,10 @@ export interface ArticleListResponse {
 interface Expression {
   id: number;
   title: string;
-  image_url: string;
+  image: {
+    url: string;
+    alt:string;
+  }
 }
 
 interface Value {
@@ -281,8 +446,14 @@ interface Value {
 
 interface WhyUs {
   description: string;
-  title: string;
-  image: string;
+  title: {
+    part_one: string;
+    part_two: string;
+  }
+  image: {
+    url: string;
+    alt: string;
+  },
   differences: {
     id: number;
     title: string;
@@ -305,7 +476,10 @@ export interface Statistics {
 interface WhoWeServe {
   description: string,
   title: string;
-  image: string;
+  image: {
+    url: string;
+    alt: string;
+  },
   clients: {
     id: number,
     name: string
@@ -314,7 +488,10 @@ interface WhoWeServe {
 
 export interface Project {
   id: number;
-  image_url: string;
+  image: {
+    url: string;
+    alt: string;
+  }
 }
 
 export interface Review {
@@ -322,26 +499,42 @@ export interface Review {
   username: string;
   position: string;
   quote: string;
-  image_url: string;
+  image: {
+    url: string;
+    alt: string;
+  };
   file_type: string;
   file_url: string;
+  thumbnail: {
+    url: string;
+    alt: string;
+  }
 }
 
 interface Other {
   header_title: string;
   header_description: string;
-  header_image: string;
+  header_image: {
+    url: string;
+    alt: string;
+  },
   expressions_section: {
     title: string;
     subtitle: string;
     desc: string;
-    image: string;
+    image: {
+      url: string;
+      alt: string;
+    },
     expressions: Expression[]
   };
   our_vision: string;
   our_mission: string;
   our_values: Value;
-  our_mission_image: string;
+  our_mission_image: {
+    url: string;
+    alt: string;
+  },
   why_us: WhyUs;
   statistics: Statistics;
   who_we_serve: WhoWeServe;
@@ -356,7 +549,10 @@ interface Other {
 interface PageData {
   title: string;
   content: string;
-  slug: string;
+  slug: {
+    ar: string;
+    en: string;
+  },
   meta_description: string;
   meta_keywords: string;
   other: Other;
@@ -383,17 +579,79 @@ export interface ServiceTypeData {
   id: number;
   name: string;
   description: string;
-  slug: string;
+  slug: {
+    ar: string;
+    en: string;
+  };
   main_title: string;
   main_desc: string;
+  home_main_title: string;
+  home_main_desc: string;
+  faqs: FAQItemType[];
+  features_section: {
+    hero_title: string;
+    hero_desc: string;
+    features: {
+      id: number;
+      name: string;
+      desc: string;
+      icon: {
+        url: string;
+        alt: string;
+      }
+    }[]
+  }
+  processes_section: {
+    hero_title: string;
+    hero_desc: string;
+    hero_image: {
+      url: string;
+      alt: string;
+    }
+    processes: {
+      id: number;
+      name: string;
+      desc: string;
+    }[]
+  };
+  propositions_section: {
+    hero_title: string;
+    hero_desc: string;
+    propositions: {
+      id: number,
+      image: {
+          url: string;
+          alt: string;
+      },
+      title: string;
+      content: string;
+    }[]
+  }         
   meta_description: string;
   meta_tags: string;
-  image_url: string;
+  image: {
+    url: string;
+    alt: string;
+  };
+  icon: {
+    url: string;
+    alt: string;
+  };
+  video: {
+    hero_title: string;
+    hero_desc: string;
+    url: string;
+    thumbnail_url: string;
+    alt: string;
+  };
 }
 
 interface ProjectType {
   id: number;
-  image_url: string;
+  image: {
+    url: string;
+    alt: string;
+  }
 }
 
 interface StepType {
@@ -405,11 +663,14 @@ export interface ServicesPageDataType {
     header: {
       title: string;
       desc: string
-      image: string
+      image: {
+        url: string;
+        alt: string;
+      }
     },
     title: string;
     desc: string;
-    faq: FAQItemType[] 
+    faqs: FAQItemType[] 
     services: ServiceTypeData[];
     projects: ProjectType[];
     steps: StepType[];
@@ -426,16 +687,87 @@ export interface ServicesDetailsPageDataType {
 }
 
 
-export interface ProjectTypeData {
+export interface  ProjectTypeData {
   id: number;
   title: string;
+  name: string;
   short_description: string;
   description: string;
-  slug: string;
+  slug: {
+    ar: string;
+    en: string;
+  },
   meta_tags: string;
   owner_name: string;
   country_name: string;
-  image_url: string;
+  project_domain: string;
+
+  project_problem: {
+    image: {
+      url: string;
+      alt:  string;
+    },
+    content:  string;
+  },
+
+  project_solution: string;
+
+  project_overview: {
+    image: {
+      url: string;
+      alt:  string;
+    },
+    content:  string;
+  }
+
+  project_banner_alt: {
+    url: string;
+    alt: string;
+  }
+            
+  project_results: string;
+
+  project_outputs: string;
+
+  client_type: {
+    key: string;
+    value: string;
+  };
+
+  icon: {
+    url: string;
+    alt: string;
+  };
+
+  image: {
+    url: string;
+    alt: string;
+  };
+
+  languages: {
+    id: number;
+    name: string;
+    image: {
+      url: string;
+      alt: string;
+    };
+  }[]
+ 
+  services: {
+    id: number;
+    name: string;
+  }[]
+
+
+  links: {
+    id: number;
+    name: string;
+    link: string;
+    image: {
+      url: string;
+      alt: string;
+    }
+  }[]
 }
 export interface ProjectsPageDataType {
   data: {
@@ -452,6 +784,7 @@ export interface ProjectsPageDataType {
 export interface ProjectDetailsPageDataType {
   data: {
     project: ProjectTypeData;
+    faqs: FAQItemType[]
     similar: ProjectTypeData[];
   };
   status: boolean;
@@ -492,13 +825,19 @@ export interface FAQPageDataType {
 export interface ContactUsPageDataType {
   data: {
     title: string;
-    slug: string;
+    slug: {
+      ar: string;
+      en: string;
+    },
     meta_description: string;
     meta_keywords: string;
     other: {
       header_title: string;
       header_description: string;
-      header_image: string;
+      header_image: {
+        url: string;
+        alt: string;
+      };
       communication: {
         first: {
           title: string
@@ -519,6 +858,8 @@ export interface ContactUsPageDataType {
       form: {
         title: string;
         desc: string;
+        left_title: string;
+        left_desc: string;
       },
       branches: Branch[];
       locations: {
@@ -536,6 +877,8 @@ export interface ContactUsPageDataType {
 
 export interface FormSettingsDataType {
   data: {
+    hero_title: string;
+    hero_desc: string;
     countries: {
       id: number;
       name: string;
@@ -589,15 +932,26 @@ export interface Benefit {
   id: number;
   title: string;
   description: string;
-  image_url: string;
+  image: {
+    url: string;
+    alt: string;
+  }
 }
 export interface CareerPageDataType {
   data: {
     title: string;
     meta_description: string;
+    slug: {
+      ar: string;
+      en: string;
+    },
     meta_keywords: string;
     hero_title: string;
     hero_desc: string;
+    hero_image: {
+      url: string;
+      alt: string;
+    };
     sections: Sections;
     our_benefits: {
       title: string;
@@ -606,6 +960,13 @@ export interface CareerPageDataType {
     };
     faqs: FAQItemType[];
   };
+  status: boolean;
+  message: string;
+  error: string;
+}
+
+export interface RecordUserVisitData {
+  data: null;
   status: boolean;
   message: string;
   error: string;

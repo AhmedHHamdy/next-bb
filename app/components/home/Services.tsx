@@ -1,6 +1,6 @@
 import { ServiceType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export default async function Services({
   servicesData,
@@ -13,6 +13,8 @@ export default async function Services({
 }) {
 
   const t = await getTranslations('HomePage');
+
+  const locale = await getLocale();
 
 
   function truncateText(text: string = "", maxLength: number): string {
@@ -34,7 +36,7 @@ export default async function Services({
   return (
     <section className="relative bg-[#131A27] mt-[32px] md:mt-[64px] py-[72px] px-[15px] 2xl:px-0 overflow-hidden">
       <div className="absolute inset-0 top-[15px]">
-        <img src="/background-art.svg" alt="background art" />
+        <img src="/background-art.svg" />
       </div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
@@ -55,15 +57,16 @@ export default async function Services({
                 >
                   <div className="self-start w-16 h-16 mt-[7px]">
                     {/* h-[85px] */}
-                    <img className="h-[45px]" src={service.image_url} alt="service icon" />
+                    <img className="h-[54px] w-[54px]" src={service?.icon?.url} alt={service?.icon?.alt} />
                   </div>
                   <div className="flex flex-col gap-[10px] w-full md:w-[240px]">
-                    <h3 className="text-[16px] md:text-[21.5px] font-bold text-white break-words">{truncate60(service?.name)}</h3>
-                    <p dangerouslySetInnerHTML={{__html: service?.description}} className="text-gray-300 text-[12px] md:text-[14px] break-words">
-                      {/* {truncate120(service?.description)} */}
+                    <h3 className="text-[16px] md:text-[21.5px] font-bold text-white break-words">{service?.home_main_title}</h3>
+                    {/*  dangerouslySetInnerHTML={{__html: service?.description}} */}
+                    <p className="text-gray-300 text-[12px] md:text-[14px] break-words">
+                      {service?.home_main_desc}
                     </p>
                     <Link
-                      href={`/services/${service.id}/${service.slug}`}
+                      href={`/services/${locale == "en" ? service?.slug?.en : service?.slug?.ar}`}
                       className="flex items-center gap-2 text-[#EDA133] text-[14px] md:text-[15px]"
                     >
                       {t("serviceDetails")}

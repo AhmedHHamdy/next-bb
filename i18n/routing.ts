@@ -9,5 +9,7 @@ export const routing = defineRouting({
 
   localeDetection: false,
 
-  localePrefix: "as-needed"
+  localePrefix: "as-needed",
+
+  localeCookie: true
 });

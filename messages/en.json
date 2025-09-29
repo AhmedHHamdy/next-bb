@@ -8,18 +8,25 @@
     "allProjects": "All Projects",
     "serviceDetails": "Service Details",
     "allServices": "All Services",
-    "popularFaq": "Popular FAQ",
-    "faqDescription": "If you have any other questions or need more clarification about our services, please feel free to check out our answers here or contact us directly.",
+    "popularFaq": "Frequently Asked Questions",
+    "faqDescription": "Have a question or need more details about our services? Check the answers here or contact us directly for support.",
     "exploreAllArticles": "Explore All Articles",
     "businessBuilding": "Business Building",
-    "projects": "projects",
-    "home": "home"
+    "projects": "Projects",
+    "home": "Home"
   },
   "ProjectDetails": {
     "popularProjects": "Popular Projects",
-    "seeMore": "See More"
+    "seeMore": "See More",
+    "solution": "Solution",
+    "overview": "Overview",
+    "problem": "Problem",
+    "languagesUsed": "Languages Used",
+    "outputs": "Outputs",
+    "results": "results"
   },
   "Services": {
+    "home": "Home",
     "freeConsultation": "Free Consultation",
     "startProject": "Start Your Project",
     "askService": "Request a service now",
@@ -38,7 +45,14 @@
     "tags": "Tags",
     "shareVia": "Share via:",
     "relatedArticles": "Related Articles",
-    "discoverRelatedArticles": "Discover similar articles that might interest you and complement what you've just read."
+    "discoverRelatedArticles": "Discover similar articles that might interest you and complement what you've just read.",
+    "articleContent": "Article Content"
+  },
+  "SidePages": {
+    "privacyPolicyContent": "Privacy Policy Content",
+    "accessibilityContent": "Accessibility Content",
+    "userAgreementContent": "User Agreement Content",
+    "termsAndConditionsContent": "Terms and Conditions Content"
   },
   "AboutUs": {
     "whoAreWe": "Who Are We?",
@@ -52,7 +66,7 @@
     "viewPastProjects": "View Past Projects",
     "viewSuccessStories": "View Success Stories",
     "whatOurClientsSay": "What Our Clients Say",
-    "bookFreeConsultation": "Book a Free Consultation",
+    "bookFreeConsultation": "Free Consultation",
     "viewOurWork": "View Our Work"
   },
   "ContactUs": {
@@ -208,7 +222,8 @@
     "backButton": "Back",
     "submitting": "Sending...",
     "submit": "Submit",
-    "consultationInfoTitle": "Consultation Information"
+    "consultationInfoTitle": "Consultation Information",
+    "noAvailableTimesFound": "No available times found"
   },
   "FooterForm": {
     "emailRequired": "Email is required",

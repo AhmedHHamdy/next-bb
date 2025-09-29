@@ -44,13 +44,13 @@ export default function Page() {
                     <section className="flex flex-col md:flex-row items-center gap-[15px]">
                       {/* <!-- Company --> */}
                       <div className="flex items-center gap-2">
-                        <img src="/person-svg-apply-page.svg" alt="person icon" />
+                        <img src="/person-svg-apply-page.svg"/>
                         <span className="text-base font-medium text-[#4A4A4A]">رينتال</span>
                       </div>
 
                       {/* <!-- Location --> */}
                       <div className="flex items-center gap-2">
-                        <img src="/location-svg-apply-page.svg" alt="location icon" />
+                        <img src="/location-svg-apply-page.svg"  />
                         <span className="text-base font-medium text-[#4A4A4A]">المملكة العربية السعودية</span>
                       </div>
                     </section>

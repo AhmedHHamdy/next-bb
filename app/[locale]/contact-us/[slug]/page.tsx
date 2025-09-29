@@ -1,12 +1,17 @@
+"use client";
+
 import ContactUsForm from "@/app/components/contact-us/ContactUsForm";
 import MapComponent from "@/app/components/contact-us/MapComponent";
 import FAQ from "@/app/components/global/FAQ";
 import { ContactUsPageDataType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { getLocale, getTranslations } from "next-intl/server";
-import { Metadata } from "next";
+import { useQuery } from "@tanstack/react-query";
+import { Spin } from "antd";
+import { useLocale, useTranslations } from "next-intl";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-async function getContactUsPageData(locale: string): Promise<ContactUsPageDataType> {
+async function fetchContactUsPageData(locale: string): Promise<ContactUsPageDataType> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getContactUsInfo`, {
     method: "GET",
     headers: {
@@ -16,8 +21,6 @@ async function getContactUsPageData(locale: string): Promise<ContactUsPageDataTy
   });
 
   if (!res.ok) {
-    console.log(res, "res")
-    console.log("Server responded with error code:", res.status);
     if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
       throw new Error("Failed to fetch Server issue");
     } else {
@@ -28,24 +31,82 @@ async function getContactUsPageData(locale: string): Promise<ContactUsPageDataTy
   return res.json();
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
-  const { data } = await getContactUsPageData(locale);
+export default function Page() {
+  const locale = useLocale();
+  const t = useTranslations('ContactUs');
+  const e = useTranslations("Errors404")
+  const router = useRouter();
+  const params = useParams();
+  const currentSlug = Array.isArray(params.slug) ? decodeURIComponent(params.slug[0]) : decodeURIComponent(params?.slug || "") || "";
 
-  return {
-    title: data?.title,
-    description: data?.meta_description,
-    keywords: data?.meta_keywords
-  };
-}
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["contact-us", locale],
+    queryFn: () => fetchContactUsPageData(locale),
+  });
 
-export default async function Page() {
-  const locale = await getLocale();
+  // useEffect(() => {
+  //   const fetchedSlug = data?.data?.slug;
+  //   if (!isLoading && fetchedSlug && router) {
+  //     router.push(`/${locale}/contact-us/${fetchedSlug}`);
+  //   }
+  // }, [data, router, isLoading]);
 
-  const t = await getTranslations('ContactUs');
+  // useEffect(() => {
+  //   if (data) {
+  //     localStorage.setItem("slug-contact-us", `${data?.data?.slug?.en + "+" +  data?.data?.slug?.ar}`)
+  //   }
+  // }, [data])
 
-  // fetch typed data
-  const { data } = await getContactUsPageData(locale);
+  useEffect(() => {
+    // const canonical = localStorage.getItem("slug-contact-us")?.split("+");
+    // router.replace(`/${locale}/contact-us/${locale == "en" ? data?.data?.slug?.en : data?.data?.slug?.ar}`);
+
+    if (locale == "en" && data) {
+      router.replace(`/${locale}/contact-us/${data?.data?.slug?.en}`);
+    } else if (locale == "ar" && data) {
+      router.replace(`/${locale}/contact-us/${data?.data?.slug?.ar}`);
+    } 
+  }, [currentSlug, locale, router, data]);
+
+  if (isLoading) {
+    return (
+      <section className="min-h-screen text-center flex items-center justify-center">
+        <section className="px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem] text-center">
+          <div className="max-w-[1400px] mx-auto flex items-center justify-center">
+            <Spin size="large"/>
+          </div>
+        </section>
+      </section>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <section className="px-6 py-[6rem] lg:py-[8rem] xl:py-[9rem] text-center">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="flex flex-col items-center gap-[32px] max-w-[553px] mx-auto">
+            <img className="w-[202px] h-[169px] md:w-[352px] md:h-[321px]" src="/error404.svg" alt="error 404 image" />
+            <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
+              <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
+                {e("errorLoadingContent")}
+              </h1>
+              <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
+                {e("sorryTemporaryProblem")}
+              </p>
+            </div>
+            <button
+              onClick={() => refetch()}
+              className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
+            >
+              {e("refreshPage")}
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const pageData = data.data;
 
   return (
     <>
@@ -56,10 +117,10 @@ export default async function Page() {
           <div className="max-w-[1670px] mx-auto relative z-[50] grid lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-5">
 
             {/* <!-- Background Vector --> */}
-            <div className="absolute right-[20px] top-[20px] ltr:hidden  ltr:xl:left-[-4%] rtl:xl:right-[-4%] xl:top-[10%] ltr:2xl:left-[6%] rtl:2xl:right-[6%] 2xl:top-[10%] opacity-70 z-[10]">
+            <div className="absolute hidden xl:block right-[20px] top-[20px] ltr:hidden  ltr:xl:left-[-4%] rtl:xl:right-[-4%] xl:top-[10%] ltr:2xl:left-[6%] rtl:2xl:right-[6%] 2xl:top-[10%] opacity-70 z-[10]">
               <img
                 src="/contact-bg-background.png"
-                alt="background decoration"
+                
                 className="w-[225px] h-[543px]"
               />
             </div>
@@ -71,9 +132,10 @@ export default async function Page() {
               ">
 
               <h1 className="text-[28px] md:text-[48px] w-full font-bold text-[#232323] leading-[1.5] relative z-[50]">
-                {data?.other?.header_title?.slice(0, 60)}
+                {pageData?.other?.header_title?.slice(0, 60)}
               </h1>
-{/* 
+
+              {/* 
               <div className="absolute z-[50] md:top-[31%] lg:top-[36%] xl:top-[38%] 2xl:top-[34%] right-[45px] md:right-[5%] lg:right-[4%] xl:right-[14%] 2xl:right-[25%] hidden md:block">
                 <img src="/hero-vector-1393.svg" alt="decorative element" className="w-[247px] h-[28px]" />
               </div>
@@ -83,7 +145,7 @@ export default async function Page() {
               </div> */}
 
               <p className="text-[14px] md:text-[18px] font-medium text-[#393939] leading-[1.56] xl:max-w-full relative z-[50]">
-                {data?.other?.header_description}
+                {pageData?.other?.header_description}
               </p>
 
               {/* <!-- Buttons --> */}
@@ -111,8 +173,8 @@ export default async function Page() {
 
             <div className="w-full h-[350px] md:h-[655px] relative mt-[24px] lg:mt-0 2xl:col-span-2">
               <img
-                src={data?.other?.header_image}
-                alt="hero image"
+                src={pageData?.other?.header_image?.url}
+                alt={pageData?.other?.header_image?.alt}
                 className="w-full h-full object-cover lg:rounded-[8px]"
               />
             </div>
@@ -121,7 +183,7 @@ export default async function Page() {
       </section>
 
       {/* <!-- From Section --> */}
-      <ContactUsForm translationData={data?.other?.form} />
+      <ContactUsForm translationData={pageData?.other?.form} />
 
       {/* <!-- Contact Methods Section --> */}
       <div id="contact" className="w-full bg-white px-6 pb-[48px] md:pb-[72px]">
@@ -141,15 +203,15 @@ export default async function Page() {
               <div className="bg-[rgba(245,245,245,0.5)] rounded-[28px] p-6 h-full flex flex-col justify-center items-center">
                 <div className="flex flex-col items-center text-center space-y-[2px]">
                   {/* <!-- Icon --> */}
-                  <img src="/phone-icon.svg" alt="phone icon" />
+                  <img src="/phone-icon.svg"  />
 
                   {/* <!-- Content --> */}
                   <div className="space-y-2">
-                    <h3 className="text-[18px] font-medium text-black"> {data?.other?.communication?.first?.title}</h3>
+                    <h3 className="text-[18px] font-medium text-black"> {pageData?.other?.communication?.first?.title}</h3>
                     <p className="text-[14px] font-medium text-[#4A4A4A] leading-[1.4]">
-                      {data?.other?.communication?.first?.desc}
+                      {pageData?.other?.communication?.first?.desc}
                     </p>
-                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.first?.value}</p>
+                    <p className="text-[18px] font-bold text-black" dir="ltr">{pageData?.other?.communication?.first?.value}</p>
                   </div>
                 </div>
               </div>
@@ -160,15 +222,15 @@ export default async function Page() {
               <div className="bg-[rgba(245,245,245,0.5)] rounded-[28px] p-6 h-full flex flex-col justify-center items-center">
                 <div className="flex flex-col items-center text-center space-y-[2px]">
                   {/* <!-- Icon --> */}
-                  <img src="/message-icon.svg" alt="message icon" />
+                  <img src="/message-icon.svg"  />
 
                   {/* <!-- Content --> */}
                   <div className="space-y-2">
-                    <h3 className="text-[18px] font-medium text-black">{data?.other?.communication?.second?.title}</h3>
+                    <h3 className="text-[18px] font-medium text-black">{pageData?.other?.communication?.second?.title}</h3>
                     <p className="text-[14px] font-medium text-[#4A4A4A] leading-[1.4]">
-                      {data?.other?.communication?.second?.desc}
+                      {pageData?.other?.communication?.second?.desc}
                     </p>
-                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.second?.value}</p>
+                    <p className="text-[18px] font-bold text-black">{pageData?.other?.communication?.second?.value}</p>
                   </div>
                 </div>
               </div>
@@ -179,15 +241,15 @@ export default async function Page() {
               <div className="bg-[rgba(245,245,245,0.5)] rounded-[28px] p-6 h-full flex flex-col justify-center items-center">
                 <div className="flex flex-col items-center text-center space-y-[2px]">
                   {/* <!-- Icon --> */}
-                  <img src="/email-icon.svg" alt="email icon" />
+                  <img src="/email-icon.svg"  />
 
                   {/* <!-- Content --> */}
                   <div className="space-y-2">
-                    <h3 className="text-[18px] font-medium text-black">{data?.other?.communication?.third?.title}</h3>
+                    <h3 className="text-[18px] font-medium text-black">{pageData?.other?.communication?.third?.title}</h3>
                     <p className="text-[14px] font-medium text-[#4A4A4A] leading-[1.4]">
-                      {data?.other?.communication?.third?.desc}
+                      {pageData?.other?.communication?.third?.desc}
                     </p>
-                    <p className="text-[18px] font-bold text-black">{data?.other?.communication?.third?.value}</p>
+                    <p className="text-[18px] font-bold text-black">{pageData?.other?.communication?.third?.value}</p>
                   </div>
                 </div>
               </div>
@@ -208,12 +270,12 @@ export default async function Page() {
           </div>
 
           {/* <!-- Interactive Map --> */}
-          <MapComponent branchesData={data?.other?.branches ? data?.other?.branches : []} />
+          <MapComponent branchesData={pageData?.other?.branches ? pageData?.other?.branches : []} />
 
           {/* <!-- Default Branches Cards --> */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[24px] md:gap-[35px] px-[15px] lg:px-0">
 
-            {data?.other?.branches?.map(branch => {
+            {pageData?.other?.branches?.map(branch => {
               return (
                 <div key={branch.id} className="bg-white rounded-[6px] p-1 shadow-lg border border-[#F3F3F1] w-full">
                   <div className="bg-[rgba(245,245,245,0.5)] rounded-[6px] p-6 h-full">
@@ -221,18 +283,18 @@ export default async function Page() {
                     <div className="space-y-[10px]">
                       <div className="flex items-center gap-[14px]">
                         <div className="flex-shrink-0">
-                          <img src="/location-icon-svg.svg" alt="location icon" />
+                          <img src="/location-icon-svg.svg"  />
                         </div>
                         <span className="font-medium text-[14px] text-[#232323] leading-tight">
                           {branch?.location}
                         </span>
                       </div>
                       <div className="flex items-center gap-[14px]">
-                        <img src="/call-icon-svg.svg" alt="call icon" />
-                        <span className="font-medium text-[14px] text-[#232323]">{branch?.phone}</span>
+                        <img src="/call-icon-svg.svg"  />
+                        <a href={`tel:${branch?.phone.replace(/\D/g, '')}`} className="font-medium text-[14px] text-[#232323] cursor-pointer" dir="ltr">{branch?.phone}</a>
                       </div>
                       <div className="flex items-center gap-[14px]">
-                        <img src="/email-icon-svg.svg" alt="email icon" />
+                        <img src="/email-icon-svg.svg"  />
                         <span className="font-medium text-[14px] text-[#232323]">{branch?.email}</span>
                       </div>
                     </div>
@@ -247,7 +309,7 @@ export default async function Page() {
       </div>
 
       {/* <!-- FAQ Section --> */}
-      <FAQ faqs={data?.other?.faqs ? data?.other?.faqs : []} />
+      <FAQ faqs={pageData?.other?.faqs ? pageData?.other?.faqs : []} />
     </>
   );
 }

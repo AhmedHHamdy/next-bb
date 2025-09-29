@@ -8,7 +8,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ReactQueryProvider from "../utils/Providers/ReactQueryProvider";
 import { ConfigProvider } from "antd";
-import Head from "next/head";
+// import Head from "next/head";
 
 export const pingFont = localFont({
   src: [
@@ -63,9 +63,37 @@ export const pingFont = localFont({
 })
 
 // export const metadata: Metadata = {
-//   title: "Business Building",
-//   description: "Business Building For Information Technology",
+//   openGraph: {
+//     title: "Business Building",
+//     description: "Business Building For Information Technology",
+//     url: "https://bb4it.org",
+//     siteName: "Business Building",
+//     images: [
+//       {
+//         url: "/opengraph-image.jpg", // Public file under /app or /public
+//         width: 1200,
+//         height: 630,
+//         alt: "BB Logo",
+//       },
+//     ],
+//     type: "website",
+//   },
+//   twitter: {
+//     card: "summary_large_image",
+//     title: "Business Building",
+//     description: "Business Building For Information Technology",
+//     images: ["/twitter-image.jpg"],
+//   },
 // };
+
+async function getAppSettings(locale: string) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getAppSettings`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json", lang: locale },
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
 
 export default async function RootLayout({
   children,
@@ -76,6 +104,9 @@ export default async function RootLayout({
 }>) {
   const { locale } = await params;
 
+  const json = await getAppSettings(locale);
+  const data = json?.data;
+
   if (!hasLocale(routing.locales, locale)) {
     notFound()
   }
@@ -84,13 +115,10 @@ export default async function RootLayout({
 
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
       <script
-        src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyBNh10dxuAizGa6ckcNzuRNibGH1cNnXrY&libraries=places,marker&language=ar&region=SA`}
+        src={`https://maps.googleapis.com/maps/api/js?key=${data?.google_maps_api_key}&libraries=places,marker&language=ar&region=SA`}
         async
         defer
       ></script>
-      <Head>
-        <link rel="icon" href="/about-team.png" type="image/png"/>
-      </Head>
       <body
         className={`${pingFont.variable} font-ping antialiased`}
       >

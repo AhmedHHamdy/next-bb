@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { ArticleType } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function Blogs({
   articles,
@@ -20,6 +20,8 @@ export default function Blogs({
 }) {
 
   const t = useTranslations("HomePage");
+
+  const localeValue = useLocale()
 
   function truncateText(text: string = "", maxLength: number): string {
     if (text.length > maxLength) {
@@ -37,7 +39,7 @@ export default function Blogs({
     return truncateText(text, 100)
   }
   return (
-    <section className="relative bg-white">
+    <section className="relative bg-white pt-[40px]">
       <div className="max-w-[1400px] mx-auto">
         <div className="text-center mb-[36px] md:mb-[48px] px-[15px] 2xl:px-0">
           <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[12px]">{articles?.title}</h2>
@@ -74,12 +76,12 @@ export default function Blogs({
               articles?.articles?.slice(0, 3)?.map((article) => {
                 return (
                   <SwiperSlide key={article.id} className="swiper-slide">
-                    <Link href={`/blogs/${article.id}/${article.slug}`}>
-                      <div className="bg-white h-full pb-[30px] xl:pb-0 xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
+                    <Link href={`/blogs/${localeValue == "en" ? article?.slug?.en : article?.slug?.ar}`}>
+                      <div className="bg-white h-full pb-[30px] xl:pb-0 xl:ltr:min-h-[465px] xl:rtl:min-h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                         <div className="relative">
                           <div
                             className="w-full h-[206px] lg:h-64 bg-no-repeat rounded-t-lg bg-cover"
-                            style={{ backgroundImage: `url(${article.image_url})` }}
+                            style={{ backgroundImage: `url(${article.image?.url})` }}
                           ></div>
                         </div>
                         <div className="px-[13px] pt-[11px]">

@@ -149,9 +149,41 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
 
   return (
     <>
-      <div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center gap-6 mb-[32px] md:border-b-2 md:border-[#F0ECE7] md:pb-[22px]">
-        <div className="hidden md:flex flex-wrap gap-[32px] lg:gap-y-[40px] xl:gap-6 px-[15px] xl:px-0">
-          <div
+      <section className="flex items-center justify-center">
+        <div className="w-full lg:w-[439px] px-[15px] xl:px-0">
+          <div className="relative">
+            <div className="flex items-center justify-between bg-white border border-[#DADADA] rounded-lg pe-[8px] py-3 h-14">
+              <form
+                className="flex items-center gap-3 flex-1 ps-[16px]"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  refetch();
+                }}
+              >
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder={t("searchByBlogName")}
+                  className="flex-1 bg-transparent border-none outline-none text-[#4A4A4A] placeholder-[#4A4A4A] text-sm font-medium"
+                />
+                <div onClick={() => refetch()} className="cursor-pointer">
+                  <img src="/search-icon.svg"  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+{/*  md:pb-[22px] */}
+      <div className="flex flex-col-reverse lg:flex-row justify-center mt-10 items-start lg:items-center gap-6 mb-[32px] md:border-b-2 md:border-[#F0ECE7]">
+
+
+
+{/* flex flex-wrap gap-[32px] lg:gap-y-[40px] xl:gap-6 */}
+        <div className="hidden md:block w-full max-w-[800px] mx-auto px-[15px] xl:px-0">
+          {/* <div
             onClick={() => setSelectedSectionId("")}
             className={`${
               selectedSectionId == "" ? "blog-icon-container" : ""
@@ -218,9 +250,9 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
             </svg>
             <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium">{t("all")}</span>
             <div className="indicator absolute -bottom-6 w-20 h-0.5 bg-transparent rounded-full"></div>
-          </div>
+          </div> */}
 
-          {sectionsData.map((section) => {
+          {/* {sectionsData.map((section) => {
             return (
               <div
                 onClick={() => setSelectedSectionId(String(section.id))}
@@ -305,7 +337,12 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
                 <div className="indicator absolute -bottom-6 w-20 h-0.5 bg-transparent rounded-full"></div>
               </div>
             );
-          })}
+          })} */}
+          <BlogsCategories
+            sectionsData={sectionsData}
+            setSelectedSection={(value) => setSelectedSectionId(value)}
+            selectedSectionId={selectedSectionId}
+          />
         </div>
 
         <section className="block md:hidden w-full px-[10px] xl:px-0 pb-[0px] border-b-2 border-[#F0ECE7]">
@@ -316,42 +353,19 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
           />
         </section>
 
-        <div className="w-full lg:w-[439px] px-[15px] xl:px-0">
-          <div className="relative">
-            <div className="flex items-center justify-between bg-white border border-[#DADADA] rounded-lg pe-[8px] py-3 h-14">
-              <form
-                className="flex items-center gap-3 flex-1 ps-[16px]"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  refetch();
-                }}
-              >
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder={t("searchByBlogName")}
-                  className="flex-1 bg-transparent border-none outline-none text-[#4A4A4A] placeholder-[#4A4A4A] text-sm font-medium"
-                />
-                <div onClick={() => refetch()} className="cursor-pointer">
-                  <img src="/search-icon.svg" alt="search-icon" />
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+        
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-[24px] md:gap-x-[20px] md:gap-y-[32px] px-[15px] xl:px-0">
         {data?.data?.data &&
           data?.data?.data?.map((article) => {
             return (
-              <Link key={article.id} href={`/blogs/${article.id}/${article.slug}`}>
+              <Link key={article.id} href={`/blogs/${locale == "en" ? article?.slug?.en : article?.slug?.ar}`}>
                 <div className="bg-white pb-[24px] xl:pb-0 h-full 2xl:h-[445px] border border-[#DADADA] rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
                   <div className="relative">
                     <div
                       className="w-full h-[206px] lg:h-64 bg-no-repeat rounded-t-lg bg-cover"
-                      style={{ backgroundImage: `url(${article?.image_url})` }}
+                      style={{ backgroundImage: `url(${article?.image?.url})` }}
                     ></div>
                   </div>
                   <div className="px-[13px] pt-[11px]">
@@ -406,9 +420,9 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
           onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
           className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] flex justify-center items-center cursor-pointer disabled:opacity-50"
         >
-          <img className="rtl:block ltr:hidden" src="/pagination-arrow-right.svg" alt="pagination arrow right" />
+          <img className="rtl:block ltr:hidden" src="/pagination-arrow-right.svg"  />
 
-          <img className="rtl:hidden ltr:block" src="/pagination-arrow-left.svg" alt="pagination arrow left" />
+          <img className="rtl:hidden ltr:block" src="/pagination-arrow-left.svg"  />
         </button>
 
         {/* Page Numbers with Ellipsis */}
@@ -439,9 +453,9 @@ export default function BlogsPagination({ sectionsData }: { sectionsData: Sectio
           onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
           className="border border-[#131A27] rounded-[8px] h-[44px] w-[44px] flex justify-center items-center cursor-pointer disabled:opacity-50"
         >
-          <img className="rtl:block ltr:hidden" src="/pagination-arrow-left.svg" alt="pagination arrow left" />
+          <img className="rtl:block ltr:hidden" src="/pagination-arrow-left.svg"  />
 
-          <img className="rtl:hidden ltr:block" src="/pagination-arrow-right.svg" alt="pagination arrow right" />
+          <img className="rtl:hidden ltr:block" src="/pagination-arrow-right.svg"  />
         </button>
       </div>
     </>

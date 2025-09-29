@@ -31,6 +31,8 @@ export default function ContactUsForm({translationData}: {
   translationData: {
     title: string;
     desc: string;
+    left_title: string;
+    left_desc: string;
   }
 }) {
 
@@ -59,7 +61,7 @@ export default function ContactUsForm({translationData}: {
   const [errorText, setErrorText] = useState("");
   
 
-  console.log(formData, "formData");
+  // console.log(formData, "formData");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -210,7 +212,7 @@ export default function ContactUsForm({translationData}: {
       return res.json();
     },
     onSuccess: (data) => {
-      console.log("✅ Form submitted successfully:", data);
+      // console.log("✅ Form submitted successfully:", data);
       setFormData({
         name: "",
         country_id: "",
@@ -230,7 +232,7 @@ export default function ContactUsForm({translationData}: {
     },
     onError: (error: any) => {
       console.error("❌ Error submitting form:", error);
-      console.log(error, "error")
+      // console.log(error, "error")
 
       setErrorText(error.message || "حدث خطأ أثناء إرسال النموذج.");
 
@@ -256,12 +258,14 @@ export default function ContactUsForm({translationData}: {
           <div className="w-full lg:w-[500px]">
             <div className="bg-white border border-[#E7E8E9] rounded-lg p-6 shadow-lg">
               <h2 className="text-[20px] md:text-[40px] font-medium md:font-bold text-black mb-9">
-                {contactTranslation("pleaseFillTheForm")}
+                {/* {contactTranslation("pleaseFillTheForm")} */}
+                {translationData.left_title}
               </h2>
 
               <div className="space-y-6">
                 <p className="text-[14px] md:text-[18px] font-medium text-[#4A4A4A] leading-[1.5] ">
-                  {contactTranslation("fillDataBelow")}
+                  {/* {contactTranslation("fillDataBelow")} */}
+                  {translationData.left_desc}
                 </p>
 
                 <section className="flex items-center">
@@ -269,20 +273,20 @@ export default function ContactUsForm({translationData}: {
                   <div className="flex items-center gap-4">
                     <div className="flex -space-x-2">
                       <div className="w-12 h-12 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
-                        <img src="/image-people-1.png" alt="image avatar" />
+                        <img src="/image-people-1.png" />
                       </div>
                       <div className="w-12 h-12 rounded-full border-2 border-white bg-gray-400 flex items-center justify-center">
-                        <img src="/image-people-2.png" alt="image avatar" />
+                        <img src="/image-people-2.png" />
                       </div>
                       <div className="w-12 h-12 rounded-full border-2 border-white bg-gray-500 flex items-center justify-center">
-                        <img src="/image-people-3.png" alt="image avatar" />
+                        <img src="/image-people-3.png" />
                       </div>
                     </div>
 
                     {/* <!-- Rating Section --> */}
                     <div className="flex flex-col items-center gap-[2px]">
                       <div className="flex items-center gap-2">
-                        <img src="/star-svg.svg" alt="star svg" />
+                        <img src="/star-svg.svg"  />
                         <span className="text-[16px] font-normal text-[#050505]">4.5</span>
                       </div>
                       <span className="text-[14px] font-normal text-[#050505]">{contactTranslation("fromOver500Reviews")}</span>
@@ -302,7 +306,7 @@ export default function ContactUsForm({translationData}: {
                   if (validateForm()) {
                     mutation.mutate(formData)
                   }
-                }} className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                }} className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
                   {/* <!-- Name Field --> */}
 
                     <div className="space-y-3">
@@ -482,7 +486,7 @@ export default function ContactUsForm({translationData}: {
                     </div>
 
                     {/* <!-- Message Field --> */}
-                    <div className="space-y-3 col-span-1 md:col-span-2">
+                    <div className="space-y-3 col-span-1 xl:col-span-2">
                       <label className="block text-[16px] font-medium text-black">{tInput("message")} <span className="text-[#FF6B6B]">*</span></label>
                       <textarea
                         placeholder={tInput("enterMessageText")}

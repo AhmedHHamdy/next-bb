@@ -8,9 +8,11 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { ProjectTypeData } from "@/app/utils/Types";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function ProjectsCarousel({ previousProjectsData }: { previousProjectsData: ProjectTypeData[]}) {
+
+  const locale = useLocale();
 
   const t = useTranslations("ProjectDetails");
 
@@ -92,7 +94,7 @@ export default function ProjectsCarousel({ previousProjectsData }: { previousPro
           return (
             <SwiperSlide key={project?.id} className="swiper-slide">
               <div
-                style={{ backgroundImage: `url(${project.image_url})` }}
+                style={{ backgroundImage: `url(${project?.image?.url})` }}
                 className="h-[312px] md:h-[426px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 inset-project-grid-item-shadow"
               >
                 <div className="h-[270px]  md:w-full md:h-[374px] flex flex-col items-start justify-end project-card">
@@ -101,14 +103,14 @@ export default function ProjectsCarousel({ previousProjectsData }: { previousPro
                       <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] md:flex-row md:items-center md:justify-between w-full">
                         <section className="flex items-center w-[265px] md:w-[400px] gap-[13px]">
                           {/* md:w-[111px] md:px-0 w-full */}
-                          <h4 className="flex justify-center  items-center gap-[8px] px-2 md:px-5  w-[150px] md:w-[250px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                            <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
+                          <h4 className="flex justify-center  items-center gap-[8px] px-2 md:px-5 w-[150px] md:w-[250px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
+                            <img className="h-[14.5px] md:h-[23px]" src={project?.client_type.key == "individual" ? "/person-icon.svg" : "/company-svg-icon.svg"} alt={project?.client_type.key == "individual" ? "person icon" : "company icon"}/>
                             {project?.owner_name}
                           </h4>
 
                           {/* md:w-[235.5px] */}
                           <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 w-full  h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                            <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
+                            <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg"  />
                             {project?.country_name}
                           </h4>
                         </section>
@@ -126,7 +128,7 @@ export default function ProjectsCarousel({ previousProjectsData }: { previousPro
 
                     <div className="mt-[16px] see-more-button">
                       <Link
-                        href={`/projects/${project?.id}/${project?.slug}`}
+                        href={`/projects/${locale == "en" ? project?.slug?.en : project?.slug?.ar}`}
                         className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[172px] h-[28px] md:h-[48px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
                       >
                         <span className="text-[14px] md:text-[16px] font-normal">{t("seeMore")}</span>

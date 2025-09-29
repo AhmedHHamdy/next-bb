@@ -5,14 +5,30 @@ import { Link } from "@/i18n/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 import { useLocale, useTranslations } from "next-intl";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Page() {
 
   const locale = useLocale();
 
   const t = useTranslations("NavLinks");
+  const e = useTranslations("Errors404")
 
-  console.log(locale, "sd")
+  const s = useTranslations("SidePages")
+
+  const router = useRouter();
+
+  const [headings, setHeadings] = useState<
+    { id: string; text: string; level: number }[]
+  >([]);
+
+  const [processedHtml, setProcessedHtml] = useState("")
+
+  const params = useParams();
+  const currentSlug = Array.isArray(params.slug) ? decodeURIComponent(params.slug[0]) : decodeURIComponent(params?.slug || "") || "";
+
+  // console.log(locale, "sd")
 
   const fetchAccessibility = async (): Promise<PolicyPages> => {
     const res = await fetch(
@@ -39,6 +55,51 @@ export default function Page() {
     queryFn: fetchAccessibility,
   });
 
+  // console.log(data, "data acess")
+
+  // useEffect(() => {
+  //   if (locale == "en" && data) {
+  //     router.replace(`/${locale}/accessibility/${data?.data?.slug?.en}`);
+  //   } else if (locale == "ar" && data) {
+  //     router.replace(`/${locale}/accessibility/${data?.data?.slug?.ar}`);
+  //   } 
+  // }, [currentSlug, locale, router, data]);
+
+  useEffect(() => {
+    if (!data?.data?.content) return;
+  
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(
+      data?.data?.content,
+      "text/html"
+    );
+  
+    const newHeadings: { id: string; text: string; level: number }[] = [];
+  
+    doc.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((node, index) => {
+      const text = node.textContent?.trim() || "heading";
+      const id = `h${index}`;
+      node.setAttribute("id", id);
+  
+      newHeadings.push({
+        id,
+        text,
+        level: parseInt(node.tagName.replace("H", ""), 10),
+      });
+    });
+  
+    setHeadings(newHeadings);
+    setProcessedHtml(doc.body.innerHTML); // store new HTML string
+  }, [data?.data?.content]);
+
+  useEffect(() => {
+    if (locale == "en" && data) {
+      router.replace(`/${locale}/accessibility/${data?.data?.slug?.en}`);
+    } else if (locale == "ar" && data) {
+      router.replace(`/${locale}/accessibility/${data?.data?.slug?.ar}`);
+    } 
+  }, [currentSlug, locale, router, data]);
+
 
   if (isLoading) {
     return (
@@ -54,22 +115,23 @@ export default function Page() {
 
   if (isError) {
     return (
-      <section className="px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem] text-center">
+      <section className="px-6 py-[6rem] lg:py-[8rem] xl:py-[9rem] text-center">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex flex-col items-center gap-[32px] max-w-[553px] mx-auto">
             <img className="w-[202px] h-[169px] md:w-[352px] md:h-[321px]" src="/error404.svg" alt="error 404 image" />
-
             <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
               <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
-                حدث خطأ أثناء تحميل المحتوى
+                {e("errorLoadingContent")}
               </h1>
               <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
-                عذرًا، واجهنا مشكلة مؤقتة. يرجى تحديث الصفحة أو المحاولة لاحقًا.
+                {e("sorryTemporaryProblem")}
               </p>
             </div>
-
-            <button onClick={() => refetch()} className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors">
-              تحديث الصفحة
+            <button
+              onClick={() => refetch()}
+              className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
+            >
+              {e("refreshPage")}
             </button>
           </div>
         </div>
@@ -98,7 +160,7 @@ export default function Page() {
               <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
             </svg>
 
-            <Link href="/accessibility" className="text-black text-[15px] font-medium leading-[1.65]">
+            <Link href={`/accessibility/${currentSlug}`} className="text-black text-[15px] font-medium leading-[1.65]">
               {data?.data?.title}
             </Link>
           </div>
@@ -107,130 +169,37 @@ export default function Page() {
 
       <div className="w-full bg-white px-6 pt-[20px] pb-[64px] md:pb-[100px] md:pt-[36px]">
         {/* max-w-[1300px]  */}
-        <div className="max-w-[1000px] mx-auto">
+        <div className="max-w-[1300px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-11">
-            {/* <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
-              <h3 className="text-[16px] text-[#4A4A4A] font-medium">محتوى إمكانية الوصول</h3>
+            <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
+              <h3 className="text-[16px] text-[#4A4A4A] font-medium">{s("accessibilityContent")}</h3>
 
               <hr className="my-[16px] text-[#DADADA]" />
 
               <div className="space-y-[0px] md:space-y-[14px] border-s-6 border-[#E7E8E9] ps-0">
-                <a
-                  href="#reach"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  إمكانية الوصول
-                </a>
-                <a
-                  href="#goal"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  هدفنا
-                </a>
-                <a
-                  href="#what-we-provide"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  ما الذي وفرناه
-                </a>
-                <a
-                  href="#what-we-do"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  ما زلنا نعمل على تحسين
-                </a>
-                <a
-                  href="#problem"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  هل تواجه مشكلة في الوصول إلى الموقع؟
-                </a>
-                <a
-                  href="#updates"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  آخر تحديث
-                </a>
-              </div>
-            </div> */}
+                <ul className="space-y-2">
+                  {headings.map((h) => (
+                    <li key={h.id} className={`pl-${(h.level - 1) * 4} list-none`}>
+                      <a
+                        href={`#${h.id}`}
+                        
+                        className="text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] transition delay-150 border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+            </div>
+            </div>
 
             <div className="flex-1">
               <div className="space-y-[24px]">
-                {/* <img
-                  className="hidden md:inline h-[200px] w-[343px] md:h-[234px] rounded-2xl md:w-full brightness-80"
-                  src="/accessibility-img.png"
-                  alt="accessibility image"
-                />
-                <img
-                  className="md:hidden h-[200px] w-full rounded-2xl object-cover object-center"
-                  src="/accessibility-mobile.png"
-                  alt="accessibility image"
-                /> */}
-
-                <div className="space-y-[32px] md:space-y-[24px]">
-                  <div id="reach" className="space-y-3">
-                    {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
-                    {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
-                    <p dangerouslySetInnerHTML={{__html: String(data?.data?.content || "")}}>
-                      {/* {data?.data?.content} */}
-                    </p>
+                <div className="space-y-[32px] md:space-b-[24px] md:space-t-0">
+                  {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
+                  {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
+                  <div dangerouslySetInnerHTML={{__html: String(processedHtml  || "")}} className="custom-content mx-auto">
                   </div>
-
-                  {/* <div id="goal" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">هدفنا:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      هدفنا هو أن يكون هذا الموقع متاحًا وقابلًا للاستخدام من قِبل أكبر عدد ممكن من الأشخاص، بما يشمل:
-                    </p>
-                    <ul className="ps-2 list-disc list-inside space-y-1 text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      <li>مستخدمي قارئات الشاشة.</li>
-                      <li>من يعانون من ضعف البصر أو عمى الألوان.</li>
-                      <li>من يستخدمون لوحة المفاتيح فقط للتنقل.</li>
-                      <li>من يعانون من صعوبات في الإدراك أو التعلم.</li>
-                      <li>مستخدمي الأجهزة المساعدة.</li>
-                    </ul>
-                  </div>
-
-                  <div id="what-we-provide" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">ما الذي وفرناه:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      إمكانية تكبير النصوص دون فقدان وضوح المحتوى.
-                    </p>
-                    <ul className="ps-2 list-disc list-inside space-y-1 text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      <li>توافق الموقع مع أدوات قراءة الشاشة مثل NVDA وVoiceOver.</li>
-                      <li>التنقل الكامل باستخدام لوحة المفاتيح فقط.</li>
-                      <li>وضوح الألوان والتباين لتسهيل القراءة.</li>
-                      <li>تسميات واضحة للصور والنماذج (alt text + labels).</li>
-                      <li>هيكل تنظيمي متماسك يسهل الفهم والتنقل.</li>
-                    </ul>
-                  </div>
-
-                  <div id="what-we-do" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">ما زلنا نعمل على تحسين:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نحن ملتزمون بإجراء تحسينات مستمرة لضمان وصول كافة المستخدمين للمحتوى بسهولة. في حال وجود أي صعوبة
-                      أو خلل في تجربة الاستخدام، يرجى إعلامنا فورًا.
-                    </p>
-                  </div>
-
-                  <div id="problem" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">
-                      هل تواجه مشكلة في الوصول إلى الموقع؟
-                    </h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      إذا واجهت أي صعوبة أو لديك ملاحظات تتعلق بإمكانية الوصول، لا تتردد في التواصل معنا عبر:
-                    </p>
-                    <ul className="ps-2 list-disc list-inside space-y-1 text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      <li>البريد الإلكتروني: [example@email.com]</li>
-                      <li>أو من خلال صفحة [اتصل بنا]</li>
-                    </ul>
-                  </div>
-
-                  <div id="updates" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">آخر تحديث</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      تمت مراجعة وتحديث هذه الصفحة بتاريخ: [اكتب التاريخ هنا]
-                    </p>
-                  </div> */}
                 </div>
               </div>
             </div>

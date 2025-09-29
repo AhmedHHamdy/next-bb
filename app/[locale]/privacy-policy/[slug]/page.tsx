@@ -5,12 +5,25 @@ import { Link } from "@/i18n/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Spin } from "antd";
 import { useLocale, useTranslations } from "next-intl";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Page() {
 
   const locale = useLocale();
 
   const t = useTranslations("NavLinks");
+  const e = useTranslations("Errors404")
+  const s = useTranslations("SidePages")
+
+  const router = useRouter();
+
+  const [headings, setHeadings] = useState<{ id: string; text: string; level: number }[]>([]);
+
+  const [processedHtml, setProcessedHtml] = useState("")
+
+  const params = useParams();
+  const currentSlug = Array.isArray(params.slug) ? decodeURIComponent(params.slug[0]) : decodeURIComponent(params?.slug || "") || "";
 
   const fetchPrivacyPolicy = async (): Promise<PolicyPages> => {
     const res = await fetch(
@@ -38,6 +51,65 @@ export default function Page() {
   });
 
 
+  // useEffect(() => {
+  //   if (!isLoading && data?.data?.slug && router) {
+  //     router.push(`/${locale}/privacy-policy/${data.data.slug}`);
+  //   }
+  // }, [locale, data, router]); // include deps
+
+  // useEffect(() => {
+  //   if (data) {
+  //     localStorage.setItem("slug-privacy-policy", `${data?.data?.slug?.en + "+" +  data?.data?.slug?.ar}`)
+  //   }
+  // }, [data])
+
+  // useEffect(() => {
+  //   const canonical = localStorage.getItem("slug-privacy-policy")?.split("+");
+  //   router.replace(`/${locale}/privacy-policy/${locale == "en" ? data?.data?.slug?.en : data?.data?.slug?.ar}`);
+    
+  //   if (locale == "en") {
+  //     router.replace(`/${locale}/privacy-policy/${canonical?.[0]}`);
+  //   } else if (locale == "ar") {
+  //     router.replace(`/${locale}/privacy-policy/${canonical?.[1]}`);
+  //   } 
+  // }, [currentSlug, locale, router]);
+
+  useEffect(() => {
+    if (!data?.data?.content) return;
+  
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(
+      data?.data?.content,
+      "text/html"
+    );
+  
+    const newHeadings: { id: string; text: string; level: number }[] = [];
+  
+    doc.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach((node, index) => {
+      const text = node.textContent?.trim() || "heading";
+      const id = `h${index}`;
+      node.setAttribute("id", id);
+  
+      newHeadings.push({
+        id,
+        text,
+        level: parseInt(node.tagName.replace("H", ""), 10),
+      });
+    });
+  
+    setHeadings(newHeadings);
+    setProcessedHtml(doc.body.innerHTML); // store new HTML string
+  }, [data?.data?.content]);
+
+  useEffect(() => {
+    if (locale == "en" && data) {
+      router.replace(`/${locale}/privacy-policy/${data?.data?.slug?.en}`);
+    } else if (locale == "ar" && data) {
+      router.replace(`/${locale}/privacy-policy/${data?.data?.slug?.ar}`);
+    } 
+  }, [currentSlug, locale, router, data]);
+
+
   if (isLoading) {
     return (
       <section className="min-h-screen text-center flex items-center justify-center">
@@ -52,22 +124,23 @@ export default function Page() {
 
   if (isError) {
     return (
-      <section className="px-6 pt-[6rem] lg:pt-[8rem] xl:pt-[9rem] text-center">
+      <section className="px-6 py-[6rem] lg:py-[8rem] xl:py-[9rem] text-center">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex flex-col items-center gap-[32px] max-w-[553px] mx-auto">
             <img className="w-[202px] h-[169px] md:w-[352px] md:h-[321px]" src="/error404.svg" alt="error 404 image" />
-
             <div className="flex flex-col items-center gap-2 text-center px-[15px] md:px-0">
               <h1 className="text-black text-[20px] md:text-[24px] font-bold leading-[1.5]">
-                حدث خطأ أثناء تحميل المحتوى
+                {e("errorLoadingContent")}
               </h1>
               <p className="text-[#4A4A4A] text-[14px] font-medium leading-[1.43]">
-                عذرًا، واجهنا مشكلة مؤقتة. يرجى تحديث الصفحة أو المحاولة لاحقًا.
+                {e("sorryTemporaryProblem")}
               </p>
             </div>
-
-            <button onClick={() => refetch()} className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors">
-              تحديث الصفحة
+            <button
+              onClick={() => refetch()}
+              className="bg-[#EDA133] text-white w-[181px] py-2 rounded-lg font-medium text-[16px] leading-[1.5] hover:bg-[#D1912A] transition-colors"
+            >
+              {e("refreshPage")}
             </button>
           </div>
         </div>
@@ -96,7 +169,7 @@ export default function Page() {
               <path d="M5.93974 2.21999C5.81307 2.21999 5.68641 2.26665 5.58641 2.36665C5.39307 2.55999 5.39307 2.87999 5.58641 3.07332L9.93307 7.41999C10.2531 7.73999 10.2531 8.25999 9.93307 8.57999L5.58641 12.9267C5.39307 13.12 5.39307 13.44 5.58641 13.6333C5.77974 13.8267 6.09974 13.8267 6.29307 13.6333L10.6397 9.28665C10.9797 8.94665 11.1731 8.48665 11.1731 7.99999C11.1731 7.51332 10.9864 7.05332 10.6397 6.71332L6.29307 2.36665C6.19307 2.27332 6.06641 2.21999 5.93974 2.21999Z" fill="#8B8B8B"/>
             </svg>
 
-            <Link href="/privacy-policy" className="text-black text-[15px] font-medium leading-[1.65]">
+            <Link href={`/privacy-policy/${currentSlug}`} className="text-black text-[15px] font-medium leading-[1.65]">
               {data?.data?.title}
             </Link>
           </div>
@@ -104,136 +177,38 @@ export default function Page() {
       </div>
 
       <div className="w-full bg-white px-6 pt-[20px] pb-[64px] md:pb-[100px] md:pt-[36px]">
-        <div className="max-w-[1000px] mx-auto">
+        <div className="max-w-[1300px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-11">
-            {/* <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
-              <h3 className="text-[16px] text-[#4A4A4A] font-medium">محتوى سياسة الخصوصية</h3>
+            <div className="block md:w-[290px] flex-shrink-0 border border-[#DADADA] h-full p-[16px] pb-[32px] rounded-[8px]">
+              <h3 className="text-[16px] text-[#4A4A4A] font-medium">{s("privacyPolicyContent")}</h3>
 
               <hr className="my-[16px] text-[#DADADA]" />
 
               <div className="space-y-[0px] md:space-y-[14px] border-s-6 border-[#E7E8E9] ps-0">
-                <a
-                  href="#collection"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  جمع المعلومات
-                </a>
-                <a
-                  href="#usage"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  استخدام المعلومات
-                </a>
-                <a
-                  href="#protection"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  حماية البيانات
-                </a>
-                <a
-                  href="#cookies"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  ملفات تعريف الارتباط (Cookies)
-                </a>
-                <a
-                  href="#sharing"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  مشاركة البيانات
-                </a>
-                <a
-                  href="#external-links"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  روابط خارجية
-                </a>
-                <a
-                  href="#user-rights"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  حقوق المستخدم
-                </a>
-                <a
-                  href="#updates"
-                  className="block text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
-                >
-                  تحديثات السياسة
-                </a>
+                <ul className="space-y-2">
+                  {headings.map((h) => (
+                    <li key={h.id} className={`pl-${(h.level - 1) * 4} list-none`}>
+                      <a
+                        href={`#${h.id}`}
+                        
+                        className="text-base font-medium hover:text-[#EDA133] leading-[1.5] flex gap-2 border-s-6 -ms-[6px] transition delay-150 border-[#E7E8E9] hover:border-[#EDA133] ps-[16px] py-[10px]"
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div> */}
+            </div>
 
             <div className="flex-1">
               <div className="space-y-[24px]">
-                {/* <img
-                  className="hidden md:inline h-[200px] w-[343px] md:h-[234px] rounded-2xl md:w-full brightness-80"
-                  src="/privacy-policy.png"
-                  alt="privacy-policy image"
-                />
-                <img
-                  className="md:hidden h-[200px] w-full rounded-2xl object-cover"
-                  src="/privacy-policy-mobile.png"
-                  alt="privacy-policy image"
-                /> */}
-
+      
                 <div className="space-y-[32px] md:space-y-[24px]">
-                  <div id="collection" className="space-y-3">
-                    {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
-                    {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
-                    <p dangerouslySetInnerHTML={{__html: String(data?.data?.content || "")}} >
-                      {/* {data?.data?.content} */}
-                    </p>
+                  {/* <h2 className="text-[18px] md:text-[20px] font-bold text-black">{data?.data?.title?.slice(0, 80)}</h2> */}
+                  {/* className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]" */}
+                  <div dangerouslySetInnerHTML={{__html: String(processedHtml  || "")}} className="custom-content mx-auto">
                   </div>
-
-                  {/* <div id="usage" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">استخدام المعلومات:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نستخدم بياناتك لتحسين تجربتك، وتقديم الخدمات، والتواصل معك، وتحليل أداء الموقع أو التطبيق.
-                    </p>
-                  </div>
-
-                  <div id="protection" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">حماية البيانات:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نلتزم بحماية معلوماتك باستخدام إجراءات أمان تقنية وتنظيمية لمنع الوصول غير المصرح به.
-                    </p>
-                  </div>
-
-                  <div id="cookies" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">ملفات تعريف الارتباط (Cookies):</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نستخدم ملفات تعريف الارتباط لتحسين الأداء وتحليل الاستخدام، ويمكنك تعطيلها من إعدادات المتصفح.
-                    </p>
-                  </div>
-
-                  <div id="sharing" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">مشاركة البيانات:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      لا نبيع أو نشارك بياناتك مع أي طرف ثالث إلا في حال الضرورة لتقديم الخدمة أو الالتزام بالقوانين.
-                    </p>
-                  </div>
-
-                  <div id="external-links" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">روابط خارجية:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      قد يحتوي موقعنا على روابط لمواقع أخرى لسنا مسؤولين عن ممارسات الخصوصية فيها، ويُنصح بقراءة
-                      سياساتهم.
-                    </p>
-                  </div>
-
-                  <div id="user-rights" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">حقوق المستخدم:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      يحق لك الوصول إلى بياناتك الشخصية، وطلب تعديلها أو حذفها في أي وقت عبر التواصل معنا.
-                    </p>
-                  </div>
-
-                  <div id="updates" className="space-y-3">
-                    <h2 className="text-[18px] md:text-[20px] font-bold text-black">تحديثات السياسة:</h2>
-                    <p className="text-[16px] font-medium text-[#4A4A4A] leading-[1.5]">
-                      نحتفظ بالحق في تعديل سياسة الخصوصية، وسيتم نشر أي تحديث هنا مع تاريخ آخر تعديل.
-                    </p>
-                  </div> */}
                 </div>
               </div>
             </div>

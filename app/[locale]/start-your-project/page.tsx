@@ -2,7 +2,7 @@
 
 import CountryCodeInput from "@/app/components/global/CountryCodeInput";
 import FileUpload from "@/app/components/global/FileUpload";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { FormSettingsDataType } from "@/app/utils/Types";
@@ -68,8 +68,10 @@ export default function Page() {
   const [successText, setSuccessText] = useState("");
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
+  // HTMLInputElement
+  const firstErrorElement = useRef<HTMLButtonElement | null>(null);
 
-  console.log(formData, "formData")
+  // console.log(formData, "formData")
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -266,6 +268,10 @@ export default function Page() {
     }
 
     setValidationErrors(errors);
+    if (firstErrorElement.current) {
+      firstErrorElement.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      firstErrorElement.current.focus();
+    }
     return Object.keys(errors).length === 0;
   };
 
@@ -303,10 +309,10 @@ export default function Page() {
           {/* <!-- Section Header --> */}
           <div className="text-center mb-[29px] md:mb-[48px] px-[15px] 2xl:px-0 max-w-[636px] mx-auto">
             <h2 className="text-[24px] md:text-[40px] font-bold text-black mb-[12px]">
-              {tInputs("readyToExplore")}
+              {data?.data?.hero_title}
             </h2>
             <p className="text-[14px] md:text-[18px] text-[#4A4A4A] font-medium leading-relaxed max-w-3xl mx-auto">
-              {tInputs("requestAndConsult")}
+             {data?.data?.hero_desc}
             </p>
           </div>
 
@@ -405,7 +411,7 @@ export default function Page() {
                             } role-btn px-6 py-3 border border-[#DADADA77] rounded-lg text-sm w-[155px] md:w-[160px] font-medium text-[#4A4A4A] hover:border-[#EDA133] hover:bg-[#FAEAD1] transition-colors`}>
                             {tInputs("projectOwner")}
                           </button>
-                          <button type="button" onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "representative"})) 
+                          <button type="button"  ref={firstErrorElement} onClick={() => {setFormData((previousData) => ({...previousData, owner_identity: "representative"})) 
                           if (validationErrors.owner_identity || validationErrors.owner_role) {
                                 setValidationErrors((prev) => ({...prev, owner_identity: undefined, owner_role: undefined}))
                               }  
@@ -710,7 +716,7 @@ export default function Page() {
                             mutation.mutate(formData)
                           }
                         }}
-                        className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors"
+                        className="px-4 py-2 bg-[#EDA133] w-full md:w-[268px] h-[56px] text-white rounded-lg text-base font-medium hover:bg-[#D1912A] transition-colors cursor-pointer transition-transform duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/40"
                       >
                         {mutation.isPending ? tInputs("send") + "..." : tInputs("send")}
                       </button>

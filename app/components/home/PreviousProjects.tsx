@@ -7,7 +7,8 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { ProjectTypeData } from "@/app/utils/Types";
 
 export default function PreviousProjects({ dataInfo }: {
   dataInfo: {
@@ -18,20 +19,36 @@ export default function PreviousProjects({ dataInfo }: {
       title: string;
       short_description: string;
       owner_name: string;
-      slug: string
-      meta_tags: string
+      slug: {
+        ar: string;
+        en: string;
+      },
+      meta_tags: string,
       country_name: string;
-      image_url: string;
+      image: {
+        url: string;
+        alt: string;
+      },
+      client_type: {
+        key: string;
+        value: string;
+      };
+      services: {
+        id: number;
+        name: string;
+      }[];
     }[]
   }
 }) {
 
   const t = useTranslations("HomePage");
 
+  const localeValue = useLocale()
+
   return (
     <section className="relative bg-[#131A27] py-[48px] md:py-[70px] md:h-[1123px] overflow-hidden">
       <div className="absolute inset-0 z-[1]">
-        <img src="/project-background.svg" alt="background art" />
+        <img src="/project-background.svg"  />
       </div>
 
       <div className="relative z-20 previous-projects-container">
@@ -47,14 +64,14 @@ export default function PreviousProjects({ dataInfo }: {
           spaceBetween={48}
           slidesPerView={1}
           loop
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false,
-          }}
-          
+          // autoplay={{
+          //   delay: 5000,
+          //   disableOnInteraction: false,
+          // }}
+          // Autoplay
           direction="horizontal"
           centeredSlides
-          modules={[Navigation, Autoplay]}
+          modules={[Navigation, ]}
           navigation={{
             nextEl: ".swiper-3-button-next-1",
             prevEl: ".swiper-3-button-prev-1",
@@ -94,44 +111,41 @@ export default function PreviousProjects({ dataInfo }: {
             return (
               <SwiperSlide
                 key={project?.id}
-                style={{ backgroundImage: `url(${project?.image_url})` }}
+                style={{ backgroundImage: `url(${project?.image?.url})` }}
                 className="swiper-slide h-[312px] md:h-[707px] bg-no-repeat bg-cover bg-bottom rounded-lg p-8 px-4 md:px-8 border border-gray-700 hover:border-[#EDA133] inset-shadow-lg"
               >
-                <div className="h-[270px] w-[235px] md:w-full md:h-[650px] flex flex-col items-start justify-end project-card">
+                <div className="h-[270px] w-full md:w-full md:h-[650px] flex flex-col items-start justify-end project-card">
                   <section className="w-full">
                     <h3 className="text-[16px] md:text-[40px] font-medium text-white">{project?.title}</h3>
                     <section className="mt-[12px] md:mt-[14px] flex flex-col gap-[8px] lg:flex-row lg:items-center lg:justify-between w-full">
                       <section className="flex items-center gap-[13px]">
-                        {/* <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                          <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
-                          {project?.title}
-                        </h4> */}
 
-                        <h4 className="flex justify-center  items-center gap-[8px] px-2 md:px-5  w-[150px] md:w-[250px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                          <img className="h-[14.5px] md:h-[23px]" src="/person-icon.svg" alt="person icon" />
+                        <h4 className="flex justify-center  items-center gap-[8px] px-2 md:px-5 w-8/12 md:w-[250px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          <img className="h-[14.5px] md:h-[23px]" src={project?.client_type.key == "individual" ? "/person-icon.svg" : "/company-svg-icon.svg"} alt={project?.client_type.key == "individual" ? "person icon" : "company icon"}/>
                           {project?.owner_name}
                         </h4>
 
-                        {/* <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[235.5px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                          <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
-                          {project?.country_name}
-                        </h4> */}
 
-                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 w-full  h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
-                          <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg" alt="location icon" />
+                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 w-full md:w-full h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md rounded-[8px] text-[12px] md:text-[16px] text-white">
+                          <img className="h-[14.5px] md:h-[23px]" src="/location-icon.svg"  />
                           {project?.country_name}
                         </h4>
                       </section>
 
-                      {/* <section className="flex items-center gap-[13px]">
-                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[117px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
-                          تطوير الويب
-                        </h4>
+                      <section className="flex flex-wrap items-center gap-[13px]">
+                        {project?.services?.map(service => {
+                          return (
+                            // md:w-[117px]
+                            <h4 key={service.id} className="text-center flex justify-center items-center gap-[8px] px-2 md:px-6 md:max-w-[217px] h-[28px] md:h-[40px] bg-[#FFFFFF33] backdrop-blur-md bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
+                              {service?.name}
+                            </h4>
+                          )
+                        })}
 
-                        <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
+                        {/* <h4 className="flex justify-center items-center gap-[8px] px-2 md:px-0 md:w-[111px] h-[28px] md:h-[40px] bg-[#FFFFFF33] bg-gradient-to-r from-black/5 to-black/20 rounded-[8px] text-[12px] md:text-[16px] text-white">
                           تصميم الويب
-                        </h4>
-                      </section> */}
+                        </h4> */}
+                      </section>
                     </section>
                     <p className="hidden md:block mt-[18px] text-white text-[16px]">
                       {project?.short_description}
@@ -143,7 +157,7 @@ export default function PreviousProjects({ dataInfo }: {
 
                   <div className="mt-[16px] see-more-button">
                     <Link
-                      href={`/projects/${project?.id}/${project?.slug}`}
+                      href={`/projects/${localeValue == "en" ? project?.slug?.en : project?.slug?.ar}`}
                       className="bg-[#EDA133] flex items-center justify-center gap-2 hover:bg-[#D1912A] w-full md:w-[229px] h-[28px] md:h-[56px] text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 "
                     >
                       <span className="text-[14px] md:text-[16px] font-medium">{t("seeMore")}</span>
@@ -166,7 +180,8 @@ export default function PreviousProjects({ dataInfo }: {
         </Swiper>
       </div>
 
-      <section className="flex flex-col md:flex-row justify-between items-center max-w-[1225px] gap-[22px] md:gap-0 mx-auto mt-[32px] md:mt-[48px] px-[15px] 2xl:px-0 relative z-[50]">
+{/*  2xl:max-w-[1115px] */}
+      <section className="flex flex-col md:flex-row justify-between items-center max-w-[1225px] 2xl:max-w-[1115px] gap-[22px] md:gap-0 mx-auto mt-[32px] md:mt-[48px] px-[15px] 2xl:px-0 relative z-[50]">
         <section className="hidden md:flex items-center gap-[16px] rtl:flex ltr:hidden">
           <div className="swiper-3-button-prev-1 border border-[white] rounded-[8px] p-[19px] cursor-pointer">
             <svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">

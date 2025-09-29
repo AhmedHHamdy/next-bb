@@ -10,7 +10,7 @@ import Blogs from "../components/home/Blogs";
 // import { routing } from "@/i18n/routing";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
 // import { use } from "react";
-import { HomePageData } from "../utils/Types";
+import { HomePageData, RecordUserVisitData } from "../utils/Types";
 import { Link } from "@/i18n/navigation";
 import ReviewsHome from "../components/home/ReviewsHome";
 import { Metadata } from "next";
@@ -50,20 +50,43 @@ export default async function HomePage() {
     });
   
     if (!res.ok) {
-      console.log(res, "res")
-      console.log("Server responded with error code:", res.status);
+      // console.log(res, "res")
+      // console.log("Server responded with error code:", res.status);
       if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
         throw new Error("Failed to fetch Server issue");
       } else {
         throw new Error("Failed to fetch homepage data");
       }
     }
-  
+
     return res.json();
   }
 
+  async function RecordUserVisit(locale: string): Promise<RecordUserVisitData> {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/setVisitorCount`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        lang: locale,
+      }
+    });
+  
+    if (!res.ok) {
+      if (res.status == 500 || res.status == 502 || res.status == 503 || res.status == 504) {
+        throw new Error("Failed to fetch Server issue");
+      } else {
+        throw new Error("Failed to fetch Record User Visit data");
+      }
+    }
+  
+    return res.json();
+  }
+  
+
   // fetch typed data
   const { data } = await getHomePageData(locale);
+
+  const { message } = await RecordUserVisit(locale);
 
   return (
     <section className="mb-[64px] md:mb-[100px]"> 
@@ -103,7 +126,8 @@ export default async function HomePage() {
 
             </Link>
 
-            <Link href="/free-consultation" className="text-center flex items-center justify-center border w-full md:w-[150px] h-[48px] xl:h-[56px] rounded-[8px] border-orange-400 text-orange-400 px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors">
+            {/* md:w-[150px] */}
+            <Link href="/free-consultation" className="text-center flex items-center justify-center border w-full md:w-auto md:px-10  h-[48px] xl:h-[56px] rounded-[8px] border-orange-400 text-orange-400 px-4 py-2 text-[14px] md:text-[16px] font-medium hover:bg-orange-50 transition-colors">
               {t("freeConsultation")}
             </Link>
           </section>
@@ -133,7 +157,7 @@ export default async function HomePage() {
 
       {data?.our_projects.projects?.length > 0 && <PreviousProjects dataInfo={data?.our_projects} />}
 
-      {data?.our_clients?.clients?.length > 0 && <ReviewsHome reviewsData={data?.our_clients} />}
+      {(data?.our_clients && data?.our_clients?.clients?.length > 0) && <ReviewsHome reviewsData={data?.our_clients} />}
 
       {data?.faqs?.length > 0 && <FAQ faqs={data?.faqs} homePageStatus={true} />}
 

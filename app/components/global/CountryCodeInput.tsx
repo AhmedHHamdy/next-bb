@@ -119,7 +119,7 @@ export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
             />
           </svg>
           <span className="text-sm text-[#919191]">{selected?.country_code}</span>
-          <img className="w-6" src={selected?.flag} alt="flag" />
+          <img className="w-6" src={selected?.flag}  />
 
           {/* Dropdown Menu */}
           {isOpen && (
@@ -134,7 +134,7 @@ export default function CountryCodeInput({ setSelectedPhone, formDataValue }: {
                     setIsOpen(false);
                   }}
                 >
-                  <img className="w-7" src={c.flag} alt="flag" />
+                  <img className="w-7" src={c.flag}  />
                   <span className="text-[14px]">{c.country_code}</span>
                 </div>
               ))}

@@ -6,11 +6,13 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { SectionCategory } from "@/app/utils/Types";
+import { useTranslations } from "next-intl";
 
 export default function BlogsCategories({ sectionsData, setSelectedSection, selectedSectionId }: { sectionsData: SectionCategory[], setSelectedSection: (value: string) => void, selectedSectionId: string}) {
+  const t = useTranslations("Blogs")
   return (
     <Swiper
-      className="w-full"
+      className="w-full h-[125px] md:h-full"
       spaceBetween={32}
       slidesPerView={5}
       direction="horizontal"
@@ -22,21 +24,25 @@ export default function BlogsCategories({ sectionsData, setSelectedSection, sele
 
         768: {
           spaceBetween: 32,
-          slidesPerView: 1,
+          slidesPerView: 4,
         },
         1024: {
           spaceBetween: 32,
-          slidesPerView: 2,
+          slidesPerView: 4,
         },
         1279: {
-          spaceBetween: 32,
-          slidesPerView: 2,
+          spaceBetween: 15,
+          slidesPerView: 6,
+        },
+        1440: {
+          spaceBetween: 15,
+          slidesPerView: 6,
         },
       }}
     >
-      <SwiperSlide className="swiper-slide">
+      <SwiperSlide className="swiper-slide cursor-pointer">
         <div onClick={() => setSelectedSection("")} className={`${selectedSectionId == "" ? "blog-icon-container": ""} flex flex-col items-center gap-2 relative`}>
-          <svg
+          {/* <svg
             className="blogs-icon"
             xmlns="http://www.w3.org/2000/svg"
             width="54"
@@ -114,17 +120,21 @@ export default function BlogsCategories({ sectionsData, setSelectedSection, sele
                 <rect x="3.32178" y="4" width="47.3563" height="47.3563" rx="23.6782" fill="white" />
               </clipPath>
             </defs>
-          </svg>
-          <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium text-center h-[52px]">الكل</span>
-          <div className="indicator absolute -bottom-[0.2px] w-20 h-0.5 bg-transparent rounded-full"></div>
+          </svg> */}
+          <section className="w-[50px] h-[50px] rounded-[200px] border-[1px] border-[#F3F3F1] section-badge flex items-center justify-center">
+              <img className="h-[20px] w-[20px]" src="/all-icon-svg.svg" />
+            </section>
+          <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium text-center h-[52px]">{t("all")}</span>
+          {/* -bottom-[0.2px] */}
+          <div className="indicator absolute hidden md:block md:-bottom-[0.2px] w-20 h-0.5 bg-transparent rounded-full"></div>
         </div>
       </SwiperSlide>
 
       {sectionsData && sectionsData?.map(section => {
         return (
-          <SwiperSlide key={section.id} className="swiper-slide">
+          <SwiperSlide key={section.id} className="swiper-slide cursor-pointer">
             <div onClick={() => setSelectedSection(String(section.id))} className={`${String(section.id) == selectedSectionId ? "blog-icon-container": ""} flex flex-col items-center gap-2 relative`}>
-              <svg
+              {/* <svg
                 className="blogs-icon"
                 xmlns="http://www.w3.org/2000/svg"
                 width="55"
@@ -198,10 +208,14 @@ export default function BlogsCategories({ sectionsData, setSelectedSection, sele
                     <rect x="3.82184" width="47.3563" height="47.3563" rx="23.6782" fill="white" />
                   </clipPath>
                 </defs>
-              </svg>
-              <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium text-center h-[52px]">{section.name}</span>
+              </svg> */}
 
-              <div className="indicator absolute -bottom-[4.2px] w-20 h-0.5 bg-transparent rounded-full"></div>
+              <section className="w-[50px] h-[50px] rounded-[200px] border-[1px] border-[#F3F3F1] section-badge flex items-center justify-center">
+                <img className="h-[20px] w-[20px]" src={section?.icon?.url} alt={section?.icon?.alt} />
+              </section>
+              <span className="blog-icon-text text-[#4A4A4A] text-sm font-medium text-center h-[52px] md:h-auto">{section.name}</span>
+{/* -bottom-[1.2px] */}
+              <div className={`indicator absolute hidden md:block ${section?.name?.length > 14 ? "md:-bottom-[31.5px] xl:-bottom-[11.5px]": "md:-bottom-[31.5px] xl:-bottom-[31.5px]"} w-20 h-0.5 bg-transparent rounded-full`}></div>
             </div>
           </SwiperSlide>
         )
