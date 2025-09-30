@@ -398,7 +398,7 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
                         poster={review?.thumbnail?.url}
                         className="w-full h-full min-h-[250px] object-cover rounded-[16px]"
                       >
-                        <source src={review?.file_url} type="video/mp4" />
+                        <source src={"https://www.pexels.com/download/video/11009926/"} type="video/mp4" />
                       </video>
                     </figure>}
 
@@ -445,7 +445,7 @@ export default function ReviewsHome({ reviewsData }: { reviewsData?: {
                         poster={review?.thumbnail?.url}
                         className="w-full h-full min-h-[250px] object-cover rounded-[16px]"
                       >
-                        <source src={review?.file_url} type="video/mp4" />
+                        <source src={"https://www.pexels.com/download/video/11009926/"} type="video/mp4" />
                       </video>
                     </figure>}
 

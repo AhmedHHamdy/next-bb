@@ -141,8 +141,8 @@ export default async function HomePage() {
                 playsInline
                 className="w-full h-full object-cover"
               >
-              <source src={"https://www.pexels.com/download/video/9421549/"} type="video/mp4" />
-              <source src={"https://www.pexels.com/download/video/9421549/"} type="video/quicktime" />
+              <source src={"https://www.pexels.com/download/video/11009926/"} type="video/mp4" />
+              <source src={"https://www.pexels.com/download/video/11009926/"} type="video/quicktime" />
               </video>
             </figure>
           </section>
