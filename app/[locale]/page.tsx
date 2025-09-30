@@ -135,13 +135,15 @@ export default async function HomePage() {
           <section className="relative w-full overflow-hidden mt-[24px] md:mt-[56px] rounded-[8px]">
             <figure className="w-full h-[293px] xl:h-[374px]">
               <video
-                src={data?.app_home_video}
                 autoPlay
                 muted
                 loop
                 playsInline
                 className="w-full h-full object-cover"
-              ></video>
+              >
+              <source src={"https://www.pexels.com/download/video/9421549/"} type="video/mp4" />
+              <source src={"https://www.pexels.com/download/video/9421549/"} type="video/quicktime" />
+              </video>
             </figure>
           </section>
         </section>
